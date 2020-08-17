@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.selectareas.css">
+    <script src="custom-question.js"></script>
+    <script src="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.1.12.4.min.js"></script>
+    <script src="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.selectareas.min.js"></script>
+    <script src="./../design/bundle.js"></script>
+</head>
+<body>
+<div class="node-contents">
+    <div class="comd-tabs__tab-content node-input-area">
+        <div class="node-properties">
+            <div class="node-properties__key-properties node-properties__key-properties--columns">
+                <div class="node-property-container">
+                    <div class="node-property node-property--checkbox node-property--required">
+                        <div class="co-toggle co-toggle--checkbox">
+                            <input class="co-toggle__input" type="checkbox" id="have-scales">
+                            <label for="have-scales" class="node-property__label node-property__label--checkbox">
+                                <div class="icon icon-checkbox co-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                        <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
+                                        <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
+                                        <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
+                                    </svg>
+                                </div>
+                                <span>With scales</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="question-answers" id="image">
+        <header class="question-answers__header co-flex co-flex--justify-between co-flex--center">
+            <div class="co-flex co-flex--center">
+                <h4 class="question-answers__title co-text-size-small">Image settings</h4>
+            </div>
+        </header>
+        <div id="image-settings">
+            <div class="comd-tabs__tab-content node-input-area">
+                <label class="node-input-area__label" for="src">Image source</label>
+                <input class="node-input-area__input form-group" type="text" id="src"/>
+                <label class="node-input-area__label" for="width">Image width</label>
+                <input class="node-input-area__input form-group" type="text" id="width"/>
+            </div>
+            <div class="comd-split-button">
+                <div class="details-controls details-controls--after mt10">
+                    <div class="co-flex__flex-auto">
+                        <div class="button-row">
+                            <button class="comd-button comd-button--secondary-neutral comd-split-button__button" id="draw-image-btn">
+                                <span class="comd-button__content"><div class="comd-portal-trigger">Draw image</div></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="areas">
+            <div class="comd-split-button">
+                <div class="details-controls details-controls--after mt10">
+                    <div class="co-flex__flex-auto">
+                        <div class="button-row">
+                            <button class="comd-button comd-button--secondary-neutral comd-split-button__button" id="change-image-btn">
+                                <span class="comd-button__content"><div class="comd-portal-trigger">Change image options</div></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="heatmap-wrapper"></div>
+            <div class="comd-split-button">
+                <div class="details-controls details-controls--after mt10">
+                    <div class="co-flex__flex-auto">
+                        <div class="button-row">
+                            <button class="comd-button comd-button--secondary-neutral comd-split-button__button" id="save-changes-btn">
+                                <span class="comd-button__content"><div class="comd-portal-trigger">Save changes</div></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const srcInput = document.getElementById('src');
+    const widthInput = document.getElementById('width');
+    const changeImageBtn = document.getElementById('change-image-btn');
+    const drawImageBtn = document.getElementById('draw-image-btn');
+    const saveChangesBtn = document.getElementById('save-changes-btn');
+    const imageSettings = document.getElementById('image-settings');
+    const areasWrapper = document.getElementById('areas');
+    const heatmapWrapper = document.getElementById('heatmap-wrapper');
+    const haveScalesInput = document.getElementById('have-scales');
+    let areImageInputsChanged = false;
+
+    function setValues(settings) {
+        if (settings.imageOptions) {
+            srcInput.value = settings.imageOptions.src;
+            widthInput.value = settings.imageOptions.width;
+
+            haveScalesInput.checked = settings.haveScales;
+
+            imageSettings.style.display = "none";
+
+            if(settings.areas && !heatmapWrapper.innerHTML) {
+                new window.customQuestionsLibrary.HeatmapDesigner({
+                    wrapperId: "heatmap-wrapper",
+                    imageOptions: {
+                        src: settings.imageOptions.src,
+                        widthInput: settings.imageOptions.width
+                    },
+                    predefinedAreas: settings.areas,
+                    onAreasChanged: function() {}
+                });
+            }
+        } else {
+            areasWrapper.style.display = "none";
+            changeImageBtn.style.display = "none";
+        }
+    }
+
+    function saveChanges() {
+        let settings = {
+            imageOptions: {
+                src: srcInput.value,
+                width: widthInput.value
+            },
+            areas: $("#heatmap-wrapper img").selectAreas('areas'),
+            answersCount: {
+                max: 3,
+                min: 2
+            },
+            haveScales: haveScalesInput.checked
+        };
+        //var hasError = inputElement.value === '';
+        let hasError = false;
+        customQuestion.saveChanges(settings, hasError);
+    }
+
+    function drawImage() {
+        const src = srcInput.value;
+        const width = widthInput.value;
+        if (src && width) {
+            if (areImageInputsChanged) {
+                new window.customQuestionsLibrary.HeatmapDesigner({
+                    wrapperId: "heatmap-wrapper",
+                    imageOptions: {
+                        src: src,
+                        widthInput: width
+                    },
+                    predefinedAreas: []
+                });
+            }
+            imageSettings.style.display = "none";
+            changeImageBtn.style.display = "";
+            areasWrapper.style.display = "";
+            areImageInputsChanged = false;
+        }
+    }
+
+    function onInputsChange() {
+        areImageInputsChanged = true;
+        heatmapWrapper.innerHTML = "";
+    }
+
+    function showImageSettings() {
+        imageSettings.style.display = "";
+        changeImageBtn.style.display = "none";
+        areasWrapper.style.display = "none";
+    }
+
+    customQuestion.onSettingsReceived = setValues;
+
+    srcInput.addEventListener('change', onInputsChange);
+    widthInput.addEventListener('change', onInputsChange);
+
+    drawImageBtn.addEventListener('click', drawImage);
+    changeImageBtn.addEventListener('click', showImageSettings);
+    saveChangesBtn.addEventListener('click', saveChanges);
+
+    haveScalesInput.addEventListener('change', saveChanges);
+</script>
+</body>
+</html>

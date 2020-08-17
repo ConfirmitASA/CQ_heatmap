@@ -1,0 +1,77 @@
+.select-areas-background-area:not(.area-indicator) {
+    opacity: 0;
+}
+
+.image-wrapper {
+    overflow-x: auto;
+}
+
+.jBox-content {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+}
+
+.switch-wrapper {
+    display: flex;
+    color: #fff;
+    padding: 0.25em 0.5em;
+}
+
+.switch-label {
+    font-size: 0.8em;
+    padding: 0.1em;
+    user-select: none;
+}
+
+.switch {
+    position: relative;
+    display: flex;
+    width: 1.75em;
+    height: 1em;
+    margin: 0.25em 0.25em 0.25em 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000;
+    opacity: 0.2;
+    transition: .4s;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 0.75em;
+    width: 0.75em;
+    left: 0.125em;
+    bottom: 0.125em;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #fff;
+    opacity: 1;
+}
+
+input:checked + .slider:before {
+    transform: translateX(calc(100% + 0.025em));
+}
+
+.slider.round {
+    border-radius: 0.75em;
+}
+.slider.round:before {
+    border-radius: 1.75em;
+}
