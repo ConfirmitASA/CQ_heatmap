@@ -12,7 +12,5 @@ register(function (question, customQuestionSettings, questionViewSettings) {
     var answersCount = customQuestionSettings.answersCount;
     var haveScales = customQuestionSettings.haveScales;
 
-    debugger
-
     var heatmap = new customQuestionsLibrary.Heatmap({question, areas, imageOptions, answersCount, haveScales});
 });

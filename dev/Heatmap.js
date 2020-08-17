@@ -10,9 +10,12 @@ class Heatmap {
         this.areas = areas;
         this.imageOptions = imageOptions;
         this.styles = styles;
-        this.answersCount = answersCount ? answersCount : {
-            min: 1
-        };
+        this.answersCount = answersCount
+            ? {
+                max: answersCount.max && answersCount.max !== "0" ? answersCount.max : undefined,
+                min: answersCount.min && answersCount.min !== "0" ? answersCount.min : undefined
+            }
+            : {};
         this.haveScales = haveScales;
 
         this.buttonOptions = buttonOptions ? buttonOptions : [
@@ -100,8 +103,8 @@ class Heatmap {
         const tooltip = new Tooltip({
             id: id + '-area-indicator-tooltip-' + areaIndex,
             targetId: indicator.id,
-            title: !haveScales ? "Food" : "",
-            content: haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : "",
+            //title: !haveScales ? "Food" : "",
+            content: haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : "Food",
             onCreated: this.onTooltipCreated.bind(this, {areaIndex, indicator})
         });
     };
@@ -158,7 +161,7 @@ class Heatmap {
             indicator.addEventListener("click", () => {
                 if (indicator.classList.contains("area_chosen")) {
                     indicator.classList.remove("area_chosen");
-                    questionValues[areaIndex] = undefined;
+                    delete questionValues[areaIndex];
                     this.setValues({question, values: questionValues});
                 } else {
                     indicator.classList.add("area_chosen");
@@ -183,7 +186,7 @@ class Heatmap {
 
             if (currentType === type) {
                 if (input.checked) {
-                    values[areaIndex] = undefined;
+                    delete values[areaIndex];
                     input.checked = false;
                     if (indicator.classList.contains("area_" + currentType)) {
                         indicator.classList.remove("area_" + currentType);
@@ -215,24 +218,67 @@ class Heatmap {
     };
 
     subscribeToQuestion = () => {
-        const {question, answersCount} = this;
+        const {id, question, questionNode, answersCount} = this;
         const {values} = question;
-        question.validationEvent.on(function (validationResult) {
-            const valuesCount = Object.keys(values).length;
-            if (!values || valuesCount <= 0) {
-                const error = {message: 'Please provide at least one answer'};
-                validationResult.errors.push(error);
-            } else {
-                if (answersCount.min && valuesCount < answersCount.min) {
-                    const error = {message: 'Please provide at least ' + answersCount.min + ' answer(s)'};
+
+        const errorBlock = this.addErrorBlock();
+        const errorList = errorBlock.querySelector(".cf-error-list");
+
+        question.validationEvent.on((validationResult) => {
+            const valuesCount = Object.keys(this.question.values).length;
+            //const valuesCount = Object.keys(Confirmit.page.getQuestion(id).values).length;
+            const {min, max} = answersCount;
+            errorList.innerHTML = "";
+
+            if (values) {
+                if (min && valuesCount < min) {
+                    const error = {message: 'Please provide at least ' + min + ' answer(s)'};
                     validationResult.errors.push(error);
                 }
-                if (answersCount.max && valuesCount > answersCount.max) {
-                    const error = {message: 'Please provide less than ' + answersCount.max + ' answer(s)'};
+                if (max && valuesCount > max) {
+                    const error = {message: 'Please provide less than ' + max + ' answer(s)'};
                     validationResult.errors.push(error);
+                }
+                validationResult.errors.forEach(this.addErrorItem);
+                if (validationResult.errors.length > 0) {
+                    questionNode.classList.add("cf-question--error");
+                } else {
+                    questionNode.classList.remove("cf-question--error");
                 }
             }
         });
+    };
+
+    addErrorBlock = () => {
+        const {id} = this;
+        const imageWrapper = document.querySelector("#" + id + "-image-wrapper");
+
+        const errorBlock = document.createElement("div");
+        errorBlock.id = id + "_error";
+        errorBlock.classList.add("cf-question__error");
+        errorBlock.classList.add("cf-error-block");
+        errorBlock.setAttribute("role", "alert");
+        errorBlock.setAttribute("aria-labelledby", id + "_error_list");
+
+        const errorList = document.createElement("ul");
+        errorList.id = id + "_error_list";
+        errorList.classList.add("cf-error-list");
+
+        errorBlock.appendChild(errorList);
+        imageWrapper.parentNode.insertBefore(errorBlock, imageWrapper);
+
+        return errorBlock;
+    };
+
+    addErrorItem = ({message}) => {
+        const {id} = this;
+        const errorList = document.querySelector("#" + id + "_error_list");
+
+        const errorItem = document.createElement("li");
+        errorItem.classList.add("cf-error-list__item");
+        errorItem.innerText = message;
+
+        errorList.appendChild(errorItem);
     };
 
     setDynamicStyles = () => {
@@ -250,7 +296,7 @@ class Heatmap {
                 stylesElement.innerText += ".switch-wrapper-" + type + " input:checked + .slider:before { background-color: " + color + "; }";
             });
         } else {
-            stylesElement.innerText += ".area_chosen { background-color: green; opacity: 0.5; }";
+            stylesElement.innerText += ".area_chosen { background-color: green !important; opacity: 0.5; }";
         }
 
         // area highlighting

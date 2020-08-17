@@ -303,10 +303,10 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     var tooltip = new Tooltip({
       id: id + '-area-indicator-tooltip-' + areaIndex,
       targetId: indicator.id,
-      title: !haveScales ? "Food" : "",
+      //title: !haveScales ? "Food" : "",
       content: haveScales ? _this.createButtonsWrapperWithAreaAttributes({
         areaIndex: areaIndex
-      }).innerHTML : "",
+      }).innerHTML : "Food",
       onCreated: _this.onTooltipCreated.bind(_this, {
         areaIndex: areaIndex,
         indicator: indicator
@@ -378,7 +378,7 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
       indicator.addEventListener("click", function () {
         if (indicator.classList.contains("area_chosen")) {
           indicator.classList.remove("area_chosen");
-          questionValues[areaIndex] = undefined;
+          delete questionValues[areaIndex];
 
           _this.setValues({
             question: question,
@@ -411,7 +411,7 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
 
       if (currentType === type) {
         if (input.checked) {
-          values[areaIndex] = undefined;
+          delete values[areaIndex];
           input.checked = false;
 
           if (indicator.classList.contains("area_" + currentType)) {
@@ -451,33 +451,73 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
   });
 
   _defineProperty(this, "subscribeToQuestion", function () {
-    var question = _this.question,
+    var id = _this.id,
+        question = _this.question,
+        questionNode = _this.questionNode,
         answersCount = _this.answersCount;
     var values = question.values;
-    question.validationEvent.on(function (validationResult) {
-      var valuesCount = Object.keys(values).length;
 
-      if (!values || valuesCount <= 0) {
-        var error = {
-          message: 'Please provide at least one answer'
-        };
-        validationResult.errors.push(error);
-      } else {
-        if (answersCount.min && valuesCount < answersCount.min) {
+    var errorBlock = _this.addErrorBlock();
+
+    var errorList = errorBlock.querySelector(".cf-error-list");
+    question.validationEvent.on(function (validationResult) {
+      var valuesCount = Object.keys(_this.question.values).length; //const valuesCount = Object.keys(Confirmit.page.getQuestion(id).values).length;
+
+      var min = answersCount.min,
+          max = answersCount.max;
+      errorList.innerHTML = "";
+
+      if (values) {
+        if (min && valuesCount < min) {
+          var error = {
+            message: 'Please provide at least ' + min + ' answer(s)'
+          };
+          validationResult.errors.push(error);
+        }
+
+        if (max && valuesCount > max) {
           var _error = {
-            message: 'Please provide at least ' + answersCount.min + ' answer(s)'
+            message: 'Please provide less than ' + max + ' answer(s)'
           };
           validationResult.errors.push(_error);
         }
 
-        if (answersCount.max && valuesCount > answersCount.max) {
-          var _error2 = {
-            message: 'Please provide less than ' + answersCount.max + ' answer(s)'
-          };
-          validationResult.errors.push(_error2);
+        validationResult.errors.forEach(_this.addErrorItem);
+
+        if (validationResult.errors.length > 0) {
+          questionNode.classList.add("cf-question--error");
+        } else {
+          questionNode.classList.remove("cf-question--error");
         }
       }
     });
+  });
+
+  _defineProperty(this, "addErrorBlock", function () {
+    var id = _this.id;
+    var imageWrapper = document.querySelector("#" + id + "-image-wrapper");
+    var errorBlock = document.createElement("div");
+    errorBlock.id = id + "_error";
+    errorBlock.classList.add("cf-question__error");
+    errorBlock.classList.add("cf-error-block");
+    errorBlock.setAttribute("role", "alert");
+    errorBlock.setAttribute("aria-labelledby", id + "_error_list");
+    var errorList = document.createElement("ul");
+    errorList.id = id + "_error_list";
+    errorList.classList.add("cf-error-list");
+    errorBlock.appendChild(errorList);
+    imageWrapper.parentNode.insertBefore(errorBlock, imageWrapper);
+    return errorBlock;
+  });
+
+  _defineProperty(this, "addErrorItem", function (_ref7) {
+    var message = _ref7.message;
+    var id = _this.id;
+    var errorList = document.querySelector("#" + id + "_error_list");
+    var errorItem = document.createElement("li");
+    errorItem.classList.add("cf-error-list__item");
+    errorItem.innerText = message;
+    errorList.appendChild(errorItem);
   });
 
   _defineProperty(this, "setDynamicStyles", function () {
@@ -498,7 +538,7 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
         stylesElement.innerText += ".switch-wrapper-" + type + " input:checked + .slider:before { background-color: " + color + "; }";
       });
     } else {
-      stylesElement.innerText += ".area_chosen { background-color: green; opacity: 0.5; }";
+      stylesElement.innerText += ".area_chosen { background-color: green !important; opacity: 0.5; }";
     } // area highlighting
 
 
@@ -524,9 +564,10 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
   this.areas = _areas;
   this.imageOptions = _imageOptions;
   this.styles = _styles;
-  this.answersCount = _answersCount ? _answersCount : {
-    min: 1
-  };
+  this.answersCount = _answersCount ? {
+    max: _answersCount.max && _answersCount.max !== "0" ? _answersCount.max : undefined,
+    min: _answersCount.min && _answersCount.min !== "0" ? _answersCount.min : undefined
+  } : {};
   this.haveScales = _haveScales;
   this.buttonOptions = _buttonOptions ? _buttonOptions : [{
     type: "positive",
