@@ -219,7 +219,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var Heatmap_Heatmap = function Heatmap(_ref) {
   var _this = this;
 
-  var _question = _ref.question,
+  var question = _ref.question,
       _areas = _ref.areas,
       _imageOptions = _ref.imageOptions,
       _buttonOptions = _ref.buttonOptions,
@@ -326,7 +326,8 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
       backgroundPositionX: parseFloat(indicator.style.backgroundPositionX.replace("px", "")) - borderWidth + "px",
       backgroundPositionY: parseFloat(indicator.style.backgroundPositionY.replace("px", "")) - borderWidth + "px",
       backgroundImage: "",
-      backgroundColor: ""
+      backgroundColor: "",
+      cursor: ""
     });
     indicator.setAttribute("area-index", areaIndex);
     return indicator;
@@ -373,24 +374,22 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
         }
       });
     } else {
-      var question = _this.question;
-      var questionValues = question.values;
       indicator.addEventListener("click", function () {
+        var values = _this.question.values;
+
         if (indicator.classList.contains("area_chosen")) {
           indicator.classList.remove("area_chosen");
-          delete questionValues[areaIndex];
+          delete values[areaIndex];
 
           _this.setValues({
-            question: question,
-            values: questionValues
+            values: values
           });
         } else {
           indicator.classList.add("area_chosen");
-          questionValues[areaIndex] = "1";
+          values[areaIndex] = "1";
 
           _this.setValues({
-            question: question,
-            values: questionValues
+            values: values
           });
         }
       });
@@ -401,10 +400,8 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     var type = _ref5.type,
         areaIndex = _ref5.areaIndex,
         indicator = _ref5.indicator;
-    var question = _this.question,
-        buttonOptions = _this.buttonOptions;
-    var questionValues = question.values;
-    var values = questionValues ? questionValues : {};
+    var buttonOptions = _this.buttonOptions;
+    var values = _this.question.values;
     buttonOptions.forEach(function (option) {
       var currentType = option.type;
       var input = document.querySelector('.switch-wrapper-' + currentType + '[area-index="' + areaIndex + '"] input');
@@ -435,39 +432,42 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     });
 
     _this.setValues({
-      question: question,
       values: values
     });
   });
 
   _defineProperty(this, "setValues", function (_ref6) {
-    var question = _ref6.question,
-        values = _ref6.values;
-    Object.keys(values).forEach(function (areaIndex) {
-      if (values[areaIndex]) {
-        question.setValue(areaIndex, values[areaIndex]);
-      }
+    var values = _ref6.values;
+    var allValues = _this.question.values;
+
+    _this.question.answers.forEach(function (_ref7) {
+      var code = _ref7.code;
+      allValues[code] = undefined;
+    });
+
+    Object.keys(values).forEach(function (key) {
+      allValues[key] = values[key];
+    });
+    Object.keys(allValues).forEach(function (key) {
+      _this.question.setValue(key, allValues[key]);
     });
   });
 
   _defineProperty(this, "subscribeToQuestion", function () {
-    var id = _this.id,
-        question = _this.question,
-        questionNode = _this.questionNode,
+    var questionNode = _this.questionNode,
         answersCount = _this.answersCount;
-    var values = question.values;
 
     var errorBlock = _this.addErrorBlock();
 
     var errorList = errorBlock.querySelector(".cf-error-list");
-    question.validationEvent.on(function (validationResult) {
-      var valuesCount = Object.keys(_this.question.values).length; //const valuesCount = Object.keys(Confirmit.page.getQuestion(id).values).length;
 
-      var min = answersCount.min,
-          max = answersCount.max;
+    _this.question.validationEvent.on(function (validationResult) {
+      var valuesCount = Object.keys(_this.question.values).length;
+      var min = parseInt(answersCount.min);
+      var max = parseInt(answersCount.max);
       errorList.innerHTML = "";
 
-      if (values) {
+      if (_this.question.values) {
         if (min && valuesCount < min) {
           var error = {
             message: 'Please provide at least ' + min + ' answer(s)'
@@ -510,8 +510,8 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     return errorBlock;
   });
 
-  _defineProperty(this, "addErrorItem", function (_ref7) {
-    var message = _ref7.message;
+  _defineProperty(this, "addErrorItem", function (_ref8) {
+    var message = _ref8.message;
     var id = _this.id;
     var errorList = document.querySelector("#" + id + "_error_list");
     var errorItem = document.createElement("li");
@@ -539,6 +539,7 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
       });
     } else {
       stylesElement.innerText += ".area_chosen { background-color: green !important; opacity: 0.5; }";
+      stylesElement.innerText += ".area-indicator:hover { cursor: pointer; }";
     } // area highlighting
 
 
@@ -558,8 +559,8 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     questionNode.appendChild(stylesElement);
   });
 
-  this.question = _question;
-  this.id = _question.id;
+  this.question = question;
+  this.id = question.id;
   this.questionNode = document.querySelector("#" + this.id);
   this.areas = _areas;
   this.imageOptions = _imageOptions;
@@ -585,7 +586,7 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
   this.init();
 };
 
-/* harmony default export */ var dev_Heatmap = (Heatmap_Heatmap);
+
 // CONCATENATED MODULE: ./dev/entry.js
 
 
@@ -593,7 +594,7 @@ if (window && !window.customQuestionsLibrary) {
   window.customQuestionsLibrary = {};
 }
 
-window.customQuestionsLibrary.Heatmap = dev_Heatmap;
+window.customQuestionsLibrary.Heatmap = Heatmap_Heatmap;
 
 /***/ })
 /******/ ]);

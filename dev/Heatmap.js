@@ -2,7 +2,7 @@ import {ImageWrapper} from "./components/ImageWrapper";
 import {Switch} from "./components/Switch";
 import {Tooltip} from "./components/Tooltip";
 
-class Heatmap {
+export default class Heatmap {
     constructor({question, areas, imageOptions, buttonOptions, styles, answersCount, haveScales}) {
         this.question = question;
         this.id = question.id;
@@ -119,7 +119,8 @@ class Heatmap {
             backgroundPositionX: (parseFloat(indicator.style.backgroundPositionX.replace("px", "")) - borderWidth) + "px",
             backgroundPositionY: (parseFloat(indicator.style.backgroundPositionY.replace("px", "")) - borderWidth) + "px",
             backgroundImage: "",
-            backgroundColor: ""
+            backgroundColor: "",
+            cursor: ""
         });
         indicator.setAttribute("area-index", areaIndex);
 
@@ -156,29 +157,24 @@ class Heatmap {
                 }
             });
         } else {
-            const {question} = this;
-            const {values: questionValues} = question;
             indicator.addEventListener("click", () => {
+                const values = this.question.values;
                 if (indicator.classList.contains("area_chosen")) {
                     indicator.classList.remove("area_chosen");
-                    delete questionValues[areaIndex];
-                    this.setValues({question, values: questionValues});
+                    delete values[areaIndex];
+                    this.setValues({values});
                 } else {
                     indicator.classList.add("area_chosen");
-                    questionValues[areaIndex] = "1";
-                    this.setValues({question, values: questionValues});
+                    values[areaIndex] = "1";
+                    this.setValues({values});
                 }
             });
         }
     };
 
     onButtonClick = ({type, areaIndex, indicator}) => {
-        const {question, buttonOptions} = this;
-        const {values: questionValues} = question;
-
-        const values = questionValues
-            ? questionValues
-            : {};
+        const {buttonOptions} = this;
+        const values = this.question.values;
 
         buttonOptions.forEach((option) => {
             const {type: currentType} = option;
@@ -206,31 +202,36 @@ class Heatmap {
             }
         });
 
-        this.setValues({question, values});
+        this.setValues({values});
     };
 
-    setValues = ({question, values}) => {
-        Object.keys(values).forEach((areaIndex) => {
-            if (values[areaIndex]) {
-                question.setValue(areaIndex, values[areaIndex]);
-            }
+    setValues = ({values}) => {
+        const allValues = this.question.values;
+        this.question.answers.forEach(({code}) => {
+            allValues[code] = undefined;
+        });
+        Object.keys(values).forEach((key) => {
+            allValues[key] = values[key];
+        });
+        Object.keys(allValues).forEach((key) => {
+            this.question.setValue(key, allValues[key]);
         });
     };
 
     subscribeToQuestion = () => {
-        const {id, question, questionNode, answersCount} = this;
-        const {values} = question;
+        const {questionNode, answersCount} = this;
 
         const errorBlock = this.addErrorBlock();
         const errorList = errorBlock.querySelector(".cf-error-list");
 
-        question.validationEvent.on((validationResult) => {
+        this.question.validationEvent.on((validationResult) => {
             const valuesCount = Object.keys(this.question.values).length;
-            //const valuesCount = Object.keys(Confirmit.page.getQuestion(id).values).length;
-            const {min, max} = answersCount;
+            const min = parseInt(answersCount.min);
+            const max = parseInt(answersCount.max);
+
             errorList.innerHTML = "";
 
-            if (values) {
+            if (this.question.values) {
                 if (min && valuesCount < min) {
                     const error = {message: 'Please provide at least ' + min + ' answer(s)'};
                     validationResult.errors.push(error);
@@ -297,6 +298,7 @@ class Heatmap {
             });
         } else {
             stylesElement.innerText += ".area_chosen { background-color: green !important; opacity: 0.5; }";
+            stylesElement.innerText += ".area-indicator:hover { cursor: pointer; }";
         }
 
         // area highlighting
@@ -314,5 +316,3 @@ class Heatmap {
         questionNode.appendChild(stylesElement);
     };
 }
-
-export default Heatmap;

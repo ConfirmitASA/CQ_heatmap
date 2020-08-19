@@ -10,6 +10,8 @@ import Heatmap from "./Heatmap";
         src: "https://survey.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/core.jpg",
         width: "2453px"
     };
+    var answersCount = {};
+    var haveScales = false;
 
     // var styles = {
     //   borderWidth: 0, //only int values without "px"

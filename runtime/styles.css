@@ -17,6 +17,9 @@
     color: #fff;
     padding: 0.25em 0.5em;
 }
+.switch-wrapper:hover, .switch-wrapper *:hover {
+    cursor: pointer;
+}
 
 .switch-label {
     font-size: 0.8em;

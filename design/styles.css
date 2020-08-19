@@ -5679,3 +5679,96 @@ body [x-out-of-boundaries],
     z-index:1;
     background:white;
 }
+
+.comd-alert{
+    color:rgba(18, 24, 33, 0.87);
+    border-left:0.143rem solid transparent;
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-align:center;
+    align-items:center;
+    padding:1.143rem;
+    width:100%;
+    font-weight:400;
+    font-size:1rem;
+}
+
+.comd-alert__icon{
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex:none;
+    flex:none;
+    -ms-flex-align:center;
+    align-items:center;
+    -ms-flex-item-align:start;
+    align-self:flex-start;
+    margin-right:0.571rem;
+}
+
+.comd-alert__actions-wrapper{
+    -ms-flex-item-align:start;
+    align-self:flex-start;
+    -ms-flex:none;
+    flex:none;
+    margin-left:auto;
+    white-space:nowrap;
+    display:-ms-flexbox;
+    display:flex;
+}
+
+.comd-alert--warning{
+    border-left-color:#ff986e;
+    background-color:#ffeae2;
+}
+
+.comd-alert--warning .comd-alert__icon{
+    fill:#ff986e;
+}
+
+.comd-alert--info{
+    border-left-color:#007db8;
+    background-color:#ccefff;
+}
+
+.comd-alert--info .comd-alert__icon{
+    fill:#007db8;
+}
+
+.comd-alert--danger{
+    border-left-color:#fa5263;
+    background-color:#fde0ea;
+}
+
+.comd-alert--danger .comd-alert__icon{
+    fill:#fa5263;
+}
+
+.comd-alert--success{
+    border-left-color:#39a739;
+    background-color:#e8f8e0;
+}
+
+.comd-alert--success .comd-alert__icon{
+    fill:#39a739;
+}
+
+.comd-alert__text{
+    max-width:42.857rem;
+    width:100%;
+    word-break:break-word;
+}
+
+.comd-alert__href{
+    color:inherit;
+    text-decoration:underline;
+    white-space:nowrap;
+    margin-top:0.286rem;
+    margin-left:1.143rem;
+    cursor:pointer;
+}
+
+.comd-alert__dismiss-button{
+    margin-left:1.143rem;
+    margin-top:-0.571rem;
+    margin-bottom:-0.571rem;
+}

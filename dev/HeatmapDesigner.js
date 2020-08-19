@@ -1,4 +1,4 @@
-class HeatmapDesigner {
+export default class HeatmapDesigner {
     constructor ({wrapperId, imageOptions, predefinedAreas, onAreasChanged}) {
         this.id = wrapperId;
         this.imageOptions = imageOptions;
@@ -46,5 +46,3 @@ class HeatmapDesigner {
         return image;
     };
 }
-
-export default HeatmapDesigner;

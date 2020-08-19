@@ -10,60 +10,15 @@
 </head>
 <body>
 <div class="survey-settings">
-    <div class="container-fluid layout-panel">
-        <div class="comd-panel survey-settings-options" data-view="survey-settings-options" data-panel="main">
-            <div class="comd-panel__header-ie11-fix" data-panel="header">
-                <header class="comd-panel__header">
-                    <button class="comd-icon-button comd-icon-button--default comd-panel__toggle--icon-button" data-panel-toggle="icon-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="rgba(18, 24, 33, 0.6)">
-                            <path d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"></path>
-                        </svg>
-                    </button>
-                    <button class="comd-panel__toggle" data-panel-toggle="button">
-                        <h4 class="comd-panel__title">Answer options</h4>
-                    </button>
-                </header>
-            </div>
-            <div class="comd-panel__collapse-area" data-panel="collapse-area" style="height: auto;">
-                <div class="comd-panel__body" data-panel="body">
-                    <div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <ul class="option-list" style="margin-bottom: 1em;">
-                                    <li class="option-toggle">
-                                        <div class="co-toggle co-toggle--checkbox co-flex">
-                                            <input class="co-toggle__input" type="checkbox" id="haveScales">
-                                            <label for="haveScales">
-                                                <div class="icon icon-checkbox co-icon">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                                                        <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
-                                                        <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
-                                                        <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
-                                                    </svg>
-                                                </div>
-                                                <span class="">With scales</span>
-                                            </label>
-                                            <!--div class="comd-portal-trigger sd-tooltip-help">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="sd-tooltip-help__icon" fill="rgba(18, 24, 33, 0.6)">
-                                                    <path d="M15.07,11.25L14.17,12.17C13.45,12.89 13,13.5 13,15H11V14.5C11,13.39 11.45,12.39 12.17,11.67L13.41,10.41C13.78,10.05 14,9.55 14,9C14,7.89 13.1,7 12,7A2,2 0 0,0 10,9H8A4,4 0 0,1 12,5A4,4 0 0,1 16,9C16,9.88 15.64,10.67 15.07,11.25M13,19H11V17H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z"></path>
-                                                </svg>
-                                            </div-->
-                                        </div>
-                                    </li>
-                                </ul>
-                                <div class="node-input-area">
-                                    <label class="node-property__label" for="minNumberOfAnswers">Min number of answers</label>
-                                    <input class="form-control input-sm form-input form-input--8ch" type="number" min="0" id="minNumberOfAnswers"/>
-                                    <label class="node-property__label" for="maxNumberOfAnswers">Max number of answers</label>
-                                    <input class="form-control input-sm form-input form-input--8ch" type="number" min="0" id="maxNumberOfAnswers"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="comd-alert comd-alert--info">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="comd-alert__icon" fill="rgba(18, 24, 33, 0.6)">
+            <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"></path>
+        </svg>
+        <div class="comd-alert__text">
+            If you want user to be able to choose only some of answers, please remove "Required" property on the Edit tab
         </div>
     </div>
+
     <div class="container-fluid layout-panel">
         <div class="comd-panel survey-settings-options" data-view="survey-settings-options" data-panel="main">
             <div class="comd-panel__header-ie11-fix" data-panel="header">
@@ -82,49 +37,114 @@
                 <div class="comd-panel__body" data-panel="body">
                     <div id="image-settings">
                         <div class="node-input-area">
-                            <!--label class="node-input-area__label" for="src">Image source</label>
-                            <input class="node-input-area__input form-group" type="text" id="src"/>
-                            <label class="node-input-area__label" for="width">Image width</label>
-                            <input class="node-input-area__input form-group" type="text" id="width"/-->
-                            <label class="node-property__label" for="src">Image width</label>
-                            <input class="form-control input-sm form-input" type="text" id="src"/>
+                            <label class="node-property__label" for="src">Image source</label>
+                            <input class="form-control form-input" type="text" id="src" required/>
                             <label class="node-property__label" for="width">Image width</label>
-                            <input class="form-control input-sm form-input form-input--8ch" type="text" id="width"/>
+                            <input class="form-control input-sm form-input form-input--8ch" type="text" id="width" required/>
                         </div>
-                        <div class="comd-split-button">
-                            <div class="details-controls details-controls--after mt10">
-                                <div class="co-flex__flex-auto">
-                                    <div class="button-row">
-                                        <button class="comd-button comd-button--secondary-neutral comd-split-button__button" id="draw-image-btn">
-                                            <span class="comd-button__content"><div class="comd-portal-trigger">Draw image</div></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <button class="comd-button comd-button--secondary-neutral" id="draw-image-btn">
+                            <span class="comd-button__content">
+                                <div class="comd-portal-trigger">Draw image</div>
+                            </span>
+                        </button>
                     </div>
                     <div id="areas">
-                        <div class="comd-split-button">
-                            <div class="details-controls details-controls--after mt10">
-                                <div class="co-flex__flex-auto">
-                                    <div class="button-row">
-                                        <button class="comd-button comd-button--secondary-neutral comd-split-button__button" id="change-image-btn">
-                                            <span class="comd-button__content"><div class="comd-portal-trigger">Change image options</div></span>
-                                        </button>
-                                    </div>
+                        <button class="comd-button comd-button--secondary-neutral" id="change-image-btn">
+                            <span class="comd-button__content">
+                                <div class="comd-portal-trigger">Change image options</div>
+                            </span>
+                        </button>
+                        <div id="heatmap-wrapper"></div>
+                        <button class="comd-button comd-button--secondary-neutral" id="save-changes-btn">
+                            <span class="comd-button__content">
+                                <div class="comd-portal-trigger">Save changes</div>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid layout-panel">
+        <div class="comd-panel survey-settings-options" data-view="survey-settings-options" data-panel="main">
+            <div class="comd-panel__header-ie11-fix" data-panel="header">
+                <header class="comd-panel__header">
+                    <button class="comd-icon-button comd-icon-button--default comd-panel__toggle--icon-button" data-panel-toggle="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="rgba(18, 24, 33, 0.6)">
+                            <path d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"></path>
+                        </svg>
+                    </button>
+                    <button class="comd-panel__toggle" data-panel-toggle="button">
+                        <h4 class="comd-panel__title">Answer options</h4>
+                    </button>
+                </header>
+            </div>
+            <div class="comd-panel__collapse-area" data-panel="collapse-area" style="height: auto;">
+                <div class="comd-panel__body" data-panel="body">
+                    <div>
+                        <div class="row">
+                            <div class="comd-alert comd-alert--info">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="comd-alert__icon" fill="rgba(18, 24, 33, 0.6)">
+                                    <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"></path>
+                                </svg>
+                                <div class="comd-alert__text">
+                                    If you want to use positive/neutral/negative scores, please don't forget to add all three scales (with "positive", "neutral" and "negative" as codes)
                                 </div>
                             </div>
-                        </div>
-                        <div id="heatmap-wrapper"></div>
-                        <div class="comd-split-button">
-                            <div class="details-controls details-controls--after mt10">
-                                <div class="co-flex__flex-auto">
-                                    <div class="button-row">
-                                        <button class="comd-button comd-button--secondary-neutral comd-split-button__button" id="save-changes-btn">
-                                            <span class="comd-button__content"><div class="comd-portal-trigger">Save changes</div></span>
-                                        </button>
-                                    </div>
-                                </div>
+                            <div class="col-sm-6">
+                                <ul class="option-list" style="margin-bottom: 1em;">
+                                    <li class="option-toggle">
+                                        <div class="co-toggle co-toggle--checkbox co-flex">
+                                            <input class="co-toggle__input" type="checkbox" id="haveScales">
+                                            <label for="haveScales">
+                                                <div class="icon icon-checkbox co-icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                                        <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
+                                                        <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
+                                                        <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
+                                                    </svg>
+                                                </div>
+                                                <span class="">Show positive/neutral/negative scale buttons</span>
+                                            </label>
+                                        </div>
+                                    </li>
+                                    <li class="option-toggle">
+                                        <div class="co-toggle co-toggle--checkbox co-flex">
+                                            <input class="co-toggle__input" type="checkbox" id="activateMinNumber">
+                                            <label for="activateMinNumber">
+                                                <div class="icon icon-checkbox co-icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                                        <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
+                                                        <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
+                                                        <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
+                                                    </svg>
+                                                </div>
+                                                <span>
+                                                    Min number of answers
+                                                    <input class="form-control input-sm form-input form-input--8ch" type="number" id="minNumberOfAnswers"/>
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </li>
+                                    <li class="option-toggle">
+                                        <div class="co-toggle co-toggle--checkbox co-flex">
+                                            <input class="co-toggle__input" type="checkbox" id="activateMaxNumber">
+                                            <label for="activateMaxNumber">
+                                                <div class="icon icon-checkbox co-icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                                        <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
+                                                        <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
+                                                        <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
+                                                    </svg>
+                                                </div>
+                                                <span>
+                                                    Max number of answers
+                                                    <input class="form-control input-sm form-input form-input--8ch" type="number" id="maxNumberOfAnswers"/>
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -133,130 +153,8 @@
         </div>
     </div>
 </div>
-<script>
-    const srcInput = document.getElementById('src');
-    const widthInput = document.getElementById('width');
-    const changeImageBtn = document.getElementById('change-image-btn');
-    const drawImageBtn = document.getElementById('draw-image-btn');
-    const saveChangesBtn = document.getElementById('save-changes-btn');
-    const imageSettings = document.getElementById('image-settings');
-    const areasWrapper = document.getElementById('areas');
-    const heatmapWrapper = document.getElementById('heatmap-wrapper');
-    const haveScalesInput = document.getElementById('haveScales');
-    const minNumberOfAnswersInput = document.getElementById('minNumberOfAnswers');
-    const maxNumberOfAnswersInput = document.getElementById('maxNumberOfAnswers');
-    let areImageInputsChanged = false;
-
-    function setValues(settings) {
-        if (settings.imageOptions) {
-            srcInput.value = settings.imageOptions.src;
-            widthInput.value = settings.imageOptions.width;
-
-            haveScalesInput.checked = settings.haveScales;
-
-            maxNumberOfAnswersInput.value = settings.answersCount.max;
-            minNumberOfAnswersInput.value = settings.answersCount.min;
-
-            maxNumberOfAnswersInput.setAttribute("max", settings.areas.length);
-            minNumberOfAnswersInput.setAttribute("max", settings.areas.length);
-
-            imageSettings.style.display = "none";
-
-            if(settings.areas && !heatmapWrapper.innerHTML) {
-                new window.customQuestionsLibrary.HeatmapDesigner({
-                    wrapperId: "heatmap-wrapper",
-                    imageOptions: {
-                        src: settings.imageOptions.src,
-                        widthInput: settings.imageOptions.width
-                    },
-                    predefinedAreas: settings.areas,
-                    onAreasChanged: function() {}
-                });
-            }
-        } else {
-            areasWrapper.style.display = "none";
-            changeImageBtn.style.display = "none";
-        }
-    }
-
-    function saveChanges() {
-        let settings = {
-            imageOptions: {
-                src: srcInput.value,
-                width: widthInput.value
-            },
-            areas: $("#heatmap-wrapper img").selectAreas('areas'),
-            answersCount: {
-                max: maxNumberOfAnswersInput.value,
-                min: minNumberOfAnswersInput.value
-            },
-            haveScales: haveScalesInput.checked
-        };
-        //var hasError = inputElement.value === '';
-        let hasError = false;
-        customQuestion.saveChanges(settings, hasError);
-    }
-
-    function drawImage() {
-        const src = srcInput.value;
-        const width = widthInput.value;
-        if (src && width) {
-            if (areImageInputsChanged) {
-                new window.customQuestionsLibrary.HeatmapDesigner({
-                    wrapperId: "heatmap-wrapper",
-                    imageOptions: {
-                        src: src,
-                        widthInput: width
-                    },
-                    predefinedAreas: [],
-                    onAreasChanged: function () {
-                        const areas = $("#heatmap-wrapper img").selectAreas('areas');
-                        maxNumberOfAnswersInput.setAttribute("max", areas.length);
-                        minNumberOfAnswersInput.setAttribute("max", areas.length);
-                    }
-                });
-            }
-            imageSettings.style.display = "none";
-            changeImageBtn.style.display = "";
-            areasWrapper.style.display = "";
-            areImageInputsChanged = false;
-        }
-    }
-
-    function onInputsChange() {
-        areImageInputsChanged = true;
-        heatmapWrapper.innerHTML = "";
-    }
-
-    function showImageSettings() {
-        imageSettings.style.display = "";
-        changeImageBtn.style.display = "none";
-        areasWrapper.style.display = "none";
-    }
-
-    customQuestion.onSettingsReceived = setValues;
-
-    srcInput.addEventListener('change', onInputsChange);
-    widthInput.addEventListener('change', onInputsChange);
-
-    drawImageBtn.addEventListener('click', drawImage);
-    changeImageBtn.addEventListener('click', showImageSettings);
-    saveChangesBtn.addEventListener('click', saveChanges);
-
-    haveScalesInput.addEventListener('change', saveChanges);
-    minNumberOfAnswersInput.addEventListener('change', saveChanges);
-    maxNumberOfAnswersInput.addEventListener('change', saveChanges);
-
-    // minNumberOfAnswersInput.addEventListener('change', function(e) {
-    //     const areas = $("#heatmap-wrapper img").selectAreas('areas');
-    //     const newMin = parseInt(e.target.value) + 1;
-    //     maxNumberOfAnswersInput.setAttribute("min", newMin < areas ? newMin : areas);
-    // });
-    // maxNumberOfAnswersInput.addEventListener('change', function(e) {
-    //     const areas = $("#heatmap-wrapper img").selectAreas('areas');
-    //     const newMin = parseInt(e.target.value) - 1;
-    //     minNumberOfAnswersInput.setAttribute("max", newMin < areas ? newMin : areas);
-    // });
-</script>
 </body>
+<script>
+    new customQuestionsLibrary.Designer({question: customQuestion});
+</script>
 </html>
