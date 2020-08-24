@@ -81,11 +81,12 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */
+/* 0 */,
+/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -127,7 +128,8 @@ var ImageWrapper = function ImageWrapper(_ref) {
 // CONCATENATED MODULE: ./dev/components/Switch.js
 var Switch = function Switch(_ref) {
   var type = _ref.type,
-      text = _ref.text;
+      text = _ref.text,
+      id = _ref.id;
 
   var createSwitchWrapper = function createSwitchWrapper(_ref2) {
     var type = _ref2.type,
@@ -137,7 +139,8 @@ var Switch = function Switch(_ref) {
     switchWrapper.classList.add("switch-wrapper-" + type);
     switchWrapper.appendChild(createSwitch({
       type: type,
-      text: text
+      text: text,
+      id: id
     }));
     switchWrapper.appendChild(createSwitchLabel({
       text: text
@@ -147,12 +150,16 @@ var Switch = function Switch(_ref) {
 
   var createSwitch = function createSwitch(_ref3) {
     var type = _ref3.type,
-        text = _ref3.text;
-    var switchNode = document.createElement("label");
+        text = _ref3.text,
+        id = _ref3.id;
+    var switchNode = document.createElement("div");
     switchNode.classList.add("switch");
-    switchNode.appendChild(createSwitchInput());
+    switchNode.appendChild(createSwitchInput({
+      id: id
+    }));
     switchNode.appendChild(createSlider({
-      type: type
+      type: type,
+      id: id
     }));
 
     if (!text) {
@@ -162,25 +169,29 @@ var Switch = function Switch(_ref) {
     return switchNode;
   };
 
-  var createSwitchInput = function createSwitchInput() {
+  var createSwitchInput = function createSwitchInput(_ref4) {
+    var id = _ref4.id;
     var switchInput = document.createElement("input");
     switchInput.type = "checkbox";
+    switchInput.classList.add("switch-input");
+    switchInput.id = id;
     return switchInput;
   };
 
-  var createSlider = function createSlider(_ref4) {
-    var type = _ref4.type;
-    var slider = document.createElement("span");
-    slider.classList.add("slider");
-    slider.classList.add("round");
-    slider.classList.add("button-" + type);
+  var createSlider = function createSlider(_ref5) {
+    var type = _ref5.type,
+        id = _ref5.id;
+    var slider = document.createElement("label");
+    slider.classList.add("switch-label");
+    slider.classList.add("button-".concat(type));
+    slider.setAttribute("for", id);
     return slider;
   };
 
-  var createSwitchLabel = function createSwitchLabel(_ref5) {
-    var text = _ref5.text;
+  var createSwitchLabel = function createSwitchLabel(_ref6) {
+    var text = _ref6.text;
     var switchLabel = document.createElement("label");
-    switchLabel.classList.add("switch-label");
+    switchLabel.classList.add("switch-text");
 
     if (text) {
       switchLabel.innerText = text;
@@ -303,9 +314,10 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
   });
 
   _defineProperty(this, "createIndicatorAreaForAnswer", function (area, index, areaSquares) {
-    var areaIndex = areaSquares.length - index;
     var id = _this.id,
         haveScales = _this.haveScales;
+    var areaIndex = areaSquares.length - index;
+    var areaTitle = _this.areas[index].title;
 
     var indicator = _this.createIndicatorNode({
       area: area,
@@ -316,10 +328,10 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     var tooltip = new Tooltip({
       id: id + '-area-indicator-tooltip-' + areaIndex,
       targetId: indicator.id,
-      //title: !haveScales ? "Food" : "",
+      title: !haveScales ? "" : areaTitle,
       content: haveScales ? _this.createButtonsWrapperWithAreaAttributes({
         areaIndex: areaIndex
-      }).innerHTML : "Food",
+      }).innerHTML : areaTitle,
       onCreated: _this.onTooltipCreated.bind(_this, {
         areaIndex: areaIndex,
         indicator: indicator
@@ -355,7 +367,8 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
           label = option.label;
       var button = new Switch({
         type: type,
-        text: label
+        text: label,
+        id: "scale-button-".concat(type, "-").concat(areaIndex)
       });
       button.setAttribute("area-index", areaIndex);
       buttonsWrapper.appendChild(button);
@@ -548,7 +561,7 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
             color = option.color;
         stylesElement.innerText += ".area_" + type + "{ background-color: " + color + "; opacity: 0.5; }";
         stylesElement.innerText += ".switch-wrapper-" + type + "{ background-color: " + color + "; }";
-        stylesElement.innerText += ".switch-wrapper-" + type + " input:checked + .slider:before { background-color: " + color + "; }";
+        stylesElement.innerText += ".switch-wrapper-" + type + " .switch-input:checked + .switch-label:after { background-color: " + color + "; }";
       });
     } else {
       stylesElement.innerText += ".area_chosen { background-color: green !important; opacity: 0.5; }";
@@ -603,6 +616,16 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
 
 // CONCATENATED MODULE: ./dev/entry.js
 
+
+if (window.NodeList && !NodeList.prototype.forEach) {
+  NodeList.prototype.forEach = function (callback, thisArg) {
+    thisArg = thisArg || window;
+
+    for (var i = 0; i < this.length; i++) {
+      callback.call(thisArg, this[i], i, this);
+    }
+  };
+}
 
 if (window && !window.customQuestionsLibrary) {
   window.customQuestionsLibrary = {};

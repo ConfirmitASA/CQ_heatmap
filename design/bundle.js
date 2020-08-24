@@ -81,12 +81,11 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */,
-/* 1 */
+/* 0 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -105,7 +104,7 @@ var HeatmapDesigner = function HeatmapDesigner(_ref) {
       _imageOptions = _ref.imageOptions,
       _predefinedAreas = _ref.predefinedAreas,
       _onAreasChanged = _ref.onAreasChanged,
-      _onImageError = _ref.onImageError;
+      _onAreasInit = _ref.onAreasInit;
 
   _classCallCheck(this, HeatmapDesigner);
 
@@ -119,13 +118,12 @@ var HeatmapDesigner = function HeatmapDesigner(_ref) {
         id = _this.id,
         predefinedAreas = _this.predefinedAreas,
         onAreasChanged = _this.onAreasChanged,
-        onImageError = _this.onImageError;
+        onAreasInit = _this.onAreasInit;
     var src = imageOptions.src,
         width = imageOptions.width;
     var image = document.createElement("img");
     image.src = src;
     image.style.width = width;
-    image.addEventListener('error', onImageError);
     wrapper.appendChild(image);
     $("#" + id + " img").selectAreas({
       allowEdit: true,
@@ -142,6 +140,7 @@ var HeatmapDesigner = function HeatmapDesigner(_ref) {
       outlineOpacity: 0.5,
       overlayOpacity: 0.5,
       areas: predefinedAreas,
+      onLoaded: onAreasInit,
       onChanging: null,
       onChanged: onAreasChanged
     });
@@ -152,7 +151,7 @@ var HeatmapDesigner = function HeatmapDesigner(_ref) {
   this.imageOptions = _imageOptions;
   this.predefinedAreas = _predefinedAreas;
   this.onAreasChanged = _onAreasChanged;
-  this.onImageError = _onImageError;
+  this.onAreasInit = _onAreasInit;
   this.wrapper = document.querySelector("#" + this.id);
   this.init();
 };
@@ -162,20 +161,18 @@ var HeatmapDesigner = function HeatmapDesigner(_ref) {
 var InputsWrapper = function InputsWrapper(_ref) {
   var id = _ref.id,
       wrapperClass = _ref.wrapperClass,
-      inputs = _ref.inputs;
+      inputs = _ref.inputs,
+      gridTemplateColumns = _ref.gridTemplateColumns;
 
   var createWrapper = function createWrapper(_ref2) {
     var id = _ref2.id,
-        wrapperClass = _ref2.wrapperClass;
+        wrapperClass = _ref2.wrapperClass,
+        gridTemplateColumns = _ref2.gridTemplateColumns;
     var wrapper = document.createElement("div");
     wrapper.classList.add(wrapperClass);
     wrapper.classList.add("node-input-area");
     wrapper.id = id;
-    var gridTemplateColumns = "";
-    inputs.forEach(function () {
-      gridTemplateColumns += "auto ";
-    });
-    wrapper.style.gridTemplateColumns = gridTemplateColumns + "minmax(0, 1fr)";
+    wrapper.style.gridTemplateColumns = gridTemplateColumns;
     return wrapper;
   }; // const createDeleteButton = () => {
   //     const button = document.createElement("button");
@@ -192,11 +189,20 @@ var InputsWrapper = function InputsWrapper(_ref) {
   // };
 
 
-  var createInput = function createInput(_ref3) {
-    var sizeClass = _ref3.sizeClass,
-        wrapperClass = _ref3.wrapperClass,
-        type = _ref3.type,
-        onInputsChange = _ref3.onInputsChange;
+  var createLabel = function createLabel(_ref3) {
+    var text = _ref3.text;
+    var label = document.createElement("label");
+    label.classList.add("node-input-area__label");
+    label.classList.add("sd-label");
+    label.innerText = text;
+    return label;
+  };
+
+  var createInput = function createInput(_ref4) {
+    var sizeClass = _ref4.sizeClass,
+        wrapperClass = _ref4.wrapperClass,
+        type = _ref4.type,
+        onInputsChange = _ref4.onInputsChange;
     var input = document.createElement("input");
     input.classList.add("node-input-area__input");
     input.classList.add("form-control");
@@ -213,7 +219,8 @@ var InputsWrapper = function InputsWrapper(_ref) {
 
   var wrapper = createWrapper({
     id: id,
-    wrapperClass: wrapperClass
+    wrapperClass: wrapperClass,
+    gridTemplateColumns: gridTemplateColumns
   }); // const button = createDeleteButton();
   // wrapper.appendChild(button);
 
@@ -222,7 +229,8 @@ var InputsWrapper = function InputsWrapper(_ref) {
         wrapperClass = inputOptions.wrapperClass,
         type = inputOptions.type,
         onInputsChange = inputOptions.onInputsChange,
-        defaultValue = inputOptions.defaultValue;
+        defaultValue = inputOptions.defaultValue,
+        labelText = inputOptions.labelText;
     var input = createInput({
       sizeClass: sizeClass,
       wrapperClass: wrapperClass,
@@ -232,6 +240,13 @@ var InputsWrapper = function InputsWrapper(_ref) {
 
     if (defaultValue) {
       input.value = defaultValue;
+    }
+
+    if (labelText) {
+      var label = createLabel({
+        text: labelText
+      });
+      wrapper.appendChild(label);
     }
 
     wrapper.appendChild(input);
@@ -266,13 +281,37 @@ var CustomScaleItem_CustomScaleItem = function CustomScaleItem(_ref) {
   return new InputsWrapper({
     id: id,
     wrapperClass: "custom-scale-item",
-    inputs: inputs
+    inputs: inputs,
+    gridTemplateColumns: "auto auto auto minmax(0, 1fr)"
+  });
+};
+// CONCATENATED MODULE: ./dev/components/AreaTextItem.js
+
+var AreaTextItem_AreaTextItem = function AreaTextItem(_ref) {
+  var id = _ref.id,
+      onInputsChange = _ref.onInputsChange,
+      defaultValue = _ref.defaultValue,
+      labelText = _ref.labelText;
+  var inputs = [{
+    wrapperClass: "area-text-item__text",
+    sizeClass: "form-input--40ch",
+    type: "text",
+    onInputsChange: onInputsChange,
+    defaultValue: defaultValue,
+    labelText: labelText
+  }];
+  return new InputsWrapper({
+    id: id,
+    wrapperClass: "area-text-item",
+    inputs: inputs,
+    gridTemplateColumns: "auto auto minmax(0, 1fr)"
   });
 };
 // CONCATENATED MODULE: ./dev/HeatmapDesignerManager.js
 function HeatmapDesignerManager_classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function HeatmapDesignerManager_defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -443,10 +482,22 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
           },
           predefinedAreas: areas,
           onAreasChanged: function onAreasChanged() {
-            var areasCount = $("#heatmap-wrapper img").selectAreas('areas').length;
+            var areas = $("#heatmap-wrapper img").selectAreas('areas');
+            var areasCount = areas.length;
             var oldMaxValue = parseInt(maxNumberOfAnswersInput.value);
             maxNumberOfAnswersInput.setAttribute("max", areasCount);
             minNumberOfAnswersInput.setAttribute("max", oldMaxValue < areasCount ? oldMaxValue : areasCount);
+
+            _this.createAreaTextItems({});
+
+            _this.saveChanges();
+          },
+          onAreasInit: function onAreasInit() {
+            _this.createAreaTextItems({
+              defaultValues: areas.reverse().map(function (area) {
+                return area.title;
+              })
+            });
           }
         });
       }
@@ -461,6 +512,34 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
       });
 
       _this.showImage = false;
+    }
+  });
+
+  HeatmapDesignerManager_defineProperty(this, "createAreaTextItems", function (_ref3) {
+    var defaultValues = _ref3.defaultValues;
+    var areaTextListWrapper = _this.elements.areaTextListWrapper;
+    var areasCount = $("#heatmap-wrapper img").selectAreas('areas').length;
+    var areaTextItems = areaTextListWrapper.querySelectorAll(".area-text-item");
+
+    if (areaTextItems.length === areasCount) {
+      return;
+    }
+
+    if (areaTextItems.length < areasCount) {
+      for (var i = 1; i <= areasCount - areaTextItems.length; i++) {
+        areaTextListWrapper.appendChild(new AreaTextItem_AreaTextItem({
+          id: "area-text-item".concat(areaTextItems.length + i),
+          onInputsChange: _this.saveChanges,
+          defaultValue: defaultValues ? defaultValues[i - 1] : undefined,
+          labelText: areaTextItems.length + i
+        }));
+      }
+    } else {
+      areaTextItems.forEach(function (item, index) {
+        if (index + 1 > areasCount) {
+          item.remove();
+        }
+      });
     }
   });
 
@@ -495,8 +574,8 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
         minNumberOfAnswersInput = _this$elements7.minNumberOfAnswersInput,
         maxNumberOfAnswersInput = _this$elements7.maxNumberOfAnswersInput,
         activateMinNumberInput = _this$elements7.activateMinNumberInput,
-        activateMaxNumberInput = _this$elements7.activateMaxNumberInput;
-    saveChangesBtn.addEventListener('click', _this.saveChanges);
+        activateMaxNumberInput = _this$elements7.activateMaxNumberInput; //saveChangesBtn.addEventListener('click', this.saveChanges);
+
     haveScalesInput.addEventListener('change', _this.saveChanges);
     activateDefaultScalesInput.addEventListener('change', _this.saveChanges);
     activateCustomScalesInput.addEventListener('change', _this.saveChanges);
@@ -510,6 +589,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     var _this$elements8 = _this.elements,
         imageSrcInput = _this$elements8.imageSrcInput,
         imageWidthInput = _this$elements8.imageWidthInput,
+        areaTextListWrapper = _this$elements8.areaTextListWrapper,
         activateMaxNumberInput = _this$elements8.activateMaxNumberInput,
         activateMinNumberInput = _this$elements8.activateMinNumberInput,
         maxNumberOfAnswersInput = _this$elements8.maxNumberOfAnswersInput,
@@ -529,6 +609,14 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
       },
       haveScales: haveScalesInput.checked
     };
+    var areaTextItems = areaTextListWrapper.querySelectorAll(".area-text-item__text");
+    settings.areas.forEach(function (area, index) {
+      var textIndex = areaTextItems.length - index - 1;
+
+      if (areaTextItems[textIndex]) {
+        area.title = areaTextItems[textIndex].value;
+      }
+    });
 
     if (haveScalesInput.checked) {
       settings.scaleType = activateCustomScalesInput.checked ? "custom" : "default";
@@ -586,8 +674,8 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     scalesNumberInput.addEventListener('change', _this.createScaleItems);
   });
 
-  HeatmapDesignerManager_defineProperty(this, "createScaleItems", function (_ref3) {
-    var defaultValues = _ref3.defaultValues;
+  HeatmapDesignerManager_defineProperty(this, "createScaleItems", function (_ref4) {
+    var defaultValues = _ref4.defaultValues;
     var _this$elements10 = _this.elements,
         scalesNumberInput = _this$elements10.scalesNumberInput,
         customScaleListWrapper = _this$elements10.customScaleListWrapper;
@@ -671,17 +759,17 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     });
   });
 
-  HeatmapDesignerManager_defineProperty(this, "toggleElementsVisibility", function (_ref4) {
-    var elements = _ref4.elements,
-        shouldBeShown = _ref4.shouldBeShown;
+  HeatmapDesignerManager_defineProperty(this, "toggleElementsVisibility", function (_ref5) {
+    var elements = _ref5.elements,
+        shouldBeShown = _ref5.shouldBeShown;
     elements.forEach(function (element) {
       element.style.display = shouldBeShown ? "" : "none";
     });
   });
 
-  HeatmapDesignerManager_defineProperty(this, "toggleElementsDisabling", function (_ref5) {
-    var elements = _ref5.elements,
-        shouldBeDisabled = _ref5.shouldBeDisabled;
+  HeatmapDesignerManager_defineProperty(this, "toggleElementsDisabling", function (_ref6) {
+    var elements = _ref6.elements,
+        shouldBeDisabled = _ref6.shouldBeDisabled;
     elements.forEach(function (element) {
       element.disabled = !!shouldBeDisabled;
     });
@@ -701,9 +789,10 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     scalesNumberInput: document.getElementById('scalesNumber'),
     changeImageBtn: document.getElementById('change-image-btn'),
     drawImageBtn: document.getElementById('draw-image-btn'),
-    saveChangesBtn: document.getElementById('save-changes-btn'),
+    //saveChangesBtn: document.getElementById('save-changes-btn'),
     imageSettingsWrapper: document.getElementById('image-settings'),
     areasWrapper: document.getElementById('areas'),
+    areaTextListWrapper: document.getElementById('areaTextList'),
     heatmapWrapper: document.getElementById('heatmap-wrapper'),
     activateScalesWrapper: document.getElementById('activateScales'),
     customScalesWrapper: document.getElementById('customScales'),
@@ -718,6 +807,16 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
 // CONCATENATED MODULE: ./dev/designer-entry.js
 
 
+
+if (window.NodeList && !NodeList.prototype.forEach) {
+  NodeList.prototype.forEach = function (callback, thisArg) {
+    thisArg = thisArg || window;
+
+    for (var i = 0; i < this.length; i++) {
+      callback.call(thisArg, this[i], i, this);
+    }
+  };
+}
 
 if (window && !window.customQuestionsLibrary) {
   window.customQuestionsLibrary = {};

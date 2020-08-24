@@ -1,4 +1,5 @@
 import {CustomScaleItem} from "./components/CustomScaleItem";
+import {AreaTextItem} from "./components/AreaTextItem";
 
 export default class HeatmapDesignerManager {
     constructor({question}) {
@@ -17,10 +18,11 @@ export default class HeatmapDesignerManager {
 
             changeImageBtn: document.getElementById('change-image-btn'),
             drawImageBtn: document.getElementById('draw-image-btn'),
-            saveChangesBtn: document.getElementById('save-changes-btn'),
+            //saveChangesBtn: document.getElementById('save-changes-btn'),
 
             imageSettingsWrapper: document.getElementById('image-settings'),
             areasWrapper: document.getElementById('areas'),
+            areaTextListWrapper: document.getElementById('areaTextList'),
             heatmapWrapper: document.getElementById('heatmap-wrapper'),
             activateScalesWrapper: document.getElementById('activateScales'),
             customScalesWrapper: document.getElementById('customScales'),
@@ -123,16 +125,51 @@ export default class HeatmapDesignerManager {
                     },
                     predefinedAreas: areas,
                     onAreasChanged: () => {
-                        const areasCount = $("#heatmap-wrapper img").selectAreas('areas').length;
+                        const areas = $("#heatmap-wrapper img").selectAreas('areas');
+                        const areasCount = areas.length;
                         const oldMaxValue = parseInt(maxNumberOfAnswersInput.value);
                         maxNumberOfAnswersInput.setAttribute("max", areasCount);
                         minNumberOfAnswersInput.setAttribute("max", oldMaxValue < areasCount ? oldMaxValue : areasCount);
+
+                        this.createAreaTextItems({});
+
+                        this.saveChanges();
+                    },
+                    onAreasInit: () => {
+                        this.createAreaTextItems({defaultValues: areas.reverse().map(area => area.title)});
                     }
                 });
             }
             this.toggleElementsVisibility({elements: [imageSettingsWrapper]})
             this.toggleElementsVisibility({elements: [areasWrapper], shouldBeShown: true})
             this.showImage = false;
+        }
+    };
+
+    createAreaTextItems = ({defaultValues}) => {
+        const {areaTextListWrapper} = this.elements;
+        const areasCount = $("#heatmap-wrapper img").selectAreas('areas').length;
+        const areaTextItems = areaTextListWrapper.querySelectorAll(".area-text-item");
+
+        if (areaTextItems.length === areasCount) {
+            return;
+        }
+
+        if (areaTextItems.length < areasCount) {
+            for (let i = 1; i <= areasCount - areaTextItems.length; i++) {
+                areaTextListWrapper.appendChild(new AreaTextItem({
+                    id: `area-text-item${areaTextItems.length + i}`,
+                    onInputsChange: this.saveChanges,
+                    defaultValue: defaultValues ? defaultValues[i - 1] : undefined,
+                    labelText: areaTextItems.length + i
+                }));
+            }
+        } else {
+            areaTextItems.forEach((item, index) => {
+                if (index + 1 > areasCount) {
+                    item.remove();
+                }
+            });
         }
     };
 
@@ -160,7 +197,7 @@ export default class HeatmapDesignerManager {
         const {saveChangesBtn, haveScalesInput, activateDefaultScalesInput, activateCustomScalesInput,
             minNumberOfAnswersInput, maxNumberOfAnswersInput, activateMinNumberInput, activateMaxNumberInput} = this.elements;
 
-        saveChangesBtn.addEventListener('click', this.saveChanges);
+        //saveChangesBtn.addEventListener('click', this.saveChanges);
 
         haveScalesInput.addEventListener('change', this.saveChanges);
         activateDefaultScalesInput.addEventListener('change', this.saveChanges);
@@ -174,7 +211,7 @@ export default class HeatmapDesignerManager {
     };
 
     saveChanges = () => {
-        const {imageSrcInput, imageWidthInput, activateMaxNumberInput, activateMinNumberInput, maxNumberOfAnswersInput, minNumberOfAnswersInput,
+        const {imageSrcInput, imageWidthInput, areaTextListWrapper, activateMaxNumberInput, activateMinNumberInput, maxNumberOfAnswersInput, minNumberOfAnswersInput,
             haveScalesInput, activateCustomScalesInput} = this.elements;
         const heatmapImageJQ = $("#heatmap-wrapper img");
 
@@ -190,6 +227,14 @@ export default class HeatmapDesignerManager {
             },
             haveScales: haveScalesInput.checked
         };
+
+        const areaTextItems = areaTextListWrapper.querySelectorAll(".area-text-item__text");
+        settings.areas.forEach((area, index) => {
+            const textIndex = areaTextItems.length - index - 1;
+            if (areaTextItems[textIndex]) {
+                area.title = areaTextItems[textIndex].value;
+            }
+        });
 
         if (haveScalesInput.checked) {
             settings.scaleType = activateCustomScalesInput.checked ? "custom" : "default";

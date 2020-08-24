@@ -1,14 +1,10 @@
-export const InputsWrapper = ({id, wrapperClass, inputs}) => {
-    const createWrapper = ({id, wrapperClass}) => {
+export const InputsWrapper = ({id, wrapperClass, inputs, gridTemplateColumns}) => {
+    const createWrapper = ({id, wrapperClass, gridTemplateColumns}) => {
         const wrapper = document.createElement("div");
         wrapper.classList.add(wrapperClass);
         wrapper.classList.add("node-input-area");
         wrapper.id = id;
-        let gridTemplateColumns = "";
-        inputs.forEach(() => {
-            gridTemplateColumns += "auto ";
-        });
-        wrapper.style.gridTemplateColumns = gridTemplateColumns +  "minmax(0, 1fr)";
+        wrapper.style.gridTemplateColumns = gridTemplateColumns;
         return wrapper;
     };
 
@@ -26,6 +22,14 @@ export const InputsWrapper = ({id, wrapperClass, inputs}) => {
     //     return button;
     // };
 
+    const createLabel = ({text}) => {
+        const label = document.createElement("label");
+        label.classList.add("node-input-area__label");
+        label.classList.add("sd-label");
+        label.innerText = text;
+        return label;
+    };
+
     const createInput = ({sizeClass, wrapperClass, type, onInputsChange}) => {
         const input = document.createElement("input");
         input.classList.add("node-input-area__input");
@@ -42,17 +46,24 @@ export const InputsWrapper = ({id, wrapperClass, inputs}) => {
     //     wrapper.remove();
     // };
 
-    const wrapper = createWrapper({id, wrapperClass});
+    const wrapper = createWrapper({id, wrapperClass, gridTemplateColumns});
 
     // const button = createDeleteButton();
     // wrapper.appendChild(button);
 
     inputs.forEach((inputOptions) => {
-        const {sizeClass, wrapperClass, type, onInputsChange, defaultValue} = inputOptions;
+        const {sizeClass, wrapperClass, type, onInputsChange, defaultValue, labelText} = inputOptions;
         const input = createInput({sizeClass, wrapperClass, type, onInputsChange});
+
         if (defaultValue) {
             input.value = defaultValue;
         }
+
+        if (labelText) {
+            const label = createLabel({text: labelText});
+            wrapper.appendChild(label);
+        }
+
         wrapper.appendChild(input);
     });
 

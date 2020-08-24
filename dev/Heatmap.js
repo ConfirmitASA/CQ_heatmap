@@ -96,16 +96,17 @@ export default class Heatmap {
     };
 
     createIndicatorAreaForAnswer = (area, index, areaSquares) => {
-        const areaIndex = areaSquares.length - index;
         const {id, haveScales} = this;
+        const areaIndex = areaSquares.length - index;
+        const areaTitle = this.areas[index].title;
         const indicator = this.createIndicatorNode({area, areaIndex});
         area.parentNode.insertBefore(indicator, area.nextSibling);
 
         const tooltip = new Tooltip({
             id: id + '-area-indicator-tooltip-' + areaIndex,
             targetId: indicator.id,
-            //title: !haveScales ? "Food" : "",
-            content: haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : "Food",
+            title: !haveScales ? "" : areaTitle,
+            content: haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : areaTitle,
             onCreated: this.onTooltipCreated.bind(this, {areaIndex, indicator})
         });
     };
@@ -134,7 +135,7 @@ export default class Heatmap {
 
         customScales.forEach((option) => {
             const {type, label} = option;
-            const button = new Switch({type, text: label});
+            const button = new Switch({type, text: label, id: `scale-button-${type}-${areaIndex}`});
             button.setAttribute("area-index", areaIndex);
             buttonsWrapper.appendChild(button);
         });
@@ -295,7 +296,7 @@ export default class Heatmap {
                 const {type, color} = option;
                 stylesElement.innerText += ".area_" + type + "{ background-color: " + color + "; opacity: 0.5; }";
                 stylesElement.innerText += ".switch-wrapper-" + type + "{ background-color: " + color + "; }";
-                stylesElement.innerText += ".switch-wrapper-" + type + " input:checked + .slider:before { background-color: " + color + "; }";
+                stylesElement.innerText += ".switch-wrapper-" + type + " .switch-input:checked + .switch-label:after { background-color: " + color + "; }";
             });
         } else {
             stylesElement.innerText += ".area_chosen { background-color: green !important; opacity: 0.5; }";
