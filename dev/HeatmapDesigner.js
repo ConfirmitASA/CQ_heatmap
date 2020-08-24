@@ -1,9 +1,10 @@
 export default class HeatmapDesigner {
-    constructor ({wrapperId, imageOptions, predefinedAreas, onAreasChanged}) {
+    constructor ({wrapperId, imageOptions, predefinedAreas, onAreasChanged, onImageError}) {
         this.id = wrapperId;
         this.imageOptions = imageOptions;
         this.predefinedAreas = predefinedAreas;
         this.onAreasChanged = onAreasChanged;
+        this.onImageError = onImageError;
         this.wrapper = document.querySelector("#" + this.id);
 
         this.init();
@@ -14,13 +15,13 @@ export default class HeatmapDesigner {
     };
 
     render = () => {
-        const {wrapper, imageOptions, id, predefinedAreas, onAreasChanged} = this;
+        const {wrapper, imageOptions, id, predefinedAreas, onAreasChanged, onImageError} = this;
         const {src, width} = imageOptions;
 
         const image = document.createElement("img");
         image.src = src;
         image.style.width = width;
-
+        image.addEventListener('error', onImageError);
         wrapper.appendChild(image);
 
         $("#" + id + " img").selectAreas({

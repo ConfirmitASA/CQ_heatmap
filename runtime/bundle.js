@@ -97,15 +97,15 @@ var ImageWrapper = function ImageWrapper(_ref) {
   var id = _ref.id,
       imageOptions = _ref.imageOptions;
 
-  function createWrapper(_ref2) {
+  var createWrapper = function createWrapper(_ref2) {
     var id = _ref2.id;
     var wrapper = document.createElement("div");
     wrapper.classList.add("image-wrapper");
     wrapper.id = id;
     return wrapper;
-  }
+  };
 
-  function createImage(_ref3) {
+  var createImage = function createImage(_ref3) {
     var imageOptions = _ref3.imageOptions;
     var image = document.createElement("img");
     var src = imageOptions.src,
@@ -113,7 +113,7 @@ var ImageWrapper = function ImageWrapper(_ref) {
     image.src = src;
     image.style.width = width;
     return image;
-  }
+  };
 
   var wrapper = createWrapper({
     id: id
@@ -127,57 +127,69 @@ var ImageWrapper = function ImageWrapper(_ref) {
 // CONCATENATED MODULE: ./dev/components/Switch.js
 var Switch = function Switch(_ref) {
   var type = _ref.type,
-      text = _ref.text,
-      onClick = _ref.onClick;
+      text = _ref.text;
 
-  function createSwitchWrapper(_ref2) {
+  var createSwitchWrapper = function createSwitchWrapper(_ref2) {
     var type = _ref2.type,
         text = _ref2.text;
     var switchWrapper = document.createElement("div");
     switchWrapper.classList.add("switch-wrapper");
     switchWrapper.classList.add("switch-wrapper-" + type);
     switchWrapper.appendChild(createSwitch({
-      type: type
+      type: type,
+      text: text
     }));
     switchWrapper.appendChild(createSwitchLabel({
       text: text
     }));
     return switchWrapper;
-  }
+  };
 
-  function createSwitch(_ref3) {
-    var type = _ref3.type;
+  var createSwitch = function createSwitch(_ref3) {
+    var type = _ref3.type,
+        text = _ref3.text;
     var switchNode = document.createElement("label");
     switchNode.classList.add("switch");
     switchNode.appendChild(createSwitchInput());
     switchNode.appendChild(createSlider({
       type: type
     }));
-    return switchNode;
-  }
 
-  function createSwitchInput() {
+    if (!text) {
+      switchNode.style.marginRight = "0";
+    }
+
+    return switchNode;
+  };
+
+  var createSwitchInput = function createSwitchInput() {
     var switchInput = document.createElement("input");
     switchInput.type = "checkbox";
     return switchInput;
-  }
+  };
 
-  function createSlider(_ref4) {
+  var createSlider = function createSlider(_ref4) {
     var type = _ref4.type;
     var slider = document.createElement("span");
     slider.classList.add("slider");
     slider.classList.add("round");
     slider.classList.add("button-" + type);
     return slider;
-  }
+  };
 
-  function createSwitchLabel(_ref5) {
+  var createSwitchLabel = function createSwitchLabel(_ref5) {
     var text = _ref5.text;
     var switchLabel = document.createElement("label");
     switchLabel.classList.add("switch-label");
-    switchLabel.innerText = text;
+
+    if (text) {
+      switchLabel.innerText = text;
+    } else {
+      switchLabel.style.display = "none";
+    }
+
     return switchLabel;
-  }
+  };
 
   return createSwitchWrapper({
     type: type,
@@ -222,10 +234,11 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
   var question = _ref.question,
       _areas = _ref.areas,
       _imageOptions = _ref.imageOptions,
-      _buttonOptions = _ref.buttonOptions,
       _styles = _ref.styles,
       _answersCount = _ref.answersCount,
-      _haveScales = _ref.haveScales;
+      _haveScales = _ref.haveScales,
+      scaleType = _ref.scaleType,
+      _customScales = _ref.customScales;
 
   _classCallCheck(this, Heatmap);
 
@@ -335,14 +348,14 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
 
   _defineProperty(this, "createButtonsWrapperWithAreaAttributes", function (_ref3) {
     var areaIndex = _ref3.areaIndex;
-    var buttonOptions = _this.buttonOptions;
+    var customScales = _this.customScales;
     var buttonsWrapper = document.createElement("div");
-    buttonOptions.forEach(function (option) {
+    customScales.forEach(function (option) {
       var type = option.type,
-          text = option.text;
+          label = option.label;
       var button = new Switch({
         type: type,
-        text: text
+        text: label
       });
       button.setAttribute("area-index", areaIndex);
       buttonsWrapper.appendChild(button);
@@ -356,8 +369,8 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     var haveScales = _this.haveScales;
 
     if (haveScales) {
-      var buttonOptions = _this.buttonOptions;
-      buttonOptions.forEach(function (option) {
+      var customScales = _this.customScales;
+      customScales.forEach(function (option) {
         var type = option.type;
         var button = document.querySelector('.switch-wrapper-' + type + '[area-index="' + areaIndex + '"]');
 
@@ -400,9 +413,9 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     var type = _ref5.type,
         areaIndex = _ref5.areaIndex,
         indicator = _ref5.indicator;
-    var buttonOptions = _this.buttonOptions;
+    var customScales = _this.customScales;
     var values = _this.question.values;
-    buttonOptions.forEach(function (option) {
+    customScales.forEach(function (option) {
       var currentType = option.type;
       var input = document.querySelector('.switch-wrapper-' + currentType + '[area-index="' + areaIndex + '"] input');
 
@@ -521,7 +534,7 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
   });
 
   _defineProperty(this, "setDynamicStyles", function () {
-    var buttonOptions = _this.buttonOptions,
+    var customScales = _this.customScales,
         styles = _this.styles,
         questionNode = _this.questionNode,
         haveScales = _this.haveScales;
@@ -530,7 +543,7 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
 
     if (haveScales) {
       // area colors
-      buttonOptions.forEach(function (option) {
+      customScales.forEach(function (option) {
         var type = option.type,
             color = option.color;
         stylesElement.innerText += ".area_" + type + "{ background-color: " + color + "; opacity: 0.5; }";
@@ -570,19 +583,20 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     min: _answersCount.min && _answersCount.min !== "0" ? _answersCount.min : undefined
   } : {};
   this.haveScales = _haveScales;
-  this.buttonOptions = _buttonOptions ? _buttonOptions : [{
+  var defaultScales = [{
     type: "positive",
-    text: "Positive",
+    label: "Positive",
     color: "green"
   }, {
     type: "neutral",
-    text: "Neutral",
+    label: "Neutral",
     color: "#aaa"
   }, {
     type: "negative",
-    text: "Negative",
+    label: "Negative",
     color: "red"
   }];
+  this.customScales = scaleType === "custom" && _customScales ? _customScales : defaultScales;
   this.init();
 };
 

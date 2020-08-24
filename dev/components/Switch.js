@@ -1,41 +1,48 @@
-export const Switch = ({type, text, onClick}) => {
-    function createSwitchWrapper({type, text}) {
+export const Switch = ({type, text}) => {
+    const createSwitchWrapper = ({type, text}) => {
         const switchWrapper = document.createElement("div");
         switchWrapper.classList.add("switch-wrapper");
         switchWrapper.classList.add("switch-wrapper-" + type);
-        switchWrapper.appendChild(createSwitch({type}));
+        switchWrapper.appendChild(createSwitch({type, text}));
         switchWrapper.appendChild(createSwitchLabel({text}));
         return switchWrapper;
-    }
+    };
 
-    function createSwitch({type}) {
+    const createSwitch = ({type, text}) => {
         const switchNode = document.createElement("label");
         switchNode.classList.add("switch");
         switchNode.appendChild(createSwitchInput());
         switchNode.appendChild(createSlider({type}));
+        if (!text) {
+            switchNode.style.marginRight = "0";
+        }
         return switchNode;
-    }
+    };
 
-    function createSwitchInput() {
+    const createSwitchInput = () => {
         const switchInput = document.createElement("input");
         switchInput.type = "checkbox";
         return switchInput;
-    }
+    };
 
-    function createSlider({type}) {
+    const createSlider = ({type}) => {
         const slider = document.createElement("span");
         slider.classList.add("slider");
         slider.classList.add("round");
         slider.classList.add("button-" + type);
         return slider;
-    }
+    };
 
-    function createSwitchLabel({text}) {
+    const createSwitchLabel = ({text}) => {
         const switchLabel = document.createElement("label");
         switchLabel.classList.add("switch-label");
-        switchLabel.innerText = text;
+        if (text) {
+            switchLabel.innerText = text;
+        } else {
+            switchLabel.style.display = "none";
+        }
         return switchLabel;
-    }
+    };
 
     return createSwitchWrapper({type, text});
 };

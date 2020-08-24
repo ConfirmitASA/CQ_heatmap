@@ -3,7 +3,7 @@ import {Switch} from "./components/Switch";
 import {Tooltip} from "./components/Tooltip";
 
 export default class Heatmap {
-    constructor({question, areas, imageOptions, buttonOptions, styles, answersCount, haveScales}) {
+    constructor({question, areas, imageOptions, styles, answersCount, haveScales, scaleType, customScales}) {
         this.question = question;
         this.id = question.id;
         this.questionNode = document.querySelector("#" + this.id);
@@ -16,25 +16,26 @@ export default class Heatmap {
                 min: answersCount.min && answersCount.min !== "0" ? answersCount.min : undefined
             }
             : {};
-        this.haveScales = haveScales;
 
-        this.buttonOptions = buttonOptions ? buttonOptions : [
+        this.haveScales = haveScales;
+        const defaultScales = [
             {
                 type: "positive",
-                text: "Positive",
+                label: "Positive",
                 color: "green"
             },
             {
                 type: "neutral",
-                text: "Neutral",
+                label: "Neutral",
                 color: "#aaa"
             },
             {
                 type: "negative",
-                text: "Negative",
+                label: "Negative",
                 color: "red"
             }
         ];
+        this.customScales = (scaleType === "custom" && customScales) ? customScales : defaultScales;
 
         this.init();
     }
@@ -128,12 +129,12 @@ export default class Heatmap {
     };
 
     createButtonsWrapperWithAreaAttributes = ({areaIndex}) => {
-        const {buttonOptions} = this;
+        const {customScales} = this;
         const buttonsWrapper = document.createElement("div");
 
-        buttonOptions.forEach((option) => {
-            const {type, text} = option;
-            const button = new Switch({type, text});
+        customScales.forEach((option) => {
+            const {type, label} = option;
+            const button = new Switch({type, text: label});
             button.setAttribute("area-index", areaIndex);
             buttonsWrapper.appendChild(button);
         });
@@ -145,8 +146,8 @@ export default class Heatmap {
         const {haveScales} = this;
 
         if (haveScales) {
-            const {buttonOptions} = this;
-            buttonOptions.forEach((option) => {
+            const {customScales} = this;
+            customScales.forEach((option) => {
                 const {type} = option;
                 const button = document.querySelector('.switch-wrapper-' + type + '[area-index="' + areaIndex + '"]');
                 if (button) {
@@ -173,10 +174,10 @@ export default class Heatmap {
     };
 
     onButtonClick = ({type, areaIndex, indicator}) => {
-        const {buttonOptions} = this;
+        const {customScales} = this;
         const values = this.question.values;
 
-        buttonOptions.forEach((option) => {
+        customScales.forEach((option) => {
             const {type: currentType} = option;
             const input = document.querySelector('.switch-wrapper-' + currentType + '[area-index="' + areaIndex + '"] input');
 
@@ -283,14 +284,14 @@ export default class Heatmap {
     };
 
     setDynamicStyles = () => {
-        const {buttonOptions, styles, questionNode, haveScales} = this;
+        const {customScales, styles, questionNode, haveScales} = this;
 
         const stylesElement = document.createElement("style");
         stylesElement.innerText = "";
 
         if (haveScales) {
             // area colors
-            buttonOptions.forEach((option) => {
+            customScales.forEach((option) => {
                 const {type, color} = option;
                 stylesElement.innerText += ".area_" + type + "{ background-color: " + color + "; opacity: 0.5; }";
                 stylesElement.innerText += ".switch-wrapper-" + type + "{ background-color: " + color + "; }";

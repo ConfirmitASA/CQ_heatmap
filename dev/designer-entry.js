@@ -1,9 +1,9 @@
 import HeatmapDesigner from "./HeatmapDesigner"
-import Designer from "./Designer";
+import HeatmapDesignerManager from "./HeatmapDesignerManager";
 
 if (window && !window.customQuestionsLibrary) {
     window.customQuestionsLibrary = {};
 }
 
 window.customQuestionsLibrary.HeatmapDesigner = HeatmapDesigner;
-window.customQuestionsLibrary.Designer = Designer;
+window.customQuestionsLibrary.HeatmapDesignerManager = HeatmapDesignerManager;

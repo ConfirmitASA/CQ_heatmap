@@ -5772,3 +5772,32 @@ body [x-out-of-boundaries],
     margin-top:-0.571rem;
     margin-bottom:-0.571rem;
 }
+
+@charset "UTF-8";
+.expand-collapse-button svg{
+    transition-property:transform;
+    transition-duration:200ms;
+    transition-timing-function:ease-in-out;
+}
+
+.expand-collapse-button.expand-collapse-button--flipped svg{
+    transform:scaleX(-1);
+}
+
+.sd-temp-icon-button{
+    display:inline-flex;
+    background:transparent;
+    border:none;
+    padding:0;
+    fill:rgba(18, 24, 33, 0.6);
+}
+.sd-temp-icon-button:hover{
+    fill:rgba(18, 24, 33, 0.87);
+}
+
+.button-row{
+    display:inline-flex;
+}
+.button-row > :not(:first-child){
+    margin-left:1.143rem;
+}

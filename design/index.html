@@ -2,7 +2,8 @@
 <html>
 <head>
     <link rel="stylesheet" href="styles.css"/>
-    <link rel="stylesheet" href="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.selectareas.css">
+    <link rel="stylesheet"
+          href="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.selectareas.css">
     <script src="custom-question.js"></script>
     <script src="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.1.12.4.min.js"></script>
     <script src="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.selectareas.min.js"></script>
@@ -11,11 +12,13 @@
 <body>
 <div class="survey-settings">
     <div class="comd-alert comd-alert--info">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="comd-alert__icon" fill="rgba(18, 24, 33, 0.6)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="comd-alert__icon"
+             fill="rgba(18, 24, 33, 0.6)">
             <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"></path>
         </svg>
         <div class="comd-alert__text">
-            If you want user to be able to choose only some of answers, please remove "Required" property on the Edit tab
+            If you want user to be able to choose only some of answers, please remove "Required" property on the Edit
+            tab
         </div>
     </div>
 
@@ -23,8 +26,10 @@
         <div class="comd-panel survey-settings-options" data-view="survey-settings-options" data-panel="main">
             <div class="comd-panel__header-ie11-fix" data-panel="header">
                 <header class="comd-panel__header">
-                    <button class="comd-icon-button comd-icon-button--default comd-panel__toggle--icon-button" data-panel-toggle="icon-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="rgba(18, 24, 33, 0.6)">
+                    <button class="comd-icon-button comd-icon-button--default comd-panel__toggle--icon-button"
+                            data-panel-toggle="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                             fill="rgba(18, 24, 33, 0.6)">
                             <path d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"></path>
                         </svg>
                     </button>
@@ -37,10 +42,11 @@
                 <div class="comd-panel__body" data-panel="body">
                     <div id="image-settings">
                         <div class="node-input-area">
-                            <label class="node-property__label" for="src">Image source</label>
-                            <input class="form-control form-input" type="text" id="src" required/>
-                            <label class="node-property__label" for="width">Image width</label>
-                            <input class="form-control input-sm form-input form-input--8ch" type="text" id="width" required/>
+                            <label class="sd-label node-input-area__label" for="src">Image source</label>
+                            <input class="node-input-area__input form-control form-input" type="text" id="src"/>
+                            <label class="sd-label node-input-area__label" for="width">Image width</label>
+                            <input class="node-input-area__input form-control input-sm form-input form-input--8ch"
+                                   type="number" id="width"/>
                         </div>
                         <button class="comd-button comd-button--secondary-neutral" id="draw-image-btn">
                             <span class="comd-button__content">
@@ -69,8 +75,10 @@
         <div class="comd-panel survey-settings-options" data-view="survey-settings-options" data-panel="main">
             <div class="comd-panel__header-ie11-fix" data-panel="header">
                 <header class="comd-panel__header">
-                    <button class="comd-icon-button comd-icon-button--default comd-panel__toggle--icon-button" data-panel-toggle="icon-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="rgba(18, 24, 33, 0.6)">
+                    <button class="comd-icon-button comd-icon-button--default comd-panel__toggle--icon-button"
+                            data-panel-toggle="icon-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                             fill="rgba(18, 24, 33, 0.6)">
                             <path d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"></path>
                         </svg>
                     </button>
@@ -82,38 +90,86 @@
             <div class="comd-panel__collapse-area" data-panel="collapse-area" style="height: auto;">
                 <div class="comd-panel__body" data-panel="body">
                     <div>
-                        <div class="row">
-                            <div class="comd-alert comd-alert--info">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="comd-alert__icon" fill="rgba(18, 24, 33, 0.6)">
-                                    <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"></path>
-                                </svg>
-                                <div class="comd-alert__text">
-                                    If you want to use positive/neutral/negative scores, please don't forget to add all three scales (with "positive", "neutral" and "negative" as codes)
-                                </div>
+                        <div class="comd-alert comd-alert--info">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 class="comd-alert__icon" fill="rgba(18, 24, 33, 0.6)">
+                                <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"></path>
+                            </svg>
+                            <div class="comd-alert__text">
+                                If you want to use positive/neutral/negative scores, please don't forget to add all
+                                three scales (with "positive", "neutral" and "negative" as codes)
                             </div>
-                            <div class="col-sm-6">
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
                                 <ul class="option-list" style="margin-bottom: 1em;">
                                     <li class="option-toggle">
                                         <div class="co-toggle co-toggle--checkbox co-flex">
                                             <input class="co-toggle__input" type="checkbox" id="haveScales">
                                             <label for="haveScales">
                                                 <div class="icon icon-checkbox co-icon">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                         viewBox="0 0 16 16">
                                                         <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
                                                         <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
                                                         <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
                                                     </svg>
                                                 </div>
-                                                <span class="">Show positive/neutral/negative scale buttons</span>
+                                                <span class="">Show scale buttons</span>
                                             </label>
                                         </div>
                                     </li>
+                                    <ul class="option-list" style="margin-bottom: 1em;" id="activateScales">
+                                        <li class="option-toggle">
+                                            <div class="co-toggle co-toggle--checkbox co-flex">
+                                                <input class="co-toggle__input" type="checkbox"
+                                                       id="activateDefaultScales">
+                                                <label for="activateDefaultScales">
+                                                    <div class="icon icon-checkbox co-icon">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                             viewBox="0 0 16 16">
+                                                            <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
+                                                            <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
+                                                            <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <span>Default positive/neutral/negative scales</span>
+                                                </label>
+                                            </div>
+                                        </li>
+                                        <li class="option-toggle">
+                                            <div class="co-toggle co-toggle--checkbox co-flex">
+                                                <input class="co-toggle__input" type="checkbox"
+                                                       id="activateCustomScales">
+                                                <label for="activateCustomScales">
+                                                    <div class="icon icon-checkbox co-icon">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                             viewBox="0 0 16 16">
+                                                            <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
+                                                            <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
+                                                            <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <span>Custom scales</span>
+                                                </label>
+                                            </div>
+                                        </li>
+                                        <div style="padding-left: 22px;" id="customScales">
+                                            <div class="node-input-area">
+                                                <label class="sd-label node-input-area__label" for="src">Number of scales</label>
+                                                <input class="node-input-area__input form-control input-sm form-input form-input--2ch"
+                                                       type="number" id="scalesNumber" min="1"/>
+                                            </div>
+                                            <div id="customScaleList"></div>
+                                        </div>
+                                    </ul>
                                     <li class="option-toggle">
                                         <div class="co-toggle co-toggle--checkbox co-flex">
                                             <input class="co-toggle__input" type="checkbox" id="activateMinNumber">
                                             <label for="activateMinNumber">
                                                 <div class="icon icon-checkbox co-icon">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                         viewBox="0 0 16 16">
                                                         <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
                                                         <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
                                                         <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
@@ -121,7 +177,8 @@
                                                 </div>
                                                 <span>
                                                     Min number of answers
-                                                    <input class="form-control input-sm form-input form-input--8ch" type="number" id="minNumberOfAnswers"/>
+                                                    <input class="form-control input-sm form-input form-input--8ch"
+                                                           type="number" id="minNumberOfAnswers"/>
                                                 </span>
                                             </label>
                                         </div>
@@ -131,7 +188,8 @@
                                             <input class="co-toggle__input" type="checkbox" id="activateMaxNumber">
                                             <label for="activateMaxNumber">
                                                 <div class="icon icon-checkbox co-icon">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                         viewBox="0 0 16 16">
                                                         <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
                                                         <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
                                                         <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
@@ -139,7 +197,8 @@
                                                 </div>
                                                 <span>
                                                     Max number of answers
-                                                    <input class="form-control input-sm form-input form-input--8ch" type="number" id="maxNumberOfAnswers"/>
+                                                    <input class="form-control input-sm form-input form-input--8ch"
+                                                           type="number" id="maxNumberOfAnswers"/>
                                                 </span>
                                             </label>
                                         </div>
@@ -155,6 +214,6 @@
 </div>
 </body>
 <script>
-    new customQuestionsLibrary.Designer({question: customQuestion});
+    new customQuestionsLibrary.HeatmapDesignerManager({question: customQuestion});
 </script>
 </html>
