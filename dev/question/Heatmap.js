@@ -1,6 +1,6 @@
-import {ImageWrapper} from "./components/ImageWrapper";
-import {Switch} from "./components/Switch";
-import {Tooltip} from "./components/Tooltip";
+import {ImageWrapper} from "../components/ImageWrapper";
+import {Switch} from "../components/Switch";
+import {Tooltip} from "../components/Tooltip";
 
 export default class Heatmap {
     constructor({question, areas, imageOptions, styles, answersCount, haveScales, scaleType, customScales}) {
@@ -12,8 +12,9 @@ export default class Heatmap {
         this.styles = styles;
         this.answersCount = answersCount
             ? {
-                max: answersCount.max && answersCount.max !== "0" ? answersCount.max : undefined,
-                min: answersCount.min && answersCount.min !== "0" ? answersCount.min : undefined
+                equal: answersCount.type === "equal" && answersCount.equal && answersCount.equal !== "0" ? answersCount.equal : undefined,
+                max: answersCount.type === "min-max" && answersCount.max && answersCount.max !== "0" ? answersCount.max : undefined,
+                min: answersCount.type === "min-max" && answersCount.min && answersCount.min !== "0" ? answersCount.min : undefined
             }
             : {};
 
@@ -228,12 +229,17 @@ export default class Heatmap {
 
         this.question.validationEvent.on((validationResult) => {
             const valuesCount = Object.keys(this.question.values).length;
+            const equal = parseInt(answersCount.equal);
             const min = parseInt(answersCount.min);
             const max = parseInt(answersCount.max);
 
             errorList.innerHTML = "";
 
             if (this.question.values) {
+                if (equal && valuesCount !== equal) {
+                    const error = {message: 'Please provide exactly ' + equal + ' answer(s)'};
+                    validationResult.errors.push(error);
+                }
                 if (min && valuesCount < min) {
                     const error = {message: 'Please provide at least ' + min + ' answer(s)'};
                     validationResult.errors.push(error);

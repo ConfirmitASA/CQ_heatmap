@@ -4,214 +4,173 @@
     <link rel="stylesheet" href="styles.css"/>
     <link rel="stylesheet"
           href="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.selectareas.css">
-    <script src="custom-question.js"></script>
     <script src="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.1.12.4.min.js"></script>
     <script src="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.selectareas.min.js"></script>
-    <script src="./../design/bundle.js"></script>
+    <script src="custom-question.js"></script>
+    <script src="design-page-components.js"></script>
+    <script src="bundle.js"></script>
 </head>
 <body>
 <div class="survey-settings">
     <div class="comd-alert comd-alert--info">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="comd-alert__icon"
-             fill="rgba(18, 24, 33, 0.6)">
-            <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"></path>
-        </svg>
         <div class="comd-alert__text">
             If you want user to be able to choose only some of answers, please remove "Required" property on the Edit
             tab
         </div>
     </div>
 
-    <div class="container-fluid layout-panel">
-        <div class="comd-panel survey-settings-options" data-view="survey-settings-options" data-panel="main">
-            <div class="comd-panel__header-ie11-fix" data-panel="header">
-                <header class="comd-panel__header">
-                    <button class="comd-icon-button comd-icon-button--default comd-panel__toggle--icon-button"
-                            data-panel-toggle="icon-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="rgba(18, 24, 33, 0.6)">
-                            <path d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"></path>
-                        </svg>
-                    </button>
-                    <button class="comd-panel__toggle" data-panel-toggle="button">
-                        <h4 class="comd-panel__title">Image options</h4>
-                    </button>
-                </header>
+    <div class="node-properties-key-fields comd-panel">
+        <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
+            <div class="node-properties__toggle co-flex co-flex--center">
+                <h4 class="co-text-size-normal">Image options</h4>
+                <!--                <div class="sd-tooltip-help" data-tooltip-text="This is the test tooltip text which would be shown when hoover on the tooltip icon. Example of a long one"></div>-->
             </div>
-            <div class="comd-panel__collapse-area" data-panel="collapse-area" style="height: auto;">
-                <div class="comd-panel__body" data-panel="body">
-                    <div id="image-settings">
-                        <div class="node-input-area">
-                            <label class="sd-label node-input-area__label" for="src">Image source</label>
-                            <input class="node-input-area__input form-control form-input" type="text" id="src"/>
-                            <label class="sd-label node-input-area__label" for="width">Image width</label>
-                            <input class="node-input-area__input form-control input-sm form-input form-input--8ch"
-                                   type="number" id="width"/>
-                        </div>
-                        <button class="comd-button comd-button--secondary-neutral" id="draw-image-btn">
-                            <span class="comd-button__content">
+            <div class="co-flex co-flex--center">
+                <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
+            </div>
+        </header>
+        <div class="comd-panel__collapse-area">
+            <div id="image-settings">
+                <div class="node-properties">
+                    <div class="node-property">
+                        <label class="node-property__label" for="imageSrc">Image source
+                            <div class="sd-tooltip-help"
+                                 data-tooltip-text="To have textarea or input type text with width 100% you need to have blocks structured like below block 'node-property' right inside of a block 'node-properties' and class 'form-input--full-width' stretches field to full width"></div>
+                        </label>
+                        <input type="text" class="form-input form-input--full-width" name="imageSrc" id="imageSrc">
+                    </div>
+                </div>
+                <div class="node-properties">
+                    <div class="node-property">
+                        <label class="node-property__label" for="imageWidth">Image width</label>
+                        <input type="number" class="form-input form-input--4ch" name="imageWidth" id="imageWidth"
+                               value="" min="1">
+                        <span>px</span>
+                    </div>
+                </div>
+                <div class="node-property button-block">
+                    <div class="button-block">
+                        <button class="comd-button comd-button--secondary-neutral">
+                            <span class="comd-button__content" id="draw-image-btn">
                                 <div class="comd-portal-trigger">Draw image</div>
                             </span>
                         </button>
                     </div>
-                    <div id="areas">
-                        <button class="comd-button comd-button--secondary-neutral" id="change-image-btn">
-                            <span class="comd-button__content">
+                </div>
+            </div>
+            <div id="areas">
+                <div class="node-property button-block">
+                    <div class="button-block">
+                        <button class="comd-button comd-button--secondary-neutral">
+                            <span class="comd-button__content" id="change-image-btn">
                                 <div class="comd-portal-trigger">Change image options</div>
                             </span>
                         </button>
-                        <div id="heatmap-wrapper"></div>
-<!--                        <button class="comd-button comd-button&#45;&#45;secondary-neutral" id="save-changes-btn" style="margin-top: 1em">-->
-<!--                            <span class="comd-button__content">-->
-<!--                                <div class="comd-portal-trigger">Save changes</div>-->
-<!--                            </span>-->
-<!--                        </button>-->
-                        <div id="areaTextList" style="margin-top: 1em">
-<!--                            <label class="sd-label node-input-area__label" for="1">First</label>-->
-<!--                            <input class="node-input-area__input form-control form-input form-input&#45;&#45;40ch" type="text" id="1"/>-->
-<!--                            <label class="sd-label node-input-area__label" for="2">Second</label>-->
-<!--                            <input class="node-input-area__input form-control form-input form-input&#45;&#45;40ch" type="text" id="2"/>-->
-                        </div>
                     </div>
                 </div>
+                <div id="heatmap-wrapper" style="width: 100%; overflow-x: auto;"></div>
+                <div id="areaTextList" style="margin-top: 1em"></div>
             </div>
         </div>
     </div>
-    <div class="container-fluid layout-panel">
-        <div class="comd-panel survey-settings-options" data-view="survey-settings-options" data-panel="main">
-            <div class="comd-panel__header-ie11-fix" data-panel="header">
-                <header class="comd-panel__header">
-                    <button class="comd-icon-button comd-icon-button--default comd-panel__toggle--icon-button"
-                            data-panel-toggle="icon-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                             fill="rgba(18, 24, 33, 0.6)">
-                            <path d="M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z"></path>
-                        </svg>
-                    </button>
-                    <button class="comd-panel__toggle" data-panel-toggle="button">
-                        <h4 class="comd-panel__title">Answer options</h4>
-                    </button>
-                </header>
+
+
+    <div class="node-properties-key-fields comd-panel comd-panel--collapsed">
+        <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
+            <div class="node-properties__toggle co-flex co-flex--center">
+                <h4 class="co-text-size-normal">Answer options</h4>
+                <!--                <div class="sd-tooltip-help" data-tooltip-text="This is the test tooltip text which would be shown when hoover on the tooltip icon. Example of a long one"></div>-->
             </div>
-            <div class="comd-panel__collapse-area" data-panel="collapse-area" style="height: auto;">
-                <div class="comd-panel__body" data-panel="body">
-                    <div>
-                        <div class="comd-alert comd-alert--info">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                 class="comd-alert__icon" fill="rgba(18, 24, 33, 0.6)">
-                                <path d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"></path>
-                            </svg>
-                            <div class="comd-alert__text">
-                                If you want to use positive/neutral/negative scores, please don't forget to add all
-                                three scales (with "positive", "neutral" and "negative" as codes)
-                            </div>
+            <div class="co-flex co-flex--center">
+                <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
+            </div>
+        </header>
+        <div class="comd-panel__collapse-area">
+            <div class="comd-alert comd-alert--info">
+                <div class="comd-alert__text">
+                    If you want to use positive/neutral/negative scores, please don't forget to add all
+                    three scales (with "positive", "neutral" and "negative" as codes)
+                </div>
+            </div>
+            <div class="node-properties">
+                <div class="node-property-container">
+                    <div class="node-property node-property--checkbox">
+                        <div class="co-toggle co-toggle--checkbox">
+                            <input class="co-toggle__input" type="checkbox" name="haveScales" id="haveScales"/>
+                            <label for="haveScales" class="node-property__label node-property__label--checkbox">
+                                <div class="icon-checkbox co-icon">
+                                </div>
+                                <span>Show scale buttons</span>
+                            </label>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <ul class="option-list" style="margin-bottom: 1em;">
-                                    <li class="option-toggle">
-                                        <div class="co-toggle co-toggle--checkbox co-flex">
-                                            <input class="co-toggle__input" type="checkbox" id="haveScales">
-                                            <label for="haveScales">
-                                                <div class="icon icon-checkbox co-icon">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                         viewBox="0 0 16 16">
-                                                        <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
-                                                        <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
-                                                        <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
-                                                    </svg>
-                                                </div>
-                                                <span class="">Show scale buttons</span>
-                                            </label>
-                                        </div>
-                                    </li>
-                                    <ul class="option-list" style="margin-bottom: 1em;" id="activateScales">
-                                        <li class="option-toggle">
-                                            <div class="co-toggle co-toggle--checkbox co-flex">
-                                                <input class="co-toggle__input" type="checkbox"
-                                                       id="activateDefaultScales">
-                                                <label for="activateDefaultScales">
-                                                    <div class="icon icon-checkbox co-icon">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                             viewBox="0 0 16 16">
-                                                            <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
-                                                            <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
-                                                            <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <span>Default positive/neutral/negative scales</span>
-                                                </label>
-                                            </div>
-                                        </li>
-                                        <li class="option-toggle">
-                                            <div class="co-toggle co-toggle--checkbox co-flex">
-                                                <input class="co-toggle__input" type="checkbox"
-                                                       id="activateCustomScales">
-                                                <label for="activateCustomScales">
-                                                    <div class="icon icon-checkbox co-icon">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                             viewBox="0 0 16 16">
-                                                            <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
-                                                            <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
-                                                            <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <span>Custom scales</span>
-                                                </label>
-                                            </div>
-                                        </li>
-                                        <div style="padding-left: 22px;" id="customScales">
-                                            <div class="node-input-area">
-                                                <label class="sd-label node-input-area__label" for="src">Number of scales</label>
-                                                <input class="node-input-area__input form-control input-sm form-input form-input--2ch"
-                                                       type="number" id="scalesNumber" min="1"/>
-                                            </div>
-                                            <div id="customScaleList"></div>
-                                        </div>
-                                    </ul>
-                                    <li class="option-toggle">
-                                        <div class="co-toggle co-toggle--checkbox co-flex">
-                                            <input class="co-toggle__input" type="checkbox" id="activateMinNumber">
-                                            <label for="activateMinNumber">
-                                                <div class="icon icon-checkbox co-icon">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                         viewBox="0 0 16 16">
-                                                        <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
-                                                        <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
-                                                        <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
-                                                    </svg>
-                                                </div>
-                                                <span>
-                                                    Min number of answers
-                                                    <input class="form-control input-sm form-input form-input--8ch"
-                                                           type="number" id="minNumberOfAnswers"/>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </li>
-                                    <li class="option-toggle">
-                                        <div class="co-toggle co-toggle--checkbox co-flex">
-                                            <input class="co-toggle__input" type="checkbox" id="activateMaxNumber">
-                                            <label for="activateMaxNumber">
-                                                <div class="icon icon-checkbox co-icon">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                         viewBox="0 0 16 16">
-                                                        <path fill="#C6C6C6" d="M2 2h12v12H2z"></path>
-                                                        <path fill="#FFFFFF" d="M3 3h10v10H3z"></path>
-                                                        <path d="M6 6L5 7l3 4h1l7-9-1-1-6.5 7L6 6z"></path>
-                                                    </svg>
-                                                </div>
-                                                <span>
-                                                    Max number of answers
-                                                    <input class="form-control input-sm form-input form-input--8ch"
-                                                           type="number" id="maxNumberOfAnswers"/>
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="node-property node-property--radio" id="activateScales">
+                        <ul class="option-list">
+                            <li class="option-toggle">
+                                <div class="co-toggle co-toggle--radio">
+                                    <input class="co-toggle__input" id="activateDefaultScales" type="radio"
+                                           name="activateDefaultScales"/>
+                                    <label for="activateDefaultScales"
+                                           class="node-property__label node-property__label--radio">
+                                        <div class="icon-radio co-icon"></div>
+                                        <span>Default positive/neutral/negative scales</span>
+                                    </label>
+                                </div>
+                            </li>
+                            <li class="option-toggle">
+                                <div class="co-toggle co-toggle--radio">
+                                    <input class="co-toggle__input" id="activateCustomScales" type="radio"
+                                           name="activateCustomScales"/>
+                                    <label for="activateCustomScales"
+                                           class="node-property__label node-property__label--radio">
+                                        <div class="icon-radio co-icon"></div>
+                                        <span>Custom scales</span>
+                                    </label>
+                                </div>
+                                <div style="padding-left: 22px;" id="customScales">
+                                    <div class="node-input-area">
+                                        <label class="sd-label node-input-area__label">Number of scales</label>
+                                        <input class="node-input-area__input form-control input-sm form-input form-input--2ch"
+                                               type="number" id="scalesNumber" min="1"/>
+                                    </div>
+                                    <div id="customScaleList"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="node-properties">
+                <div class="node-property-container">
+                    <div class="node-property">
+                        <label class="node-property__label" for="number-of-responses__type">Number of answers</label>
+                        <select class="form-input" name="number-of-responses__type" id="number-of-responses__type"/>
+                        <option value="equal">Equal to</option>
+                        <option value="min-max" selected>Min/max count</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="node-property-container min-max-container" >
+                    <div class="node-property">
+                        <label class="node-property__label" for="number-of-responses__min">Min</label>
+                        <input type="number" class="form-input form-input--3ch" id="number-of-responses__min" min="1"
+                               value=""/>
+                    </div>
+                </div>
+
+                <div class="node-property-container min-max-container">
+                    <div class="node-property">
+                        <label class="node-property__label" for="number-of-responses__max">Max</label>
+                        <input type="number" class="form-input form-input--3ch" id="number-of-responses__max" value=""/>
+                    </div>
+                </div>
+
+                <div class="node-property-container equal-count-container">
+                    <div class="node-property">
+                        <label class="node-property__label" for="number-of-responses__min">Count</label>
+                        <input type="number" class="form-input form-input--3ch" id="number-of-responses__equal" min="1"
+                               value=""/>
                     </div>
                 </div>
             </div>

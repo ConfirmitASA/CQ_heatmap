@@ -1,5 +1,5 @@
 /* global register */
-import Heatmap from "./Heatmap";
+import Heatmap from "./question/Heatmap";
 
 (function () {
     const question = Confirmit.page.questions[0];

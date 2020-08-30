@@ -1,8 +1,8 @@
 const path = require('path');
 module.exports = {
     entry: {
-        runtime: './dev/entry.js',
-        design: './dev/designer-entry.js'
+        runtime: './dev/question/entry.js',
+        design: './dev/designer/entry.js'
     },
     output: {
         filename: './[name]/bundle.js',

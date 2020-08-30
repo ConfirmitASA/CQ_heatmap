@@ -1,10 +1,9 @@
-export const InputsWrapper = ({id, wrapperClass, inputs, gridTemplateColumns}) => {
-    const createWrapper = ({id, wrapperClass, gridTemplateColumns}) => {
+export const InputWrapper = ({id, wrapperClass, inputs}) => {
+    const createWrapper = ({id, wrapperClass}) => {
         const wrapper = document.createElement("div");
         wrapper.classList.add(wrapperClass);
-        wrapper.classList.add("node-input-area");
+        wrapper.classList.add("node-input-row");
         wrapper.id = id;
-        wrapper.style.gridTemplateColumns = gridTemplateColumns;
         return wrapper;
     };
 
@@ -24,7 +23,7 @@ export const InputsWrapper = ({id, wrapperClass, inputs, gridTemplateColumns}) =
 
     const createLabel = ({text}) => {
         const label = document.createElement("label");
-        label.classList.add("node-input-area__label");
+        label.classList.add("node-input-row__label");
         label.classList.add("sd-label");
         label.innerText = text;
         return label;
@@ -32,8 +31,7 @@ export const InputsWrapper = ({id, wrapperClass, inputs, gridTemplateColumns}) =
 
     const createInput = ({sizeClass, wrapperClass, type, onInputsChange}) => {
         const input = document.createElement("input");
-        input.classList.add("node-input-area__input");
-        input.classList.add("form-control");
+        input.classList.add("node-input-row__input");
         input.classList.add("form-input");
         input.classList.add(wrapperClass);
         input.classList.add(sizeClass);
@@ -46,7 +44,7 @@ export const InputsWrapper = ({id, wrapperClass, inputs, gridTemplateColumns}) =
     //     wrapper.remove();
     // };
 
-    const wrapper = createWrapper({id, wrapperClass, gridTemplateColumns});
+    const wrapper = createWrapper({id, wrapperClass});
 
     // const button = createDeleteButton();
     // wrapper.appendChild(button);

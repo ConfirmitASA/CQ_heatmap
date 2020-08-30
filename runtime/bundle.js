@@ -230,7 +230,7 @@ var Tooltip = function Tooltip(_ref) {
     onCreated: onCreated
   });
 };
-// CONCATENATED MODULE: ./dev/Heatmap.js
+// CONCATENATED MODULE: ./dev/question/Heatmap.js
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -489,23 +489,31 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
 
     _this.question.validationEvent.on(function (validationResult) {
       var valuesCount = Object.keys(_this.question.values).length;
+      var equal = parseInt(answersCount.equal);
       var min = parseInt(answersCount.min);
       var max = parseInt(answersCount.max);
       errorList.innerHTML = "";
 
       if (_this.question.values) {
-        if (min && valuesCount < min) {
+        if (equal && valuesCount !== equal) {
           var error = {
-            message: 'Please provide at least ' + min + ' answer(s)'
+            message: 'Please provide exactly ' + equal + ' answer(s)'
           };
           validationResult.errors.push(error);
         }
 
-        if (max && valuesCount > max) {
+        if (min && valuesCount < min) {
           var _error = {
-            message: 'Please provide less than ' + max + ' answer(s)'
+            message: 'Please provide at least ' + min + ' answer(s)'
           };
           validationResult.errors.push(_error);
+        }
+
+        if (max && valuesCount > max) {
+          var _error2 = {
+            message: 'Please provide less than ' + max + ' answer(s)'
+          };
+          validationResult.errors.push(_error2);
         }
 
         validationResult.errors.forEach(_this.addErrorItem);
@@ -592,8 +600,9 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
   this.imageOptions = _imageOptions;
   this.styles = _styles;
   this.answersCount = _answersCount ? {
-    max: _answersCount.max && _answersCount.max !== "0" ? _answersCount.max : undefined,
-    min: _answersCount.min && _answersCount.min !== "0" ? _answersCount.min : undefined
+    equal: _answersCount.type === "equal" && _answersCount.equal && _answersCount.equal !== "0" ? _answersCount.equal : undefined,
+    max: _answersCount.type === "min-max" && _answersCount.max && _answersCount.max !== "0" ? _answersCount.max : undefined,
+    min: _answersCount.type === "min-max" && _answersCount.min && _answersCount.min !== "0" ? _answersCount.min : undefined
   } : {};
   this.haveScales = _haveScales;
   var defaultScales = [{
@@ -614,7 +623,7 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
 };
 
 
-// CONCATENATED MODULE: ./dev/entry.js
+// CONCATENATED MODULE: ./dev/question/entry.js
 
 
 if (window.NodeList && !NodeList.prototype.forEach) {

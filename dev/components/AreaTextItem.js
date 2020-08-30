@@ -1,4 +1,4 @@
-import {InputsWrapper} from "./InputsWrapper";
+import {InputWrapper} from "./InputWrapper";
 
 export const AreaTextItem = ({id, onInputsChange, defaultValue, labelText}) => {
     const inputs = [
@@ -12,5 +12,5 @@ export const AreaTextItem = ({id, onInputsChange, defaultValue, labelText}) => {
         }
     ];
 
-    return new InputsWrapper({id, wrapperClass: "area-text-item", inputs, gridTemplateColumns: "auto auto minmax(0, 1fr)"});
+    return new InputWrapper({id, wrapperClass: "area-text-item", inputs});
 };

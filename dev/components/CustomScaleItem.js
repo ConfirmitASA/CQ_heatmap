@@ -1,4 +1,4 @@
-import {InputsWrapper} from "./InputsWrapper";
+import {InputWrapper} from "./InputWrapper";
 
 export const CustomScaleItem = ({id, onInputsChange, defaultValue}) => {
     const inputs = [
@@ -25,5 +25,5 @@ export const CustomScaleItem = ({id, onInputsChange, defaultValue}) => {
         }
     ];
 
-    return new InputsWrapper({id, wrapperClass: "custom-scale-item", inputs, gridTemplateColumns: "auto auto auto minmax(0, 1fr)"});
+    return new InputWrapper({id, wrapperClass: "custom-scale-item", inputs});
 };
