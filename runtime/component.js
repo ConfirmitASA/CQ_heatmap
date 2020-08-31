@@ -7,12 +7,14 @@ register(function (question, customQuestionSettings, questionViewSettings) {
         //     width: "2453px"
         // };
 
-    var areas = customQuestionSettings.areas;
-    var imageOptions = customQuestionSettings.imageOptions;
-    var answersCount = customQuestionSettings.answersCount;
-    var haveScales = customQuestionSettings.haveScales;
-    var scaleType = customQuestionSettings.scaleType;
-    var customScales = customQuestionSettings.customScales;
-
-    var heatmap = new customQuestionsLibrary.Heatmap({question: question, areas: areas, imageOptions: imageOptions, answersCount: answersCount, haveScales: haveScales, scaleType: scaleType, customScales: customScales});
+    var heatmap = new customQuestionsLibrary.Heatmap({
+        question: question,
+        areas: customQuestionSettings.areas,
+        imageOptions: customQuestionSettings.imageOptions,
+        answersCount: customQuestionSettings.answersCount,
+        haveScales: customQuestionSettings.haveScales,
+        scaleType: customQuestionSettings.scaleType,
+        customScales: customQuestionSettings.customScales,
+        styles: customQuestionSettings.styles
+    });
 });

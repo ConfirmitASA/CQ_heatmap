@@ -8,13 +8,18 @@ export default class HeatmapDesignerManager {
             imageSrcInput: document.getElementById('imageSrc'),
             imageWidthInput: document.getElementById('imageWidth'),
             haveScalesInput: document.getElementById('haveScales'),
-            typeForNumberOfAnswersInput: document.getElementById('number-of-responses__type'),
             equalToNumberOfAnswersInput: document.getElementById('number-of-responses__equal'),
             minNumberOfAnswersInput: document.getElementById('number-of-responses__min'),
             maxNumberOfAnswersInput: document.getElementById('number-of-responses__max'),
             activateDefaultScalesInput: document.getElementById('activateDefaultScales'),
             activateCustomScalesInput: document.getElementById('activateCustomScales'),
             scalesNumberInput: document.getElementById('scalesNumber'),
+            areaHoverColorInput: document.getElementById('areaHoverColor'),
+            areaBorderWidthInput: document.getElementById('areaBorderWidth'),
+            areaBorderColorInput: document.getElementById('areaBorderColor'),
+
+            typeForNumberOfAnswersSelector: document.getElementById('number-of-responses__type'),
+            areaHighlighterSelector: document.getElementById('areaHighlighterSelector'),
 
             changeImageBtn: document.getElementById('change-image-btn'),
             drawImageBtn: document.getElementById('draw-image-btn'),
@@ -45,13 +50,17 @@ export default class HeatmapDesignerManager {
         this.setupScaleElements();
         this.setupMinMaxEqualInputs();
         this.connectMinMaxInputs();
+        this.setupAdditionalStyles();
     };
 
     setDefaultAttributes = () => {
         const {areasWrapper, imageWidthInput, activateScalesWrapper, customScalesWrapper, customScaleListWrapper,
-            equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput} = this.elements;
+            equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput} = this.elements;
 
-        this.toggleElementsVisibility({elements: [areasWrapper, activateScalesWrapper, customScalesWrapper, customScaleListWrapper, equalToNumberOfAnswersInput.parentNode]});
+        this.toggleElementsVisibility({elements: [areasWrapper, activateScalesWrapper, customScalesWrapper, customScaleListWrapper,
+                equalToNumberOfAnswersInput.parentNode.parentNode, areaBorderWidthInput.parentNode.parentNode, areaBorderColorInput.parentNode.parentNode]});
+
+        areaHoverColorInput.value = "#ffffff";
 
         minNumberOfAnswersInput.setAttribute("min", 1);
         maxNumberOfAnswersInput.setAttribute("min", 1);
@@ -60,12 +69,13 @@ export default class HeatmapDesignerManager {
 
     setValuesFromSettings = (settings) => {
         const {answerOptionsWrapper, imageSrcInput, imageWidthInput, haveScalesInput, activateScalesWrapper, activateDefaultScalesInput,
-            activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, scalesNumberInput, typeForNumberOfAnswersInput,
-            equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput, areasWrapper} = this.elements;
-        const {imageOptions, haveScales, scaleType, customScales, answersCount, areas} = settings;
+            activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, scalesNumberInput, typeForNumberOfAnswersSelector,
+            equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput, areasWrapper,
+            areaHighlighterSelector, areaHoverColorInput, areaBorderColorInput, areaBorderWidthInput} = this.elements;
+        const {imageOptions, areas, haveScales, scaleType, customScales, answersCount, styles} = settings;
 
         if (haveScales || answersCount.type === "equal" && answersCount.equal || answersCount.type === "min-max" && (answersCount.min || answersCount.max)) {
-            answerOptionsWrapper.classList.remove("comd-panel--collapsed");
+            answerOptionsWrapper.querySelector("header").click();
         }
 
         if (imageOptions) {
@@ -88,15 +98,16 @@ export default class HeatmapDesignerManager {
             scalesNumberInput.value = customScales.length;
             this.createScaleItems({defaultValues: customScales});
         }
-        this.toggleElementsVisibility({elements: [customScalesWrapper, customScaleListWrapper], shouldBeShown: haveScales && scaleType === "custom"});
+        this.toggleElementsVisibility({elements: [customScalesWrapper], shouldBeShown: haveScales && scaleType === "custom"});
+        this.toggleElementsVisibility({elements: [customScaleListWrapper], shouldBeShown: haveScales && scaleType === "custom" && customScales.length > 0});
 
         if (answersCount.type === "equal") {
-            typeForNumberOfAnswersInput[0].selected = true;
+            typeForNumberOfAnswersSelector[0].selected = true;
         } else {
-            typeForNumberOfAnswersInput[1].selected = true;
+            typeForNumberOfAnswersSelector[1].selected = true;
         }
-        this.toggleElementsVisibility({elements: [equalToNumberOfAnswersInput.parentNode], shouldBeShown: answersCount.type === "equal"});
-        this.toggleElementsVisibility({elements: [minNumberOfAnswersInput.parentNode, maxNumberOfAnswersInput.parentNode], shouldBeShown: answersCount.type === "min-max"});
+        this.toggleElementsVisibility({elements: [equalToNumberOfAnswersInput.parentNode.parentNode], shouldBeShown: answersCount.type === "equal"});
+        this.toggleElementsVisibility({elements: [minNumberOfAnswersInput.parentNode.parentNode, maxNumberOfAnswersInput.parentNode.parentNode], shouldBeShown: answersCount.type === "min-max"});
 
         if (answersCount.equal) {
             equalToNumberOfAnswersInput.value = answersCount.equal;
@@ -109,6 +120,29 @@ export default class HeatmapDesignerManager {
         }
 
         maxNumberOfAnswersInput.setAttribute("max", areas.length);
+
+        if (styles && styles.areaHighlight) {
+            if (styles.areaHighlight.type === "border") {
+                areaHighlighterSelector[1].selected = true;
+            } else {
+                areaHighlighterSelector[0].selected = true;
+            }
+            if (styles.areaHighlight.color) {
+                areaHoverColorInput.value = styles.areaHighlight.color;
+            } else {
+                areaHoverColorInput.value = "#ffffff";
+            }
+            if (styles.areaHighlight.border) {
+                if (styles.areaHighlight.border.width) {
+                    areaBorderWidthInput.value = styles.areaHighlight.border.width;
+                }
+                if (styles.areaHighlight.border.color) {
+                    areaBorderColorInput.value = styles.areaHighlight.border.color;
+                }
+            }
+        }
+        this.toggleElementsVisibility({elements: [areaHoverColorInput.parentNode.parentNode], shouldBeShown: !styles || !styles.areaHighlight || styles.areaHighlight.type === "color"});
+        this.toggleElementsVisibility({elements: [areaBorderWidthInput.parentNode.parentNode, areaBorderColorInput.parentNode.parentNode], shouldBeShown: styles && styles.areaHighlight && styles.areaHighlight.type === "border"});
     };
 
     drawImage = ({settings}) => {
@@ -200,25 +234,32 @@ export default class HeatmapDesignerManager {
 
     setupSavingElements = () => {
         const {haveScalesInput, activateDefaultScalesInput, activateCustomScalesInput,
-            typeForNumberOfAnswersInput, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput} = this.elements;
+            typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput,
+            areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput} = this.elements;
 
         haveScalesInput.addEventListener('change', this.saveChanges);
         activateDefaultScalesInput.addEventListener('change', this.saveChanges);
         activateCustomScalesInput.addEventListener('change', this.saveChanges);
 
-        typeForNumberOfAnswersInput.addEventListener('change', this.saveChanges);
+        typeForNumberOfAnswersSelector.addEventListener('change', this.saveChanges);
         equalToNumberOfAnswersInput.addEventListener('change', this.saveChanges);
         minNumberOfAnswersInput.addEventListener('change', this.saveChanges);
         maxNumberOfAnswersInput.addEventListener('change', this.saveChanges);
+
+        areaHighlighterSelector.addEventListener('change', this.saveChanges);
+        areaHoverColorInput.addEventListener('change', this.saveChanges);
+        areaBorderWidthInput.addEventListener('change', this.saveChanges);
+        areaBorderColorInput.addEventListener('change', this.saveChanges);
     };
 
     saveChanges = () => {
-        const {imageSrcInput, imageWidthInput, areaTextListWrapper,
-            typeForNumberOfAnswersInput, equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput,
-            haveScalesInput, activateCustomScalesInput} = this.elements;
+        const {imageSrcInput, imageWidthInput, areaTextListWrapper, typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput,
+            maxNumberOfAnswersInput, minNumberOfAnswersInput, haveScalesInput, activateCustomScalesInput,
+            areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput} = this.elements;
         const heatmapImageJQ = $("#heatmap-wrapper img");
 
-        const typeForNumberOfAnswers = typeForNumberOfAnswersInput[0].selected ? "equal" : "min-max";
+        const typeForNumberOfAnswers = typeForNumberOfAnswersSelector[0].selected ? "equal" : "min-max";
+        const areaHighlighterType = areaHighlighterSelector[1].selected ? "border" : "color";
 
         const settings = {
             imageOptions: {
@@ -228,11 +269,25 @@ export default class HeatmapDesignerManager {
             areas: heatmapImageJQ.length > 0 ? heatmapImageJQ.selectAreas('areas') : [],
             answersCount: {
                 type: typeForNumberOfAnswers,
-                equal: typeForNumberOfAnswers === "equal" ? equalToNumberOfAnswersInput.value : undefined,
-                max: typeForNumberOfAnswers === "min-max" ? maxNumberOfAnswersInput.value : undefined,
-                min: typeForNumberOfAnswers === "min-max" ? minNumberOfAnswersInput.value : undefined
+                equal: typeForNumberOfAnswers === "equal" && equalToNumberOfAnswersInput.value ? equalToNumberOfAnswersInput.value : undefined,
+                max: typeForNumberOfAnswers === "min-max" && maxNumberOfAnswersInput.value ? maxNumberOfAnswersInput.value : undefined,
+                min: typeForNumberOfAnswers === "min-max" && minNumberOfAnswersInput.value ? minNumberOfAnswersInput.value : undefined
             },
-            haveScales: haveScalesInput.checked
+            haveScales: haveScalesInput.checked,
+            styles: areaHighlighterType && (areaHoverColorInput.value || areaBorderWidthInput.value || areaBorderColorInput.value)
+                ? {
+                    areaHighlight: {
+                        type: areaHighlighterType,
+                        color: areaHighlighterType === "color" && areaHoverColorInput.value ? areaHoverColorInput.value : undefined,
+                        border: areaHighlighterType === "border" && (areaBorderWidthInput.value || areaBorderColorInput.value)
+                            ? {
+                                width: areaBorderWidthInput.value ? areaBorderWidthInput.value : undefined,
+                                color: areaBorderColorInput.value ? areaBorderColorInput.value : undefined
+                            }
+                            : undefined,
+                    }
+                }
+                : undefined
         };
 
         const areaTextItems = areaTextListWrapper.querySelectorAll(".area-text-item__text");
@@ -321,12 +376,12 @@ export default class HeatmapDesignerManager {
     };
 
     setupMinMaxEqualInputs = () => {
-        const {typeForNumberOfAnswersInput, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput} = this.elements;
+        const {typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput} = this.elements;
 
-        typeForNumberOfAnswersInput.addEventListener('change', (e) => {
+        typeForNumberOfAnswersSelector.addEventListener('change', (e) => {
             const selector = e.target;
-            this.toggleElementsVisibility({elements: [equalToNumberOfAnswersInput.parentNode], shouldBeShown: selector[0].selected});
-            this.toggleElementsVisibility({elements: [minNumberOfAnswersInput.parentNode, maxNumberOfAnswersInput.parentNode], shouldBeShown: selector[1].selected});
+            this.toggleElementsVisibility({elements: [equalToNumberOfAnswersInput.parentNode.parentNode], shouldBeShown: selector[0].selected});
+            this.toggleElementsVisibility({elements: [minNumberOfAnswersInput.parentNode.parentNode, maxNumberOfAnswersInput.parentNode.parentNode], shouldBeShown: selector[1].selected});
         });
     };
 
@@ -348,6 +403,16 @@ export default class HeatmapDesignerManager {
 
         this.toggleElementsVisibility({elements: [imageSettingsWrapper], shouldBeShown: true});
         this.toggleElementsVisibility({elements: [areasWrapper]});
+    };
+
+    setupAdditionalStyles = () => {
+        const {areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput} = this.elements;
+
+        areaHighlighterSelector.addEventListener('change', (e) => {
+            const selector = e.target;
+            this.toggleElementsVisibility({elements: [areaHoverColorInput.parentNode.parentNode], shouldBeShown: selector[0].selected});
+            this.toggleElementsVisibility({elements: [areaBorderWidthInput.parentNode.parentNode, areaBorderColorInput.parentNode.parentNode], shouldBeShown: selector[1].selected});
+        });
     };
 
     toggleElementsVisibility = ({elements, shouldBeShown}) => {

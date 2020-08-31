@@ -106,7 +106,7 @@ export default class Heatmap {
         const tooltip = new Tooltip({
             id: id + '-area-indicator-tooltip-' + areaIndex,
             targetId: indicator.id,
-            title: !haveScales ? "" : areaTitle,
+            title: haveScales ? areaTitle : "",
             content: haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : areaTitle,
             onCreated: this.onTooltipCreated.bind(this, {areaIndex, indicator})
         });
@@ -311,11 +311,14 @@ export default class Heatmap {
 
         // area highlighting
         if (styles) {
-            const {emptyAreaHoverColor, borderWidth} = styles;
-            if (!styles.borderWidth) {
-                stylesElement.innerText += ".select-areas-background-area:hover { background-color: " + (emptyAreaHoverColor ? emptyAreaHoverColor : "#fff") + "; opacity: 0.5; }";
-            } else {
-                stylesElement.innerText += ".select-areas-background-area { border: " + borderWidth + "px solid black; }";
+            if (styles.areaHighlight) {
+                const {color, border} = styles.areaHighlight;
+                if (color) {
+                    stylesElement.innerText += ".select-areas-background-area:hover { background-color: " + (color ? color : "#fff") + "; opacity: 0.5; }";
+                }
+                if (border) {
+                    stylesElement.innerText += ".select-areas-background-area { border: " + (border.width ? border.width : "1") + "px solid " + (border.color ? border.color : "#000") + "; }";
+                }
             }
         } else {
             stylesElement.innerText += ".select-areas-background-area:hover { background-color: #fff; opacity: 0.5; }";

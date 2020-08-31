@@ -214,7 +214,7 @@ var Tooltip = function Tooltip(_ref) {
       title = _ref.title,
       content = _ref.content,
       onCreated = _ref.onCreated;
-  return new jBox('Tooltip', {
+  return title || content ? new jBox('Tooltip', {
     id: id,
     trigger: 'mouseenter',
     attach: '#' + targetId,
@@ -228,7 +228,7 @@ var Tooltip = function Tooltip(_ref) {
     content: content,
     closeOnMouseleave: true,
     onCreated: onCreated
-  });
+  }) : undefined;
 };
 // CONCATENATED MODULE: ./dev/question/Heatmap.js
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -328,7 +328,7 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     var tooltip = new Tooltip({
       id: id + '-area-indicator-tooltip-' + areaIndex,
       targetId: indicator.id,
-      title: !haveScales ? "" : areaTitle,
+      title: haveScales ? areaTitle : "",
       content: haveScales ? _this.createButtonsWrapperWithAreaAttributes({
         areaIndex: areaIndex
       }).innerHTML : areaTitle,
@@ -578,13 +578,18 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
 
 
     if (styles) {
-      var emptyAreaHoverColor = styles.emptyAreaHoverColor,
-          borderWidth = styles.borderWidth;
+      if (styles.areaHighlight) {
+        var _styles$areaHighlight = styles.areaHighlight,
+            color = _styles$areaHighlight.color,
+            border = _styles$areaHighlight.border;
 
-      if (!styles.borderWidth) {
-        stylesElement.innerText += ".select-areas-background-area:hover { background-color: " + (emptyAreaHoverColor ? emptyAreaHoverColor : "#fff") + "; opacity: 0.5; }";
-      } else {
-        stylesElement.innerText += ".select-areas-background-area { border: " + borderWidth + "px solid black; }";
+        if (color) {
+          stylesElement.innerText += ".select-areas-background-area:hover { background-color: " + (color ? color : "#fff") + "; opacity: 0.5; }";
+        }
+
+        if (border) {
+          stylesElement.innerText += ".select-areas-background-area { border: " + (border.width ? border.width : "1") + "px solid " + (border.color ? border.color : "#000") + "; }";
+        }
       }
     } else {
       stylesElement.innerText += ".select-areas-background-area:hover { background-color: #fff; opacity: 0.5; }";

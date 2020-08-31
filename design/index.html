@@ -85,7 +85,6 @@
         </div>
     </div>
 
-
     <div class="node-properties-key-fields comd-panel comd-panel--collapsed" id="answerOptionsWrapper">
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
@@ -166,34 +165,75 @@
             <div class="node-properties">
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="number-of-responses__type">Number of answers</label>
+                        <label class="node-property__label" for="number-of-responses__type" style="margin-right: 0.5em;">Number of answers</label>
                         <select class="form-input" name="number-of-responses__type" id="number-of-responses__type"/>
-                        <option value="equal">Equal to</option>
-                        <option value="min-max" selected>Min/max count</option>
+                            <option value="equal">Equal to</option>
+                            <option value="min-max" selected>Min/max count</option>
                         </select>
                     </div>
                 </div>
-
-                <div class="node-property-container min-max-container" >
+                <div class="node-property-container" >
                     <div class="node-property">
                         <label class="node-property__label" for="number-of-responses__min">Min</label>
                         <input type="number" class="form-input form-input--3ch" id="number-of-responses__min" min="1"
                                value=""/>
                     </div>
                 </div>
-
-                <div class="node-property-container min-max-container">
+                <div class="node-property-container">
                     <div class="node-property">
                         <label class="node-property__label" for="number-of-responses__max">Max</label>
                         <input type="number" class="form-input form-input--3ch" id="number-of-responses__max" value=""/>
                     </div>
                 </div>
-
-                <div class="node-property-container equal-count-container">
+                <div class="node-property-container">
                     <div class="node-property">
                         <label class="node-property__label" for="number-of-responses__min">Count</label>
                         <input type="number" class="form-input form-input--3ch" id="number-of-responses__equal" min="1"
                                value=""/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="node-properties-key-fields comd-panel comd-panel--collapsed" id="stylesWrapper">
+        <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
+            <div class="node-properties__toggle co-flex co-flex--center">
+                <h4 class="co-text-size-normal">Additional styles</h4>
+                <!--                <div class="sd-tooltip-help" data-tooltip-text="This is the test tooltip text which would be shown when hoover on the tooltip icon. Example of a long one"></div>-->
+            </div>
+            <div class="co-flex co-flex--center">
+                <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
+            </div>
+        </header>
+        <div class="comd-panel__collapse-area">
+            <div class="node-properties">
+                <div class="node-property-container">
+                    <div class="node-property">
+                        <label class="node-property__label" for="areaHighlighterSelector">Type of area highlighting</label>
+                        <select class="form-input" id="areaHighlighterSelector"/>
+                            <option value="color" selected>Background color on hover</option>
+                            <option value="width">Permanent border</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="node-property-container">
+                    <div class="node-property">
+                        <label class="node-property__label" for="areaHoverColor">Color</label>
+                        <input type="color" class="form-input" id="areaHoverColor"/>
+                    </div>
+                </div>
+                <div class="node-property-container">
+                    <div class="node-property">
+                        <label class="node-property__label" for="areaBorderWidth">Border width</label>
+                        <input type="number" class="form-input form-input--4ch" id="areaBorderWidth" min="1"/>
+                        <span>px</span>
+                    </div>
+                </div>
+                <div class="node-property-container">
+                    <div class="node-property">
+                        <label class="node-property__label" for="areaHoverColor">Border color</label>
+                        <input type="color" class="form-input" id="areaBorderColor"/>
                     </div>
                 </div>
             </div>
