@@ -355,6 +355,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
 
   HeatmapDesignerManager_defineProperty(this, "setValuesFromSettings", function (settings) {
     var _this$elements2 = _this.elements,
+        answerOptionsWrapper = _this$elements2.answerOptionsWrapper,
         imageSrcInput = _this$elements2.imageSrcInput,
         imageWidthInput = _this$elements2.imageWidthInput,
         haveScalesInput = _this$elements2.haveScalesInput,
@@ -375,6 +376,10 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
         customScales = settings.customScales,
         answersCount = settings.answersCount,
         areas = settings.areas;
+
+    if (haveScales || answersCount.type === "equal" && answersCount.equal || answersCount.type === "min-max" && (answersCount.min || answersCount.max)) {
+      answerOptionsWrapper.classList.remove("comd-panel--collapsed");
+    }
 
     if (imageOptions) {
       imageSrcInput.value = imageOptions.src;
@@ -792,6 +797,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     areasWrapper: document.getElementById('areas'),
     areaTextListWrapper: document.getElementById('areaTextList'),
     heatmapWrapper: document.getElementById('heatmap-wrapper'),
+    answerOptionsWrapper: document.getElementById('answerOptionsWrapper'),
     activateScalesWrapper: document.getElementById('activateScales'),
     customScalesWrapper: document.getElementById('customScales'),
     customScaleListWrapper: document.getElementById('customScaleListWrapper'),

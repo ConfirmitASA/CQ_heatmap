@@ -23,6 +23,7 @@ export default class HeatmapDesignerManager {
             areasWrapper: document.getElementById('areas'),
             areaTextListWrapper: document.getElementById('areaTextList'),
             heatmapWrapper: document.getElementById('heatmap-wrapper'),
+            answerOptionsWrapper: document.getElementById('answerOptionsWrapper'),
             activateScalesWrapper: document.getElementById('activateScales'),
             customScalesWrapper: document.getElementById('customScales'),
             customScaleListWrapper: document.getElementById('customScaleListWrapper'),
@@ -58,9 +59,14 @@ export default class HeatmapDesignerManager {
     };
 
     setValuesFromSettings = (settings) => {
-        const {imageSrcInput, imageWidthInput, haveScalesInput, activateScalesWrapper, activateDefaultScalesInput, activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, scalesNumberInput,
-            typeForNumberOfAnswersInput, equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput, areasWrapper} = this.elements;
+        const {answerOptionsWrapper, imageSrcInput, imageWidthInput, haveScalesInput, activateScalesWrapper, activateDefaultScalesInput,
+            activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, scalesNumberInput, typeForNumberOfAnswersInput,
+            equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput, areasWrapper} = this.elements;
         const {imageOptions, haveScales, scaleType, customScales, answersCount, areas} = settings;
+
+        if (haveScales || answersCount.type === "equal" && answersCount.equal || answersCount.type === "min-max" && (answersCount.min || answersCount.max)) {
+            answerOptionsWrapper.classList.remove("comd-panel--collapsed");
+        }
 
         if (imageOptions) {
             imageSrcInput.value = imageOptions.src;
