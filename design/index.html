@@ -69,7 +69,18 @@
                     </div>
                 </div>
                 <div id="heatmap-wrapper" style="width: 100%; overflow-x: auto;"></div>
-                <div id="areaTextList" style="margin-top: 1em"></div>
+                <div class="inputlist-container" style="margin-top: 1em">
+                    <table class="inputlist">
+                        <thead style="display: none;">
+                            <tr>
+                                <th class="inputlist__header"></th>
+                                <th class="inputlist__header"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="areaTextList">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -133,7 +144,19 @@
                                         <input class="node-input-area__input form-control input-sm form-input form-input--2ch"
                                                type="number" id="scalesNumber" min="1"/>
                                     </div>
-                                    <div id="customScaleList"></div>
+                                    <div class="inputlist-container" id="customScaleListWrapper">
+                                        <table class="inputlist">
+                                            <thead>
+                                                <tr>
+                                                    <th class="inputlist__header"></th>
+                                                    <th class="inputlist__header">Code</th>
+                                                    <th class="inputlist__header">Text</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="customScaleList">
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </li>
                         </ul>

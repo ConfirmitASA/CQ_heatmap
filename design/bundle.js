@@ -158,93 +158,90 @@ var HeatmapDesigner = function HeatmapDesigner(_ref) {
 
 
 // CONCATENATED MODULE: ./dev/components/InputWrapper.js
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 var InputWrapper = function InputWrapper(_ref) {
   var id = _ref.id,
       wrapperClass = _ref.wrapperClass,
-      inputs = _ref.inputs;
+      components = _ref.components;
 
   var createWrapper = function createWrapper(_ref2) {
     var id = _ref2.id,
         wrapperClass = _ref2.wrapperClass;
-    var wrapper = document.createElement("div");
+    var wrapper = document.createElement("tr");
     wrapper.classList.add(wrapperClass);
-    wrapper.classList.add("node-input-row");
+    wrapper.classList.add("inputlist__item");
     wrapper.id = id;
     return wrapper;
-  }; // const createDeleteButton = () => {
-  //     const button = document.createElement("button");
-  //     button.classList.add("sd-temp-icon-button");
-  //     button.classList.add("custom-scale-item__delete");
-  //     button.style.paddingTop = "4px";
-  //     button.innerHTML = `
-  //         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="answerlist__btn-delete-answer-icon" fill="rgba(18, 24, 33, 0.6)">
-  //             <path d="M7.91 23.45h9.82c.53 0 1.64-1.16 1.64-3.27v-13H4.64v13a2.93 2.93 0 0 0 3.27 3.27zm8.18-21.27L14.45.55H9.54L7.91 2.18H3v3.24h18V2.18z"></path>
-  //         </svg>
-  //     `;
-  //     button.addEventListener('click', onDeleteButtonClick);
-  //     return button;
-  // };
-
-
-  var createLabel = function createLabel(_ref3) {
-    var text = _ref3.text;
-    var label = document.createElement("label");
-    label.classList.add("node-input-row__label");
-    label.classList.add("sd-label");
-    label.innerText = text;
-    return label;
   };
 
-  var createInput = function createInput(_ref4) {
-    var sizeClass = _ref4.sizeClass,
-        wrapperClass = _ref4.wrapperClass,
-        type = _ref4.type,
-        onInputsChange = _ref4.onInputsChange;
-    var input = document.createElement("input");
-    input.classList.add("node-input-row__input");
-    input.classList.add("form-input");
-    input.classList.add(wrapperClass);
-    input.classList.add(sizeClass);
-    input.type = type;
-    input.addEventListener('change', onInputsChange);
-    return input;
-  }; // const onDeleteButtonClick = () => {
-  //     wrapper.remove();
-  // };
+  var createComponent = function createComponent(_ref3) {
+    var _component$classList;
 
+    var tag = _ref3.tag,
+        classes = _ref3.classes,
+        inputType = _ref3.inputType,
+        onInputChange = _ref3.onInputChange,
+        inputDefaultValue = _ref3.inputDefaultValue,
+        labelText = _ref3.labelText;
+    var column = document.createElement("td");
+    column.classList.add("inputlist__column");
+    var component = document.createElement(tag);
+    classes.length > 0 && (_component$classList = component.classList).add.apply(_component$classList, _toConsumableArray(classes));
+
+    switch (tag) {
+      case "input":
+        component.type = inputType;
+        component.addEventListener('change', onInputChange);
+
+        if (inputDefaultValue) {
+          component.value = inputDefaultValue;
+        }
+
+        break;
+
+      case "label":
+        if (labelText) {
+          component.innerText = labelText;
+        }
+
+        break;
+    }
+
+    column.appendChild(component);
+    return column;
+  };
 
   var wrapper = createWrapper({
     id: id,
     wrapperClass: wrapperClass
-  }); // const button = createDeleteButton();
-  // wrapper.appendChild(button);
-
-  inputs.forEach(function (inputOptions) {
-    var sizeClass = inputOptions.sizeClass,
-        wrapperClass = inputOptions.wrapperClass,
-        type = inputOptions.type,
-        onInputsChange = inputOptions.onInputsChange,
-        defaultValue = inputOptions.defaultValue,
-        labelText = inputOptions.labelText;
-    var input = createInput({
-      sizeClass: sizeClass,
-      wrapperClass: wrapperClass,
-      type: type,
-      onInputsChange: onInputsChange
+  });
+  components.forEach(function (options) {
+    var tag = options.tag,
+        classes = options.classes,
+        inputType = options.inputType,
+        onInputChange = options.onInputChange,
+        inputDefaultValue = options.inputDefaultValue,
+        labelText = options.labelText;
+    var component = createComponent({
+      tag: tag,
+      classes: classes,
+      inputType: inputType,
+      onInputChange: onInputChange,
+      inputDefaultValue: inputDefaultValue,
+      labelText: labelText
     });
-
-    if (defaultValue) {
-      input.value = defaultValue;
-    }
-
-    if (labelText) {
-      var label = createLabel({
-        text: labelText
-      });
-      wrapper.appendChild(label);
-    }
-
-    wrapper.appendChild(input);
+    wrapper.appendChild(component);
   });
   return wrapper;
 };
@@ -252,52 +249,55 @@ var InputWrapper = function InputWrapper(_ref) {
 
 var CustomScaleItem_CustomScaleItem = function CustomScaleItem(_ref) {
   var id = _ref.id,
-      onInputsChange = _ref.onInputsChange,
+      onInputChange = _ref.onInputChange,
       defaultValue = _ref.defaultValue;
-  var inputs = [{
-    wrapperClass: "custom-scale-item__color",
-    sizeClass: "form-input--2ch",
-    type: "color",
-    onInputsChange: onInputsChange,
-    defaultValue: defaultValue ? defaultValue.color : undefined
+  var components = [{
+    tag: "input",
+    classes: ["custom-scale-item__color", "form-input", "form-input--2ch"],
+    inputType: "color",
+    onInputChange: onInputChange,
+    inputDefaultValue: defaultValue ? defaultValue.color : undefined
   }, {
-    wrapperClass: "custom-scale-item__code",
-    sizeClass: "form-input--8ch",
-    type: "text",
-    onInputsChange: onInputsChange,
-    defaultValue: defaultValue ? defaultValue.code : undefined
+    tag: "input",
+    classes: ["custom-scale-item__code", "form-input", "form-input--8ch"],
+    inputType: "text",
+    onInputChange: onInputChange,
+    inputDefaultValue: defaultValue ? defaultValue.code : undefined
   }, {
-    wrapperClass: "custom-scale-item__label",
-    sizeClass: "form-input--40ch",
-    type: "text",
-    onInputsChange: onInputsChange,
-    defaultValue: defaultValue ? defaultValue.label : undefined
+    tag: "input",
+    classes: ["custom-scale-item__label", "form-input", "form-input--40ch"],
+    inputType: "text",
+    onInputChange: onInputChange,
+    inputDefaultValue: defaultValue ? defaultValue.label : undefined
   }];
   return new InputWrapper({
     id: id,
     wrapperClass: "custom-scale-item",
-    inputs: inputs
+    components: components
   });
 };
 // CONCATENATED MODULE: ./dev/components/AreaTextItem.js
 
 var AreaTextItem_AreaTextItem = function AreaTextItem(_ref) {
   var id = _ref.id,
-      onInputsChange = _ref.onInputsChange,
+      onInputChange = _ref.onInputChange,
       defaultValue = _ref.defaultValue,
       labelText = _ref.labelText;
-  var inputs = [{
-    wrapperClass: "area-text-item__text",
-    sizeClass: "form-input--40ch",
-    type: "text",
-    onInputsChange: onInputsChange,
-    defaultValue: defaultValue,
+  var components = [{
+    tag: "label",
+    classes: [],
     labelText: labelText
+  }, {
+    tag: "input",
+    classes: ["area-text-item__text", "form-input", "form-input--40ch"],
+    inputType: "text",
+    onInputChange: onInputChange,
+    inputDefaultValue: defaultValue
   }];
   return new InputWrapper({
     id: id,
     wrapperClass: "area-text-item",
-    inputs: inputs
+    components: components
   });
 };
 // CONCATENATED MODULE: ./dev/designer/HeatmapDesignerManager.js
@@ -336,7 +336,6 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
   HeatmapDesignerManager_defineProperty(this, "setDefaultAttributes", function () {
     var _this$elements = _this.elements,
         areasWrapper = _this$elements.areasWrapper,
-        areaTextListWrapper = _this$elements.areaTextListWrapper,
         imageWidthInput = _this$elements.imageWidthInput,
         activateScalesWrapper = _this$elements.activateScalesWrapper,
         customScalesWrapper = _this$elements.customScalesWrapper,
@@ -346,14 +345,12 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
         maxNumberOfAnswersInput = _this$elements.maxNumberOfAnswersInput;
 
     _this.toggleElementsVisibility({
-      elements: [areasWrapper, activateScalesWrapper, customScalesWrapper, equalToNumberOfAnswersInput.parentNode]
+      elements: [areasWrapper, activateScalesWrapper, customScalesWrapper, customScaleListWrapper, equalToNumberOfAnswersInput.parentNode]
     });
 
     minNumberOfAnswersInput.setAttribute("min", 1);
     maxNumberOfAnswersInput.setAttribute("min", 1);
     imageWidthInput.setAttribute("min", 1);
-    areaTextListWrapper.classList.add("node-input-list");
-    customScaleListWrapper.classList.add("node-input-list");
   });
 
   HeatmapDesignerManager_defineProperty(this, "setValuesFromSettings", function (settings) {
@@ -365,6 +362,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
         activateDefaultScalesInput = _this$elements2.activateDefaultScalesInput,
         activateCustomScalesInput = _this$elements2.activateCustomScalesInput,
         customScalesWrapper = _this$elements2.customScalesWrapper,
+        customScaleListWrapper = _this$elements2.customScaleListWrapper,
         scalesNumberInput = _this$elements2.scalesNumberInput,
         typeForNumberOfAnswersInput = _this$elements2.typeForNumberOfAnswersInput,
         equalToNumberOfAnswersInput = _this$elements2.equalToNumberOfAnswersInput,
@@ -412,7 +410,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     }
 
     _this.toggleElementsVisibility({
-      elements: [customScalesWrapper],
+      elements: [customScalesWrapper, customScaleListWrapper],
       shouldBeShown: haveScales && scaleType === "custom"
     });
 
@@ -522,7 +520,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
       for (var i = 1; i <= areasCount - areaTextItems.length; i++) {
         areaTextListWrapper.appendChild(new AreaTextItem_AreaTextItem({
           id: "area-text-item".concat(areaTextItems.length + i),
-          onInputsChange: _this.saveChanges,
+          onInputChange: _this.saveChanges,
           defaultValue: defaultValues ? defaultValues[i - 1] : undefined,
           labelText: areaTextItems.length + i
         }));
@@ -643,6 +641,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
         activateDefaultScalesInput = _this$elements9.activateDefaultScalesInput,
         activateCustomScalesInput = _this$elements9.activateCustomScalesInput,
         customScalesWrapper = _this$elements9.customScalesWrapper,
+        customScaleListWrapper = _this$elements9.customScaleListWrapper,
         scalesNumberInput = _this$elements9.scalesNumberInput;
     haveScalesInput.addEventListener('change', function () {
       _this.toggleElementsVisibility({
@@ -669,6 +668,14 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
         shouldBeShown: true
       });
     });
+    scalesNumberInput.addEventListener('change', function () {
+      var scalesNumberInputValue = scalesNumberInput.value;
+
+      _this.toggleElementsVisibility({
+        elements: [customScaleListWrapper],
+        shouldBeShown: scalesNumberInputValue
+      });
+    });
     scalesNumberInput.addEventListener('change', _this.createScaleItems);
   });
 
@@ -676,8 +683,8 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     var defaultValues = _ref4.defaultValues;
     var _this$elements10 = _this.elements,
         scalesNumberInput = _this$elements10.scalesNumberInput,
-        customScaleListWrapper = _this$elements10.customScaleListWrapper;
-    var scaleItems = customScaleListWrapper.querySelectorAll(".custom-scale-item");
+        customScaleList = _this$elements10.customScaleList;
+    var scaleItems = customScaleList.querySelectorAll(".custom-scale-item");
     var scalesNumberInputValue = parseInt(scalesNumberInput.value);
 
     if (scaleItems.length === scalesNumberInputValue) {
@@ -686,9 +693,9 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
 
     if (scaleItems.length < scalesNumberInputValue) {
       for (var i = 1; i <= scalesNumberInputValue - scaleItems.length; i++) {
-        customScaleListWrapper.appendChild(new CustomScaleItem_CustomScaleItem({
+        customScaleList.appendChild(new CustomScaleItem_CustomScaleItem({
           id: "custom-scale-item".concat(scaleItems.length + i),
-          onInputsChange: _this.saveChanges,
+          onInputChange: _this.saveChanges,
           defaultValue: defaultValues ? defaultValues[i - 1] : undefined
         }));
       }
@@ -787,7 +794,8 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     heatmapWrapper: document.getElementById('heatmap-wrapper'),
     activateScalesWrapper: document.getElementById('activateScales'),
     customScalesWrapper: document.getElementById('customScales'),
-    customScaleListWrapper: document.getElementById('customScaleList')
+    customScaleListWrapper: document.getElementById('customScaleListWrapper'),
+    customScaleList: document.getElementById('customScaleList')
   };
   this.showImage = false;
   this.hasErrors = false;

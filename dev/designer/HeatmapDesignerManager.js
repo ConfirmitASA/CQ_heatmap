@@ -25,7 +25,8 @@ export default class HeatmapDesignerManager {
             heatmapWrapper: document.getElementById('heatmap-wrapper'),
             activateScalesWrapper: document.getElementById('activateScales'),
             customScalesWrapper: document.getElementById('customScales'),
-            customScaleListWrapper: document.getElementById('customScaleList')
+            customScaleListWrapper: document.getElementById('customScaleListWrapper'),
+            customScaleList: document.getElementById('customScaleList')
         };
 
         this.showImage = false;
@@ -46,21 +47,18 @@ export default class HeatmapDesignerManager {
     };
 
     setDefaultAttributes = () => {
-        const {areasWrapper, areaTextListWrapper, imageWidthInput, activateScalesWrapper, customScalesWrapper, customScaleListWrapper,
+        const {areasWrapper, imageWidthInput, activateScalesWrapper, customScalesWrapper, customScaleListWrapper,
             equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput} = this.elements;
 
-        this.toggleElementsVisibility({elements: [areasWrapper, activateScalesWrapper, customScalesWrapper, equalToNumberOfAnswersInput.parentNode]});
+        this.toggleElementsVisibility({elements: [areasWrapper, activateScalesWrapper, customScalesWrapper, customScaleListWrapper, equalToNumberOfAnswersInput.parentNode]});
 
         minNumberOfAnswersInput.setAttribute("min", 1);
         maxNumberOfAnswersInput.setAttribute("min", 1);
         imageWidthInput.setAttribute("min", 1);
-
-        areaTextListWrapper.classList.add("node-input-list");
-        customScaleListWrapper.classList.add("node-input-list");
     };
 
     setValuesFromSettings = (settings) => {
-        const {imageSrcInput, imageWidthInput, haveScalesInput, activateScalesWrapper, activateDefaultScalesInput, activateCustomScalesInput, customScalesWrapper, scalesNumberInput,
+        const {imageSrcInput, imageWidthInput, haveScalesInput, activateScalesWrapper, activateDefaultScalesInput, activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, scalesNumberInput,
             typeForNumberOfAnswersInput, equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput, areasWrapper} = this.elements;
         const {imageOptions, haveScales, scaleType, customScales, answersCount, areas} = settings;
 
@@ -84,7 +82,7 @@ export default class HeatmapDesignerManager {
             scalesNumberInput.value = customScales.length;
             this.createScaleItems({defaultValues: customScales});
         }
-        this.toggleElementsVisibility({elements: [customScalesWrapper], shouldBeShown: haveScales && scaleType === "custom"});
+        this.toggleElementsVisibility({elements: [customScalesWrapper, customScaleListWrapper], shouldBeShown: haveScales && scaleType === "custom"});
 
         if (answersCount.type === "equal") {
             typeForNumberOfAnswersInput[0].selected = true;
@@ -160,7 +158,7 @@ export default class HeatmapDesignerManager {
             for (let i = 1; i <= areasCount - areaTextItems.length; i++) {
                 areaTextListWrapper.appendChild(new AreaTextItem({
                     id: `area-text-item${areaTextItems.length + i}`,
-                    onInputsChange: this.saveChanges,
+                    onInputChange: this.saveChanges,
                     defaultValue: defaultValues ? defaultValues[i - 1] : undefined,
                     labelText: areaTextItems.length + i
                 }));
@@ -262,7 +260,7 @@ export default class HeatmapDesignerManager {
     };
 
     setupScaleElements = () => {
-        const {haveScalesInput, activateScalesWrapper, activateDefaultScalesInput, activateCustomScalesInput, customScalesWrapper, scalesNumberInput} = this.elements;
+        const {haveScalesInput, activateScalesWrapper, activateDefaultScalesInput, activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, scalesNumberInput} = this.elements;
 
         haveScalesInput.addEventListener('change', () => {
             this.toggleElementsVisibility({elements: [activateScalesWrapper], shouldBeShown: haveScalesInput.checked});
@@ -283,12 +281,16 @@ export default class HeatmapDesignerManager {
             this.toggleElementsVisibility({elements: [customScalesWrapper], shouldBeShown: true});
         });
 
+        scalesNumberInput.addEventListener('change', () => {
+            const scalesNumberInputValue = scalesNumberInput.value;
+            this.toggleElementsVisibility({elements: [customScaleListWrapper], shouldBeShown: scalesNumberInputValue});
+        });
         scalesNumberInput.addEventListener('change', this.createScaleItems);
     };
 
     createScaleItems = ({defaultValues}) => {
-        const {scalesNumberInput, customScaleListWrapper} = this.elements;
-        const scaleItems = customScaleListWrapper.querySelectorAll(".custom-scale-item");
+        const {scalesNumberInput, customScaleList} = this.elements;
+        const scaleItems = customScaleList.querySelectorAll(".custom-scale-item");
         const scalesNumberInputValue = parseInt(scalesNumberInput.value);
 
         if (scaleItems.length === scalesNumberInputValue) {
@@ -297,7 +299,11 @@ export default class HeatmapDesignerManager {
 
         if (scaleItems.length < scalesNumberInputValue) {
             for (let i = 1; i <= scalesNumberInputValue - scaleItems.length; i++) {
-                customScaleListWrapper.appendChild(new CustomScaleItem({id: `custom-scale-item${scaleItems.length + i}`, onInputsChange: this.saveChanges, defaultValue: defaultValues ? defaultValues[i - 1] : undefined}));
+                customScaleList.appendChild(new CustomScaleItem({
+                    id: `custom-scale-item${scaleItems.length + i}`,
+                    onInputChange: this.saveChanges,
+                    defaultValue: defaultValues ? defaultValues[i - 1] : undefined
+                }));
             }
         } else {
             scaleItems.forEach((item, index) => {

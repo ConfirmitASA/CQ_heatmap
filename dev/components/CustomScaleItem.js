@@ -1,29 +1,29 @@
 import {InputWrapper} from "./InputWrapper";
 
-export const CustomScaleItem = ({id, onInputsChange, defaultValue}) => {
-    const inputs = [
+export const CustomScaleItem = ({id, onInputChange, defaultValue}) => {
+    const components = [
         {
-            wrapperClass: "custom-scale-item__color",
-            sizeClass: "form-input--2ch",
-            type: "color",
-            onInputsChange,
-            defaultValue: defaultValue ? defaultValue.color : undefined
+            tag: "input",
+            classes: ["custom-scale-item__color", "form-input", "form-input--2ch"],
+            inputType: "color",
+            onInputChange,
+            inputDefaultValue: defaultValue ? defaultValue.color : undefined
         },
         {
-            wrapperClass: "custom-scale-item__code",
-            sizeClass: "form-input--8ch",
-            type: "text",
-            onInputsChange,
-            defaultValue: defaultValue ? defaultValue.code : undefined
+            tag: "input",
+            classes: ["custom-scale-item__code", "form-input", "form-input--8ch"],
+            inputType: "text",
+            onInputChange,
+            inputDefaultValue: defaultValue ? defaultValue.code : undefined
         },
         {
-            wrapperClass: "custom-scale-item__label",
-            sizeClass: "form-input--40ch",
-            type: "text",
-            onInputsChange,
-            defaultValue: defaultValue ? defaultValue.label : undefined
+            tag: "input",
+            classes: ["custom-scale-item__label", "form-input", "form-input--40ch"],
+            inputType: "text",
+            onInputChange,
+            inputDefaultValue: defaultValue ? defaultValue.label : undefined
         }
     ];
 
-    return new InputWrapper({id, wrapperClass: "custom-scale-item", inputs});
+    return new InputWrapper({id, wrapperClass: "custom-scale-item", components});
 };

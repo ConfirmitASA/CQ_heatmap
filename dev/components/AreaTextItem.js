@@ -1,16 +1,20 @@
 import {InputWrapper} from "./InputWrapper";
 
-export const AreaTextItem = ({id, onInputsChange, defaultValue, labelText}) => {
-    const inputs = [
+export const AreaTextItem = ({id, onInputChange, defaultValue, labelText}) => {
+    const components = [
         {
-            wrapperClass: "area-text-item__text",
-            sizeClass: "form-input--40ch",
-            type: "text",
-            onInputsChange,
-            defaultValue,
+            tag: "label",
+            classes: [],
             labelText
+        },
+        {
+            tag: "input",
+            classes: ["area-text-item__text", "form-input", "form-input--40ch"],
+            inputType: "text",
+            onInputChange,
+            inputDefaultValue: defaultValue
         }
     ];
 
-    return new InputWrapper({id, wrapperClass: "area-text-item", inputs});
+    return new InputWrapper({id, wrapperClass: "area-text-item", components});
 };
