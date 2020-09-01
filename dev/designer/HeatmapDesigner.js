@@ -1,8 +1,9 @@
 export default class HeatmapDesigner {
-    constructor ({wrapperId, imageOptions, predefinedAreas, onAreasChanged, onAreasInit}) {
+    constructor ({wrapperId, imageOptions, predefinedAreas, maxAreas, onAreasChanged, onAreasInit}) {
         this.id = wrapperId;
         this.imageOptions = imageOptions;
         this.predefinedAreas = predefinedAreas;
+        this.maxAreas = maxAreas ? maxAreas : 0;
         this.onAreasChanged = onAreasChanged;
         this.onAreasInit = onAreasInit;
         this.wrapper = document.querySelector("#" + this.id);
@@ -34,7 +35,7 @@ export default class HeatmapDesigner {
             minSize: [0, 0],
             maxSize: [0, 0],
             width: 0,
-            maxAreas: 0,
+            maxAreas: this.maxAreas,
             outlineOpacity: 0.5,
             overlayOpacity: 0.5,
             areas: predefinedAreas,

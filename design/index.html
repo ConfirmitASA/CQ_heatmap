@@ -14,7 +14,7 @@
 <div class="survey-settings">
     <div class="comd-alert comd-alert--info">
         <div class="comd-alert__text">
-            If you want user to be able to choose only some of answers, please remove "Required" property on the Edit
+            If you want user to be able to choose only some of answers, remove "Required" property on the Edit
             tab
         </div>
     </div>
@@ -23,7 +23,11 @@
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
                 <h4 class="co-text-size-normal">Image options</h4>
-                <!--                <div class="sd-tooltip-help" data-tooltip-text="This is the test tooltip text which would be shown when hoover on the tooltip icon. Example of a long one"></div>-->
+                <div class="sd-tooltip-help" data-tooltip-text="This is the main part of the Question
+Image is used to create areas on it. You need to specify its URL and exact width that you'd like it to have
+When you click on 'Draw image' button, the image is created as it will be in the survey
+You can create as many areas as you have answers in the Question
+You can also add some description text to each area which will appear in tooltip"></div>
             </div>
             <div class="co-flex co-flex--center">
                 <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
@@ -35,21 +39,34 @@
                     <div class="node-property">
                         <label class="node-property__label" for="imageSrc">Image source
                             <div class="sd-tooltip-help"
-                                 data-tooltip-text="To have textarea or input type text with width 100% you need to have blocks structured like below block 'node-property' right inside of a block 'node-properties' and class 'form-input--full-width' stretches field to full width"></div>
+                                 data-tooltip-text="This image will be used in question to show areas on it&#10;Upload the image in File Library and paste the link of uploaded image here"></div>
                         </label>
                         <input type="text" class="form-input form-input--full-width" name="imageSrc" id="imageSrc">
                     </div>
                 </div>
                 <div class="node-properties">
                     <div class="node-property">
-                        <label class="node-property__label" for="imageWidth">Image width</label>
+                        <label class="node-property__label" for="imageWidth">Image width
+                            <div class="sd-tooltip-help"
+                                 data-tooltip-text="This is the exact width of the image that will be used in the survey&#10;Provide the actual width of the image for better experience"></div>
+                        </label>
                         <input type="number" class="form-input form-input--4ch" name="imageWidth" id="imageWidth"
                                value="" min="1">
                         <span>px</span>
                     </div>
                 </div>
-                <div class="node-property button-block">
-                    <div class="button-block">
+                <div class="node-properties">
+                    <div class="node-property">
+                        <label class="node-property__label" for="numberOfAnswers">Number of answers
+                            <div class="sd-tooltip-help"
+                                 data-tooltip-text="Provide the actual number of answers in the Question (based on answers from 'Edit' tab)"></div>
+                        </label>
+                        <input type="number" class="form-input form-input--4ch" name="numberOfAnswers" id="numberOfAnswers"
+                               value="" min="1">
+                    </div>
+                </div>
+                <div class="node-properties">
+                    <div class="node-property button-block">
                         <button class="comd-button comd-button--secondary-neutral" id="draw-image-btn">
                             <span class="comd-button__content">
                                 <div class="comd-portal-trigger">Draw image</div>
@@ -59,27 +76,40 @@
                 </div>
             </div>
             <div id="areas">
-                <div class="node-property button-block">
-                    <div class="button-block">
-                        <button class="comd-button comd-button--secondary-neutral" id="change-image-btn">
-                            <span class="comd-button__content">
-                                <div class="comd-portal-trigger">Change image options</div>
-                            </span>
-                        </button>
+                <div class="node-properties">
+                    <div class="node-property button-block">
+                        <div class="button-block">
+                            <button class="comd-button comd-button--secondary-neutral" id="change-image-btn">
+                                <span class="comd-button__content">
+                                    <div class="comd-portal-trigger">Change image options</div>
+                                </span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div id="heatmap-wrapper" style="width: 100%; overflow-x: auto;"></div>
-                <div class="inputlist-container" style="margin-top: 1em">
-                    <table class="inputlist">
-                        <thead style="display: none;">
-                            <tr>
-                                <th class="inputlist__header"></th>
-                                <th class="inputlist__header"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="areaTextList">
-                        </tbody>
-                    </table>
+                <div class="node-properties">
+                    <div id="heatmap-wrapper" style="width: 100%; overflow-x: auto;"></div>
+                </div>
+                <div class="node-properties">
+                    <div class="node-property">
+                        <h4>
+                            Area texts in tooltip
+                            <div class="sd-tooltip-help"
+                                 data-tooltip-text="These texts will appear in areas' tooltips&#10;If you want to change some area's text, click on the area above"></div>
+                        </h4>
+                        <div class="inputlist-container">
+                            <table class="inputlist">
+                                <thead style="display: none;">
+                                    <tr>
+                                        <th class="inputlist__header"></th>
+                                        <th class="inputlist__header"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="areaTextList">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -89,19 +119,13 @@
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
                 <h4 class="co-text-size-normal">Answer options</h4>
-                <!--                <div class="sd-tooltip-help" data-tooltip-text="This is the test tooltip text which would be shown when hoover on the tooltip icon. Example of a long one"></div>-->
+                <div class="sd-tooltip-help" data-tooltip-text="These are not necessary options for the Question's answers"></div>
             </div>
             <div class="co-flex co-flex--center">
                 <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
             </div>
         </header>
         <div class="comd-panel__collapse-area">
-            <div class="comd-alert comd-alert--info">
-                <div class="comd-alert__text">
-                    If you want to use positive/neutral/negative scores, please don't forget to add all
-                    three scales (with "positive", "neutral" and "negative" as codes)
-                </div>
-            </div>
             <div class="node-properties">
                 <div class="node-property-container">
                     <div class="node-property node-property--checkbox">
@@ -117,6 +141,12 @@
                     <div class="node-property node-property--radio" id="activateScales">
                         <ul class="option-list">
                             <li class="option-toggle">
+                                <div class="comd-alert comd-alert--info" style="margin-bottom: 0.5em;" id="defaultScalesInfo">
+                                    <div class="comd-alert__text">
+                                        If you want to use positive/neutral/negative scores, don't forget to add all
+                                        three scales (with "positive", "neutral" and "negative" as codes)
+                                    </div>
+                                </div>
                                 <div class="co-toggle co-toggle--radio">
                                     <input class="co-toggle__input" id="activateDefaultScales" type="radio"
                                            name="activateDefaultScales"/>
@@ -139,7 +169,10 @@
                                 </div>
                                 <div style="padding-left: 22px;" id="customScales">
                                     <div class="node-input-area">
-                                        <label class="sd-label node-input-area__label">Number of scales</label>
+                                        <label class="sd-label node-input-area__label">Number of scales
+                                            <div class="sd-tooltip-help"
+                                                 data-tooltip-text="Provide the actual number of scales in the Question (based on answers from 'Edit' tab)"></div>
+                                        </label>
                                         <input class="node-input-area__input form-control input-sm form-input form-input--2ch"
                                                type="number" id="scalesNumber" min="1"/>
                                     </div>
@@ -200,7 +233,6 @@
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
                 <h4 class="co-text-size-normal">Additional styles</h4>
-                <!--                <div class="sd-tooltip-help" data-tooltip-text="This is the test tooltip text which would be shown when hoover on the tooltip icon. Example of a long one"></div>-->
             </div>
             <div class="co-flex co-flex--center">
                 <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
@@ -239,6 +271,10 @@
             </div>
         </div>
     </div>
+</div>
+<div class="comd-tooltip comd-tooltip--right" id="tooltipBox">
+    <div class="comd-tooltip__arrow"></div>
+    <div class="comd-tooltip__inner"></div>
 </div>
 </body>
 <script>

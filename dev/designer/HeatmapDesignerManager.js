@@ -7,6 +7,7 @@ export default class HeatmapDesignerManager {
         this.elements = {
             imageSrcInput: document.getElementById('imageSrc'),
             imageWidthInput: document.getElementById('imageWidth'),
+            numberOfAnswersInput: document.getElementById('numberOfAnswers'),
             haveScalesInput: document.getElementById('haveScales'),
             equalToNumberOfAnswersInput: document.getElementById('number-of-responses__equal'),
             minNumberOfAnswersInput: document.getElementById('number-of-responses__min'),
@@ -32,7 +33,9 @@ export default class HeatmapDesignerManager {
             activateScalesWrapper: document.getElementById('activateScales'),
             customScalesWrapper: document.getElementById('customScales'),
             customScaleListWrapper: document.getElementById('customScaleListWrapper'),
-            customScaleList: document.getElementById('customScaleList')
+            customScaleList: document.getElementById('customScaleList'),
+
+            defaultScalesInfo: document.getElementById('defaultScalesInfo')
         };
 
         this.showImage = false;
@@ -55,7 +58,9 @@ export default class HeatmapDesignerManager {
 
     setDefaultAttributes = () => {
         const {areasWrapper, imageWidthInput, activateScalesWrapper, customScalesWrapper, customScaleListWrapper,
-            equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput} = this.elements;
+            equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput,
+            areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput
+        } = this.elements;
 
         this.toggleElementsVisibility({elements: [areasWrapper, activateScalesWrapper, customScalesWrapper, customScaleListWrapper,
                 equalToNumberOfAnswersInput.parentNode.parentNode, areaBorderWidthInput.parentNode.parentNode, areaBorderColorInput.parentNode.parentNode]});
@@ -68,11 +73,11 @@ export default class HeatmapDesignerManager {
     };
 
     setValuesFromSettings = (settings) => {
-        const {answerOptionsWrapper, imageSrcInput, imageWidthInput, haveScalesInput, activateScalesWrapper, activateDefaultScalesInput,
+        const {answerOptionsWrapper, imageSrcInput, imageWidthInput, numberOfAnswersInput, haveScalesInput, activateScalesWrapper, activateDefaultScalesInput,
             activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, scalesNumberInput, typeForNumberOfAnswersSelector,
-            equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput, areasWrapper,
+            equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput, areasWrapper, defaultScalesInfo,
             areaHighlighterSelector, areaHoverColorInput, areaBorderColorInput, areaBorderWidthInput} = this.elements;
-        const {imageOptions, areas, haveScales, scaleType, customScales, answersCount, styles} = settings;
+        const {imageOptions, numberOfAnswers, areas, haveScales, scaleType, customScales, answersCount, styles} = settings;
 
         if (haveScales || answersCount.type === "equal" && answersCount.equal || answersCount.type === "min-max" && (answersCount.min || answersCount.max)) {
             answerOptionsWrapper.querySelector("header").click();
@@ -89,9 +94,16 @@ export default class HeatmapDesignerManager {
             this.toggleElementsVisibility({elements: [areasWrapper]});
         }
 
+        if (numberOfAnswers) {
+            numberOfAnswersInput.value = numberOfAnswers;
+        } else {
+            numberOfAnswersInput.value = 1;
+        }
+
         haveScalesInput.checked = haveScales;
         this.toggleElementsVisibility({elements: [activateScalesWrapper], shouldBeShown: haveScales});
         activateDefaultScalesInput.checked = scaleType === "default";
+        this.toggleElementsVisibility({elements: [defaultScalesInfo], shouldBeShown: scaleType === "default"});
         activateCustomScalesInput.checked = scaleType === "custom";
 
         if (haveScales && scaleType === "custom") {
@@ -161,7 +173,7 @@ export default class HeatmapDesignerManager {
         this.hasErrors = false;
 
         if (src && width) {
-            const {imageSettingsWrapper, areasWrapper} = this.elements;
+            const {numberOfAnswersInput, imageSettingsWrapper, areasWrapper} = this.elements;
             if (settings || this.showImage) {
                 new customQuestionsLibrary.HeatmapDesigner({
                     wrapperId: "heatmap-wrapper",
@@ -170,6 +182,7 @@ export default class HeatmapDesignerManager {
                         widthInput: width
                     },
                     predefinedAreas: areas,
+                    maxAreas: parseInt(numberOfAnswersInput.value),
                     onAreasChanged: () => {
                         this.createAreaTextItems({});
                         this.setAreaIndexesAndClick();
@@ -235,10 +248,11 @@ export default class HeatmapDesignerManager {
     };
 
     setupImageInputs = () => {
-        const {imageSrcInput, imageWidthInput} = this.elements;
+        const {imageSrcInput, imageWidthInput, numberOfAnswersInput} = this.elements;
 
         imageSrcInput.addEventListener('change', this.onImageInputsChange);
         imageWidthInput.addEventListener('change', this.onImageInputsChange);
+        numberOfAnswersInput.addEventListener('change', this.onImageInputsChange);
     };
 
     onImageInputsChange = () => {
@@ -275,7 +289,7 @@ export default class HeatmapDesignerManager {
     };
 
     saveChanges = () => {
-        const {imageSrcInput, imageWidthInput, areaTextListWrapper, typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput,
+        const {imageSrcInput, imageWidthInput, numberOfAnswersInput, areaTextListWrapper, typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput,
             maxNumberOfAnswersInput, minNumberOfAnswersInput, haveScalesInput, activateCustomScalesInput,
             areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput} = this.elements;
         const heatmapImageJQ = $("#heatmap-wrapper img");
@@ -288,6 +302,7 @@ export default class HeatmapDesignerManager {
                 src: imageSrcInput.value,
                 width: imageWidthInput.value
             },
+            numberOfAnswers: parseInt(numberOfAnswersInput.value),
             areas: heatmapImageJQ.length > 0 ? heatmapImageJQ.selectAreas('areas') : [],
             answersCount: {
                 type: typeForNumberOfAnswers,
@@ -343,17 +358,19 @@ export default class HeatmapDesignerManager {
     };
 
     setupScaleElements = () => {
-        const {haveScalesInput, activateScalesWrapper, activateDefaultScalesInput, activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, scalesNumberInput} = this.elements;
+        const {haveScalesInput, activateScalesWrapper, activateDefaultScalesInput, defaultScalesInfo, activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, scalesNumberInput} = this.elements;
 
         haveScalesInput.addEventListener('change', () => {
             this.toggleElementsVisibility({elements: [activateScalesWrapper], shouldBeShown: haveScalesInput.checked});
             activateDefaultScalesInput.checked = !activateDefaultScalesInput.checked && !activateCustomScalesInput.checked && haveScalesInput.checked;
+            this.toggleElementsVisibility({elements: [defaultScalesInfo], shouldBeShown: activateDefaultScalesInput.checked});
         });
 
         activateDefaultScalesInput.addEventListener('change', () => {
             activateDefaultScalesInput.checked = true;
             activateCustomScalesInput.checked = false;
 
+            this.toggleElementsVisibility({elements: [defaultScalesInfo], shouldBeShown: true});
             this.toggleElementsVisibility({elements: [customScalesWrapper]});
         });
 
@@ -361,6 +378,7 @@ export default class HeatmapDesignerManager {
             activateDefaultScalesInput.checked = false;
             activateCustomScalesInput.checked = true;
 
+            this.toggleElementsVisibility({elements: [defaultScalesInfo]});
             this.toggleElementsVisibility({elements: [customScalesWrapper], shouldBeShown: true});
         });
 

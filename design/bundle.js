@@ -103,6 +103,7 @@ var HeatmapDesigner = function HeatmapDesigner(_ref) {
   var wrapperId = _ref.wrapperId,
       _imageOptions = _ref.imageOptions,
       _predefinedAreas = _ref.predefinedAreas,
+      maxAreas = _ref.maxAreas,
       _onAreasChanged = _ref.onAreasChanged,
       _onAreasInit = _ref.onAreasInit;
 
@@ -136,7 +137,7 @@ var HeatmapDesigner = function HeatmapDesigner(_ref) {
       minSize: [0, 0],
       maxSize: [0, 0],
       width: 0,
-      maxAreas: 0,
+      maxAreas: _this.maxAreas,
       outlineOpacity: 0.5,
       overlayOpacity: 0.5,
       areas: predefinedAreas,
@@ -150,6 +151,7 @@ var HeatmapDesigner = function HeatmapDesigner(_ref) {
   this.id = wrapperId;
   this.imageOptions = _imageOptions;
   this.predefinedAreas = _predefinedAreas;
+  this.maxAreas = maxAreas ? maxAreas : 0;
   this.onAreasChanged = _onAreasChanged;
   this.onAreasInit = _onAreasInit;
   this.wrapper = document.querySelector("#" + this.id);
@@ -352,6 +354,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
         answerOptionsWrapper = _this$elements2.answerOptionsWrapper,
         imageSrcInput = _this$elements2.imageSrcInput,
         imageWidthInput = _this$elements2.imageWidthInput,
+        numberOfAnswersInput = _this$elements2.numberOfAnswersInput,
         haveScalesInput = _this$elements2.haveScalesInput,
         activateScalesWrapper = _this$elements2.activateScalesWrapper,
         activateDefaultScalesInput = _this$elements2.activateDefaultScalesInput,
@@ -364,11 +367,13 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
         maxNumberOfAnswersInput = _this$elements2.maxNumberOfAnswersInput,
         minNumberOfAnswersInput = _this$elements2.minNumberOfAnswersInput,
         areasWrapper = _this$elements2.areasWrapper,
+        defaultScalesInfo = _this$elements2.defaultScalesInfo,
         areaHighlighterSelector = _this$elements2.areaHighlighterSelector,
         areaHoverColorInput = _this$elements2.areaHoverColorInput,
         areaBorderColorInput = _this$elements2.areaBorderColorInput,
         areaBorderWidthInput = _this$elements2.areaBorderWidthInput;
     var imageOptions = settings.imageOptions,
+        numberOfAnswers = settings.numberOfAnswers,
         areas = settings.areas,
         haveScales = settings.haveScales,
         scaleType = settings.scaleType,
@@ -395,6 +400,12 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
       });
     }
 
+    if (numberOfAnswers) {
+      numberOfAnswersInput.value = numberOfAnswers;
+    } else {
+      numberOfAnswersInput.value = 1;
+    }
+
     haveScalesInput.checked = haveScales;
 
     _this.toggleElementsVisibility({
@@ -403,6 +414,12 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     });
 
     activateDefaultScalesInput.checked = scaleType === "default";
+
+    _this.toggleElementsVisibility({
+      elements: [defaultScalesInfo],
+      shouldBeShown: scaleType === "default"
+    });
+
     activateCustomScalesInput.checked = scaleType === "custom";
 
     if (haveScales && scaleType === "custom") {
@@ -510,6 +527,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
 
     if (src && width) {
       var _this$elements4 = _this.elements,
+          numberOfAnswersInput = _this$elements4.numberOfAnswersInput,
           imageSettingsWrapper = _this$elements4.imageSettingsWrapper,
           areasWrapper = _this$elements4.areasWrapper;
 
@@ -521,6 +539,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
             widthInput: width
           },
           predefinedAreas: areas,
+          maxAreas: parseInt(numberOfAnswersInput.value),
           onAreasChanged: function onAreasChanged() {
             _this.createAreaTextItems({});
 
@@ -607,9 +626,11 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
   HeatmapDesignerManager_defineProperty(this, "setupImageInputs", function () {
     var _this$elements6 = _this.elements,
         imageSrcInput = _this$elements6.imageSrcInput,
-        imageWidthInput = _this$elements6.imageWidthInput;
+        imageWidthInput = _this$elements6.imageWidthInput,
+        numberOfAnswersInput = _this$elements6.numberOfAnswersInput;
     imageSrcInput.addEventListener('change', _this.onImageInputsChange);
     imageWidthInput.addEventListener('change', _this.onImageInputsChange);
+    numberOfAnswersInput.addEventListener('change', _this.onImageInputsChange);
   });
 
   HeatmapDesignerManager_defineProperty(this, "onImageInputsChange", function () {
@@ -656,6 +677,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     var _this$elements9 = _this.elements,
         imageSrcInput = _this$elements9.imageSrcInput,
         imageWidthInput = _this$elements9.imageWidthInput,
+        numberOfAnswersInput = _this$elements9.numberOfAnswersInput,
         areaTextListWrapper = _this$elements9.areaTextListWrapper,
         typeForNumberOfAnswersSelector = _this$elements9.typeForNumberOfAnswersSelector,
         equalToNumberOfAnswersInput = _this$elements9.equalToNumberOfAnswersInput,
@@ -675,6 +697,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
         src: imageSrcInput.value,
         width: imageWidthInput.value
       },
+      numberOfAnswers: parseInt(numberOfAnswersInput.value),
       areas: heatmapImageJQ.length > 0 ? heatmapImageJQ.selectAreas('areas') : [],
       answersCount: {
         type: typeForNumberOfAnswers,
@@ -732,6 +755,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
         haveScalesInput = _this$elements10.haveScalesInput,
         activateScalesWrapper = _this$elements10.activateScalesWrapper,
         activateDefaultScalesInput = _this$elements10.activateDefaultScalesInput,
+        defaultScalesInfo = _this$elements10.defaultScalesInfo,
         activateCustomScalesInput = _this$elements10.activateCustomScalesInput,
         customScalesWrapper = _this$elements10.customScalesWrapper,
         customScaleListWrapper = _this$elements10.customScaleListWrapper,
@@ -743,10 +767,20 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
       });
 
       activateDefaultScalesInput.checked = !activateDefaultScalesInput.checked && !activateCustomScalesInput.checked && haveScalesInput.checked;
+
+      _this.toggleElementsVisibility({
+        elements: [defaultScalesInfo],
+        shouldBeShown: activateDefaultScalesInput.checked
+      });
     });
     activateDefaultScalesInput.addEventListener('change', function () {
       activateDefaultScalesInput.checked = true;
       activateCustomScalesInput.checked = false;
+
+      _this.toggleElementsVisibility({
+        elements: [defaultScalesInfo],
+        shouldBeShown: true
+      });
 
       _this.toggleElementsVisibility({
         elements: [customScalesWrapper]
@@ -755,6 +789,10 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     activateCustomScalesInput.addEventListener('change', function () {
       activateDefaultScalesInput.checked = false;
       activateCustomScalesInput.checked = true;
+
+      _this.toggleElementsVisibility({
+        elements: [defaultScalesInfo]
+      });
 
       _this.toggleElementsVisibility({
         elements: [customScalesWrapper],
@@ -892,6 +930,7 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
   this.elements = {
     imageSrcInput: document.getElementById('imageSrc'),
     imageWidthInput: document.getElementById('imageWidth'),
+    numberOfAnswersInput: document.getElementById('numberOfAnswers'),
     haveScalesInput: document.getElementById('haveScales'),
     equalToNumberOfAnswersInput: document.getElementById('number-of-responses__equal'),
     minNumberOfAnswersInput: document.getElementById('number-of-responses__min'),
@@ -914,7 +953,8 @@ var HeatmapDesignerManager_HeatmapDesignerManager = function HeatmapDesignerMana
     activateScalesWrapper: document.getElementById('activateScales'),
     customScalesWrapper: document.getElementById('customScales'),
     customScaleListWrapper: document.getElementById('customScaleListWrapper'),
-    customScaleList: document.getElementById('customScaleList')
+    customScaleList: document.getElementById('customScaleList'),
+    defaultScalesInfo: document.getElementById('defaultScalesInfo')
   };
   this.showImage = false;
   this.hasErrors = false;
