@@ -12,7 +12,9 @@ export const InputWrapper = ({id, wrapperClass, components}) => {
         column.classList.add("inputlist__column");
 
         const component = document.createElement(tag);
-        classes.length > 0 && component.classList.add(...classes);
+        classes.forEach((className) => {
+            component.classList.add(className);
+        })
         switch (tag) {
             case "input":
                 component.type = inputType;

@@ -172,10 +172,12 @@ export default class HeatmapDesignerManager {
                     predefinedAreas: areas,
                     onAreasChanged: () => {
                         this.createAreaTextItems({});
+                        this.setAreaIndexesAndClick();
                         this.saveChanges();
                     },
                     onAreasInit: () => {
                         this.createAreaTextItems({defaultValues: areas.reverse().map(area => area.title)});
+                        this.setAreaIndexesAndClick();
                     }
                 });
             }
@@ -187,7 +189,7 @@ export default class HeatmapDesignerManager {
 
     createAreaTextItems = ({defaultValues}) => {
         const {areaTextListWrapper} = this.elements;
-        const areasCount = $("#heatmap-wrapper img").selectAreas('areas').length;
+        const areasCount = defaultValues ? defaultValues.length : $("#heatmap-wrapper img").selectAreas('areas').length;
         const areaTextItems = areaTextListWrapper.querySelectorAll(".area-text-item");
 
         if (areaTextItems.length === areasCount) {
@@ -210,6 +212,26 @@ export default class HeatmapDesignerManager {
                 }
             });
         }
+    };
+
+    setAreaIndexesAndClick = () => {
+        const {heatmapWrapper, areaTextListWrapper} = this.elements;
+        const areaNodes = Array.prototype.slice.call(heatmapWrapper.querySelectorAll(".select-areas-background-area")).reverse();
+        areaNodes.forEach((area, index) => {
+            const areaIndex = index + 1;
+            const areaTextInput = areaTextListWrapper.querySelector(`#area-text-item${areaIndex} input`)
+            areaTextInput.setAttribute("disabled", "disabled");
+            area.setAttribute("area-index", areaIndex);
+            area.addEventListener('click', () => {
+                const deleteButton = area.nextSibling;
+                if (deleteButton.style.display === "none") {
+                    areaTextInput.setAttribute("disabled", "disabled");
+                } else {
+                    areaTextInput.removeAttribute("disabled");
+                    areaTextInput.focus();
+                }
+            });
+        });
     };
 
     setupImageInputs = () => {
