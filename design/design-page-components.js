@@ -52,10 +52,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
     function collapseStyles(el) {
         if(el.classList.contains("comd-panel--collapsed")) {
-            el.getElementsByClassName("comd-panel__collapse-area")[0].style.height = "0px";
             el.getElementsByClassName("collapse-button")[0].style.transform = "rotateZ(180deg)";
         } else {
-            el.getElementsByClassName("comd-panel__collapse-area")[0].style.height = "auto";
             el.getElementsByClassName("collapse-button")[0].style.transform = "rotateZ(0deg)";
         }
     }

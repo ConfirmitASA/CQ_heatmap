@@ -127,12 +127,12 @@ input[type=radio]:checked + label .icon-radio::before {
     line-height: 1;
     text-transform: uppercase;
     overflow: hidden;
-    -webkit-transition-property: background-color, fill, color;
-    -o-transition-property: background-color, fill, color;
-    transition-property: background-color, fill, color;
-    -webkit-transition-duration: 200ms;
-    -o-transition-duration: 200ms;
-    transition-duration: 200ms;
+    -webkit-transition-property: background-color, fill, color, transform;
+    -o-transition-property: background-color, fill, color, transform;
+    transition-property: background-color, fill, color, transform;
+    -webkit-transition-duration: 300ms;
+    -o-transition-duration: 300ms;
+    transition-duration: 300ms;
     outline: none;
 }
 .collapse-button::before {
@@ -442,19 +442,19 @@ input[type="color"] {
 
 /* collapse */
 .comd-panel {
-    -webkit-transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    -o-transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    margin-bottom: 10px;
 }
 .comd-panel__collapse-area {
     visibility: visible;
     opacity: 1;
-    -webkit-transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    -o-transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    -webkit-transition-property: visibility, opacity, height, padding, margin;
-    -o-transition-property: visibility, opacity, height, padding, margin;
-    transition-property: visibility, opacity, height, padding, margin;
+    max-height: 6000px;
+    overflow: hidden;
+    -webkit-transition: all 1100ms cubic-bezier(0.4, 0, 1, 0) 0ms;
+    -o-transition: all 1100ms cubic-bezier(0.4, 0, 1, 0) 0ms;
+    transition: all 1100ms cubic-bezier(0.4, 0, 1, 0) 0ms;
+    -webkit-transition-property: height, max-height, padding, margin;
+    -o-transition-property: height, max-height, padding, margin;
+    transition-property: height, max-height, padding, margin;
 }
 .comd-panel--collapsed .comd-panel__collapse-area {
     padding-top: 0;
@@ -462,8 +462,13 @@ input[type="color"] {
     margin-top: 0;
     margin-bottom: 0;
     overflow: hidden;
-    opacity: 0;
-    visibility: hidden;
+    max-height: 0px;
+    -webkit-transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    -o-transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    transition: all 800ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    -webkit-transition-property: height, max-height, padding, margin;
+    -o-transition-property: height, max-height, padding, margin;
+    transition-property: height, max-height, padding, margin;
 }
 /* collapse end */
 
@@ -745,14 +750,13 @@ input[type="color"] {
 .comd-button__decorator--suffix{
     margin-left:0.571rem;
 }
-
 /* button end */
 
 /* inputlist */
 .inputlist-container{
     margin:5px 0;
-    max-height:85vh;
-    overflow:auto;
+    /*max-height:85vh;*/
+    overflow-x:auto;
 }
 
 .inputlist{
