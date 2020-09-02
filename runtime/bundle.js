@@ -242,7 +242,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var Heatmap_Heatmap = function Heatmap(_ref) {
   var _this = this;
 
-  var question = _ref.question,
+  var _question = _ref.question,
       _areas = _ref.areas,
       _imageOptions = _ref.imageOptions,
       _styles = _ref.styles,
@@ -307,6 +307,33 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     });
   });
 
+  _defineProperty(this, "setExistingValues", function (_ref2) {
+    var to = _ref2.to,
+        areaIndex = _ref2.areaIndex;
+    var question = _this.question;
+    var values = question.values;
+
+    switch (to) {
+      case "tooltip":
+        var button = document.querySelector(".switch-wrapper-".concat(values[areaIndex], "[area-index=\"").concat(areaIndex, "\"]"));
+
+        if (button) {
+          button.click();
+        }
+
+        break;
+
+      case "area":
+        var area = document.querySelector(".select-areas-background-area.area-indicator[area-index=\"".concat(areaIndex, "\"]"));
+
+        if (area && !area.classList.contains("area_".concat(values[areaIndex]))) {
+          area.classList.add("area_".concat(values[areaIndex]));
+        }
+
+        break;
+    }
+  });
+
   _defineProperty(this, "onAreasLoaded", function () {
     var id = _this.id;
     var areaSquares = document.querySelectorAll("#" + id + "-image-wrapper .select-areas-background-area");
@@ -315,6 +342,7 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
 
   _defineProperty(this, "createIndicatorAreaForAnswer", function (area, index, areaSquares) {
     var id = _this.id,
+        question = _this.question,
         haveScales = _this.haveScales;
     var areaIndex = areaSquares.length - index;
     var areaTitle = _this.areas[index].title;
@@ -325,10 +353,18 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     });
 
     area.parentNode.insertBefore(indicator, area.nextSibling);
+
+    if (question.values) {
+      _this.setExistingValues({
+        to: "area",
+        areaIndex: areaIndex
+      });
+    }
+
     var tooltip = new Tooltip({
       id: id + '-area-indicator-tooltip-' + areaIndex,
       targetId: indicator.id,
-      title: haveScales ? areaTitle : "",
+      title: haveScales ? areaTitle : undefined,
       content: haveScales ? _this.createButtonsWrapperWithAreaAttributes({
         areaIndex: areaIndex
       }).innerHTML : areaTitle,
@@ -339,9 +375,9 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     });
   });
 
-  _defineProperty(this, "createIndicatorNode", function (_ref2) {
-    var area = _ref2.area,
-        areaIndex = _ref2.areaIndex;
+  _defineProperty(this, "createIndicatorNode", function (_ref3) {
+    var area = _ref3.area,
+        areaIndex = _ref3.areaIndex;
     var id = _this.id;
     var borderWidth = area.style.borderWidth;
     var indicator = area.cloneNode();
@@ -358,8 +394,8 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     return indicator;
   });
 
-  _defineProperty(this, "createButtonsWrapperWithAreaAttributes", function (_ref3) {
-    var areaIndex = _ref3.areaIndex;
+  _defineProperty(this, "createButtonsWrapperWithAreaAttributes", function (_ref4) {
+    var areaIndex = _ref4.areaIndex;
     var customScales = _this.customScales;
     var buttonsWrapper = document.createElement("div");
     customScales.forEach(function (option) {
@@ -376,10 +412,11 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     return buttonsWrapper;
   });
 
-  _defineProperty(this, "onTooltipCreated", function (_ref4) {
-    var areaIndex = _ref4.areaIndex,
-        indicator = _ref4.indicator;
-    var haveScales = _this.haveScales;
+  _defineProperty(this, "onTooltipCreated", function (_ref5) {
+    var areaIndex = _ref5.areaIndex,
+        indicator = _ref5.indicator;
+    var question = _this.question,
+        haveScales = _this.haveScales;
 
     if (haveScales) {
       var customScales = _this.customScales;
@@ -420,12 +457,19 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
         }
       });
     }
+
+    if (question.values) {
+      _this.setExistingValues({
+        to: "tooltip",
+        areaIndex: areaIndex
+      });
+    }
   });
 
-  _defineProperty(this, "onButtonClick", function (_ref5) {
-    var type = _ref5.type,
-        areaIndex = _ref5.areaIndex,
-        indicator = _ref5.indicator;
+  _defineProperty(this, "onButtonClick", function (_ref6) {
+    var type = _ref6.type,
+        areaIndex = _ref6.areaIndex,
+        indicator = _ref6.indicator;
     var customScales = _this.customScales;
     var values = _this.question.values;
     customScales.forEach(function (option) {
@@ -462,12 +506,12 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     });
   });
 
-  _defineProperty(this, "setValues", function (_ref6) {
-    var values = _ref6.values;
+  _defineProperty(this, "setValues", function (_ref7) {
+    var values = _ref7.values;
     var allValues = _this.question.values;
 
-    _this.question.answers.forEach(function (_ref7) {
-      var code = _ref7.code;
+    _this.question.answers.forEach(function (_ref8) {
+      var code = _ref8.code;
       allValues[code] = undefined;
     });
 
@@ -544,8 +588,8 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     return errorBlock;
   });
 
-  _defineProperty(this, "addErrorItem", function (_ref8) {
-    var message = _ref8.message;
+  _defineProperty(this, "addErrorItem", function (_ref9) {
+    var message = _ref9.message;
     var id = _this.id;
     var errorList = document.querySelector("#" + id + "_error_list");
     var errorItem = document.createElement("li");
@@ -598,8 +642,8 @@ var Heatmap_Heatmap = function Heatmap(_ref) {
     questionNode.appendChild(stylesElement);
   });
 
-  this.question = question;
-  this.id = question.id;
+  this.question = _question;
+  this.id = _question.id;
   this.questionNode = document.querySelector("#" + this.id);
   this.areas = _areas;
   this.imageOptions = _imageOptions;

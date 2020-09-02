@@ -90,6 +90,26 @@ export default class Heatmap {
         });
     };
 
+    setExistingValues = ({to, areaIndex}) => {
+        const {question} = this;
+        const {values} = question;
+
+        switch (to) {
+            case "tooltip":
+                const button = document.querySelector(`.switch-wrapper-${values[areaIndex]}[area-index="${areaIndex}"]`);
+                if (button) {
+                    button.click();
+                }
+                break;
+            case "area":
+                const area = document.querySelector(`.select-areas-background-area.area-indicator[area-index="${areaIndex}"]`);
+                if (area && !area.classList.contains(`area_${values[areaIndex]}`)) {
+                    area.classList.add(`area_${values[areaIndex]}`);
+                }
+                break;
+        }
+    };
+
     onAreasLoaded = () => {
         const {id} = this;
         const areaSquares = document.querySelectorAll("#" + id + "-image-wrapper .select-areas-background-area");
@@ -97,16 +117,20 @@ export default class Heatmap {
     };
 
     createIndicatorAreaForAnswer = (area, index, areaSquares) => {
-        const {id, haveScales} = this;
+        const {id, question, haveScales} = this;
         const areaIndex = areaSquares.length - index;
         const areaTitle = this.areas[index].title;
         const indicator = this.createIndicatorNode({area, areaIndex});
         area.parentNode.insertBefore(indicator, area.nextSibling);
 
+        if (question.values) {
+            this.setExistingValues({to: "area", areaIndex});
+        }
+
         const tooltip = new Tooltip({
             id: id + '-area-indicator-tooltip-' + areaIndex,
             targetId: indicator.id,
-            title: haveScales ? areaTitle : "",
+            title: haveScales ? areaTitle : undefined,
             content: haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : areaTitle,
             onCreated: this.onTooltipCreated.bind(this, {areaIndex, indicator})
         });
@@ -145,7 +169,7 @@ export default class Heatmap {
     };
 
     onTooltipCreated = ({areaIndex, indicator}) => {
-        const {haveScales} = this;
+        const {question, haveScales} = this;
 
         if (haveScales) {
             const {customScales} = this;
@@ -172,6 +196,10 @@ export default class Heatmap {
                     this.setValues({values});
                 }
             });
+        }
+
+        if (question.values) {
+            this.setExistingValues({to: "tooltip", areaIndex});
         }
     };
 
