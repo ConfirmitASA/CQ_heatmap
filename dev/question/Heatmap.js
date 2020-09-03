@@ -1,8 +1,11 @@
 import {ImageWrapper} from "../components/ImageWrapper";
 import {Switch} from "../components/Switch";
 import {Tooltip} from "../components/Tooltip";
-import {ErrorBlock} from "../components/standard question/ErrorBlock";
-import {ErrorItem} from "../components/standard question/ErrorItem";
+import {QuestionText} from "../components/standard question/QuestionText";
+import {QuestionInstruction} from "../components/standard question/QuestionInstruction";
+import {QuestionErrorBlock} from "../components/standard question/QuestionErrorBlock";
+import {QuestionErrorItem} from "../components/standard question/QuestionErrorItem";
+import {QuestionContent} from "../components/standard question/QuestionContent";
 
 export default class Heatmap {
     constructor({question, areas, imageOptions, styles, answersCount, haveScales, scaleType, customScales}) {
@@ -52,17 +55,22 @@ export default class Heatmap {
     };
 
     render = () => {
-        const wrapper = this.createImageWrapper();
+        const {question, id, questionNode, imageOptions} = this;
+
+        const text = new QuestionText({id, text: question.text});
+        const instruction = new QuestionInstruction({id, text: question.instruction});
+        const errorBlock = new QuestionErrorBlock({id});
+        const questionContent = new QuestionContent({id});
+
+        const wrapper = new ImageWrapper({id: `${id}-image-wrapper`, imageOptions});
+        questionContent.appendChild(wrapper);
+
+        questionNode.appendChild(text);
+        questionNode.appendChild(instruction);
+        questionNode.appendChild(errorBlock);
+        questionNode.appendChild(questionContent);
+
         this.selectPredefinedAreas();
-
-        return wrapper;
-    };
-
-    createImageWrapper = () => {
-        const {id, questionNode, imageOptions} = this;
-
-        const wrapper = new ImageWrapper({id: id + "-image-wrapper", imageOptions});
-        questionNode.appendChild(wrapper);
 
         return wrapper;
     };
@@ -106,7 +114,7 @@ export default class Heatmap {
         area.parentNode.insertBefore(indicator, area.nextSibling);
 
         if (!haveScales) {
-            this.setAreaOnClick(haveScales, indicator, areaIndex);
+            this.setAreaOnClick({indicator, areaIndex});
         }
 
         if (question.values) {
@@ -123,24 +131,44 @@ export default class Heatmap {
 
     setAreaOnClick = ({indicator, areaIndex}) => {
         indicator.addEventListener("click", () => {
-            const values = this.question.values;
-            const areaArrayIndex = values.indexOf(areaIndex.toString());
-            if (indicator.classList.contains("area_chosen")) {
-                if (areaArrayIndex >= 0) {
-                    values.splice(areaArrayIndex, 1);
-                }
-                this.setValues({values});
-            } else {
-                if (areaArrayIndex < 0) {
-                    values.push(areaIndex);
-                }
-                this.setValues({values});
+            const {question} = this;
+            const {type, values, scales} = question;
+            switch (type) {
+                case "Multi":
+                    const areaArrayIndex = values.indexOf(areaIndex.toString());
+                    if (indicator.classList.contains("area_chosen")) {
+                        if (areaArrayIndex >= 0) {
+                            values.splice(areaArrayIndex, 1);
+                        }
+                        this.setValues({values});
+                    } else {
+                        if (areaArrayIndex < 0) {
+                            values.push(areaIndex);
+                        }
+                        this.setValues({values});
+                    }
+                    break;
+
+                case "Grid":
+                default:
+                    if (indicator.classList.contains("area_chosen")) {
+                        if (values[areaIndex]) {
+                            values[areaIndex] = undefined;
+                        }
+                        this.setValues({values});
+                    } else {
+                        if (!values[areaIndex]) {
+                            values[areaIndex] = scales[0].code;
+                        }
+                        this.setValues({values});
+                    }
             }
             indicator.classList.toggle("area_chosen");
         });
     }
 
     createAreaTooltip = ({title, content, indicator, areaIndex}) => {
+        const {id} = this.id;
         const tooltip = new Tooltip({
             id: `${id}-area-indicator-tooltip-${areaIndex}`,
             targetId: indicator.id,
@@ -166,7 +194,7 @@ export default class Heatmap {
                 const area = document.querySelector(`.select-areas-background-area.area-indicator[area-index="${areaIndex}"]`);
                 const className = haveScales ? `area_${values[areaIndex]}` : "area_chosen";
                 if (area && !area.classList.contains(className) &&
-                    (!haveScales && values.indexOf(areaIndex.toString()) >= 0 || haveScales && values[areaIndex])) {
+                    (question.type === "Multi" && values.indexOf(areaIndex.toString()) >= 0 || question.type === "Grid" && values[areaIndex])) {
                     area.classList.add(className);
                 }
                 break;
@@ -255,8 +283,10 @@ export default class Heatmap {
     };
 
     setValues = ({values}) => {
+        const {question} = this;
+        const {type} = question;
         const allValues = this.question.values;
-        if (this.haveScales) {
+        if (type !== "Multi") {
             this.question.answers.forEach(({code}) => {
                 allValues[code] = undefined;
             });
@@ -279,8 +309,7 @@ export default class Heatmap {
     subscribeToQuestion = () => {
         const {questionNode, answersCount, haveScales} = this;
 
-        const errorBlock = this.addErrorBlock();
-        const errorList = errorBlock.querySelector(".cf-error-list");
+        const errorList = document.querySelector(".cf-question__error .cf-error-list");
 
         this.question.validationEvent.on((validationResult) => {
             const valuesCount = Object.keys(this.question.values).length;
@@ -317,18 +346,10 @@ export default class Heatmap {
         });
     };
 
-    addErrorBlock = () => {
-        const {id} = this;
-        const imageWrapper = document.querySelector(`#${id}-image-wrapper`);
-        const errorBlock = new ErrorBlock({id});
-        imageWrapper.parentNode.insertBefore(errorBlock, imageWrapper);
-        return errorBlock;
-    };
-
     addErrorItem = ({message}) => {
         const {id} = this;
         const errorList = document.querySelector(`#${id}_error_list`);
-        const errorItem = new ErrorItem({message});
+        const errorItem = new QuestionErrorItem({message});
         errorList.appendChild(errorItem);
     };
 
@@ -356,7 +377,7 @@ export default class Heatmap {
             if (styles.areaHighlight) {
                 const {color, border} = styles.areaHighlight;
                 if (color) {
-                    stylesElement.innerText += `.select-areas-background-area:hover { background-color: ${(color ? color : "#fff")}opacity: 0.5; }`;
+                    stylesElement.innerText += `.select-areas-background-area:hover { background-color: ${(color ? color : "#fff")}; opacity: 0.5; }`;
                 }
                 if (border) {
                     stylesElement.innerText += `.select-areas-background-area { border: ${(border.width ? border.width : "1")}px solid ${(border.color ? border.color : "#000")}; }`;

@@ -1,4 +1,4 @@
-export const ErrorItem = ({message}) => {
+export const QuestionErrorItem = ({message}) => {
     const errorItem = document.createElement("li");
     errorItem.classList.add("cf-error-list__item");
     errorItem.innerText = message;

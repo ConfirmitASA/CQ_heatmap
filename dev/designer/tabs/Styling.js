@@ -36,7 +36,7 @@ export default class Styling {
             elements: [CommonFunctionsUtil.getInputWrapper({
                 input: areaChosenColorInput,
                 level: 3
-            })], shouldBeShown: type === "multi"
+            })], shouldBeShown: type !== "grid"
         });
     };
 
