@@ -23,10 +23,10 @@
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
                 <h4 class="co-text-size-normal">Image options</h4>
-                <div class="sd-tooltip-help" data-tooltip-text="This is the main part of the Question
-Image is used to create areas on it. You need to specify its URL and exact width that you'd like it to have
-When you click on 'Draw image' button, the image is created as it will be in the survey
-You can create as many areas as you have answers in the Question
+                <div class="sd-tooltip-help" data-tooltip-text="This is the main part of the Question<br/>
+Image is used to create areas on it. You need to specify its URL and exact width that you'd like it to have<br/>
+When you click on 'Draw image' button, the image is created as it will be in the survey<br/>
+You can create as many areas as you have answers in the Question, but answers should have only number codes from '1' to number of areas (or more)<br/>
 You can also add some description text to each area which will appear in tooltip"></div>
             </div>
             <div class="co-flex co-flex--center">
@@ -39,7 +39,7 @@ You can also add some description text to each area which will appear in tooltip
                     <div class="node-property">
                         <label class="node-property__label" for="imageSrc">Image source
                             <div class="sd-tooltip-help"
-                                 data-tooltip-text="This image will be used in question to show areas on it&#10;Upload the image in File Library and paste the link of uploaded image here"></div>
+                                 data-tooltip-text="This image will be used in question to show areas on it<br/>Upload the image in File Library and paste the link of uploaded image here"></div>
                         </label>
                         <input type="text" class="form-input form-input--full-width" name="imageSrc" id="imageSrc">
                     </div>
@@ -48,21 +48,11 @@ You can also add some description text to each area which will appear in tooltip
                     <div class="node-property">
                         <label class="node-property__label" for="imageWidth">Image width
                             <div class="sd-tooltip-help"
-                                 data-tooltip-text="This is the exact width of the image that will be used in the survey&#10;Provide the actual width of the image for better experience"></div>
+                                 data-tooltip-text="This is the exact width of the image that will be used in the survey<br/>Provide the actual width of the image for better experience"></div>
                         </label>
                         <input type="number" class="form-input form-input--4ch" name="imageWidth" id="imageWidth"
                                value="" min="1">
                         <span>px</span>
-                    </div>
-                </div>
-                <div class="node-properties">
-                    <div class="node-property">
-                        <label class="node-property__label" for="numberOfAnswers">Number of answers
-                            <div class="sd-tooltip-help"
-                                 data-tooltip-text="Provide the actual number of answers in the Question (based on answers from 'Edit' tab)"></div>
-                        </label>
-                        <input type="number" class="form-input form-input--4ch" name="numberOfAnswers" id="numberOfAnswers"
-                               value="" min="1">
                     </div>
                 </div>
                 <div class="node-properties">
@@ -95,7 +85,7 @@ You can also add some description text to each area which will appear in tooltip
                         <h4>
                             Area texts in tooltip
                             <div class="sd-tooltip-help"
-                                 data-tooltip-text="These texts will appear in areas' tooltips&#10;If you want to change some area's text, click on the area above"></div>
+                                 data-tooltip-text="These texts will appear in areas' tooltips<br/>If you want to change some area's text, click on the area above"></div>
                         </h4>
                         <div class="inputlist-container">
                             <table class="inputlist">
@@ -139,14 +129,14 @@ You can also add some description text to each area which will appear in tooltip
                         </div>
                     </div>
                     <div class="node-property node-property--radio" id="activateScales">
+                        <div class="comd-alert comd-alert--info" id="defaultScalesInfo">
+                            <div class="comd-alert__text">
+                                If you want to use positive/neutral/negative scores, don't forget to add all
+                                three scales (with "positive", "neutral" and "negative" as codes)
+                            </div>
+                        </div>
                         <ul class="option-list">
                             <li class="option-toggle">
-                                <div class="comd-alert comd-alert--info" style="margin-bottom: 0.5em;" id="defaultScalesInfo">
-                                    <div class="comd-alert__text">
-                                        If you want to use positive/neutral/negative scores, don't forget to add all
-                                        three scales (with "positive", "neutral" and "negative" as codes)
-                                    </div>
-                                </div>
                                 <div class="co-toggle co-toggle--radio">
                                     <input class="co-toggle__input" id="activateDefaultScales" type="radio"
                                            name="activateDefaultScales"/>
@@ -195,11 +185,11 @@ You can also add some description text to each area which will appear in tooltip
                     </div>
                 </div>
             </div>
-            <div class="node-properties">
+            <div class="node-properties" id="numberOfAnswers">
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="number-of-responses__type" style="margin-right: 0.5em;">Number of answers</label>
-                        <select class="form-input" name="number-of-responses__type" id="number-of-responses__type"/>
+                        <label class="node-property__label" for="numberOfAnswers__type" style="margin-right: 0.5em;">Number of answers</label>
+                        <select class="form-input" name="numberOfAnswers__type" id="numberOfAnswers__type"/>
                             <option value="equal">Equal to</option>
                             <option value="min-max" selected>Min/max count</option>
                         </select>
@@ -207,21 +197,21 @@ You can also add some description text to each area which will appear in tooltip
                 </div>
                 <div class="node-property-container" >
                     <div class="node-property">
-                        <label class="node-property__label" for="number-of-responses__min">Min</label>
-                        <input type="number" class="form-input form-input--3ch" id="number-of-responses__min" min="1"
+                        <label class="node-property__label" for="numberOfAnswers__min">Min</label>
+                        <input type="number" class="form-input form-input--3ch" id="numberOfAnswers__min" min="1"
                                value=""/>
                     </div>
                 </div>
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="number-of-responses__max">Max</label>
-                        <input type="number" class="form-input form-input--3ch" id="number-of-responses__max" value=""/>
+                        <label class="node-property__label" for="numberOfAnswers__max">Max</label>
+                        <input type="number" class="form-input form-input--3ch" id="numberOfAnswers__max" value=""/>
                     </div>
                 </div>
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="number-of-responses__min">Count</label>
-                        <input type="number" class="form-input form-input--3ch" id="number-of-responses__equal" min="1"
+                        <label class="node-property__label" for="numberOfAnswers__equal">Count</label>
+                        <input type="number" class="form-input form-input--3ch" id="numberOfAnswers__equal" min="1"
                                value=""/>
                     </div>
                 </div>
@@ -269,6 +259,14 @@ You can also add some description text to each area which will appear in tooltip
                     </div>
                 </div>
             </div>
+            <div class="node-properties">
+                <div class="node-property-container">
+                    <div class="node-property">
+                        <label class="node-property__label" for="areaChosenColor">Background color for chosen areas</label>
+                        <input type="color" class="form-input" id="areaChosenColor"/>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -278,6 +276,6 @@ You can also add some description text to each area which will appear in tooltip
 </div>
 </body>
 <script>
-    new customQuestionsLibrary.HeatmapDesignerManager({question: customQuestion});
+    new customQuestionsLibrary.HeatmapDesignerManager({question: customQuestion, type: "multi"});
 </script>
 </html>

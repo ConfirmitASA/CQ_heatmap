@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function(){
         };
         let ttBox = document.getElementById("tooltipBox");
         ttBox.style.display = "block";
-        ttBox.getElementsByClassName("comd-tooltip__inner")[0].textContent = text;
+        ttBox.getElementsByClassName("comd-tooltip__inner")[0].innerHTML = text;
         ttBox.style.top = position.top - ttBox.offsetHeight/2 + 7 + "px";
         ttBox.style.left = position.left + 22 + "px";
     }

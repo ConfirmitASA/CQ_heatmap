@@ -91,7 +91,7 @@ export default class Heatmap {
     };
 
     setExistingValues = ({to, areaIndex}) => {
-        const {question} = this;
+        const {question, haveScales} = this;
         const {values} = question;
 
         switch (to) {
@@ -102,9 +102,12 @@ export default class Heatmap {
                 }
                 break;
             case "area":
+            default:
                 const area = document.querySelector(`.select-areas-background-area.area-indicator[area-index="${areaIndex}"]`);
-                if (area && !area.classList.contains(`area_${values[areaIndex]}`)) {
-                    area.classList.add(`area_${values[areaIndex]}`);
+                const className = haveScales ? `area_${values[areaIndex]}` : "area_chosen";
+                if (area && !area.classList.contains(className) &&
+                    (!haveScales && values.indexOf(areaIndex.toString()) >= 0 || haveScales && values[areaIndex])) {
+                    area.classList.add(className);
                 }
                 break;
         }
@@ -123,15 +126,37 @@ export default class Heatmap {
         const indicator = this.createIndicatorNode({area, areaIndex});
         area.parentNode.insertBefore(indicator, area.nextSibling);
 
+        if (!haveScales) {
+            indicator.addEventListener("click", () => {
+                const values = this.question.values;
+                const areaArrayIndex = values.indexOf(areaIndex.toString());
+                if (indicator.classList.contains("area_chosen")) {
+                    indicator.classList.remove("area_chosen");
+                    if (areaArrayIndex >= 0) {
+                        values.splice(areaArrayIndex, 1);
+                    }
+                    this.setValues({values});
+                } else {
+                    indicator.classList.add("area_chosen");
+                    if (areaArrayIndex < 0) {
+                        values.push(areaIndex);
+                    }
+                    this.setValues({values});
+                }
+            });
+        }
+
         if (question.values) {
             this.setExistingValues({to: "area", areaIndex});
         }
 
+        const title = (haveScales ? areaTitle : undefined);
+        const content = (haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : areaTitle);
         const tooltip = new Tooltip({
             id: id + '-area-indicator-tooltip-' + areaIndex,
             targetId: indicator.id,
-            title: haveScales ? areaTitle : undefined,
-            content: haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : areaTitle,
+            title,
+            content,
             onCreated: this.onTooltipCreated.bind(this, {areaIndex, indicator})
         });
     };
@@ -183,19 +208,6 @@ export default class Heatmap {
                     });
                 }
             });
-        } else {
-            indicator.addEventListener("click", () => {
-                const values = this.question.values;
-                if (indicator.classList.contains("area_chosen")) {
-                    indicator.classList.remove("area_chosen");
-                    delete values[areaIndex];
-                    this.setValues({values});
-                } else {
-                    indicator.classList.add("area_chosen");
-                    values[areaIndex] = "1";
-                    this.setValues({values});
-                }
-            });
         }
 
         if (question.values) {
@@ -238,19 +250,28 @@ export default class Heatmap {
 
     setValues = ({values}) => {
         const allValues = this.question.values;
-        this.question.answers.forEach(({code}) => {
-            allValues[code] = undefined;
-        });
-        Object.keys(values).forEach((key) => {
-            allValues[key] = values[key];
-        });
-        Object.keys(allValues).forEach((key) => {
-            this.question.setValue(key, allValues[key]);
-        });
+        if (this.haveScales) {
+            this.question.answers.forEach(({code}) => {
+                allValues[code] = undefined;
+            });
+            Object.keys(values).forEach((key) => {
+                allValues[key] = values[key];
+            });
+            Object.keys(allValues).forEach((key) => {
+                this.question.setValue(key, allValues[key]);
+            });
+        } else {
+            this.question.answers.forEach(({code}) => {
+                this.question.setValue(code, 0);
+            });
+            values.forEach((code) => {
+                this.question.setValue(code, 1);
+            });
+        }
     };
 
     subscribeToQuestion = () => {
-        const {questionNode, answersCount} = this;
+        const {questionNode, answersCount, haveScales} = this;
 
         const errorBlock = this.addErrorBlock();
         const errorList = errorBlock.querySelector(".cf-error-list");
@@ -274,6 +295,10 @@ export default class Heatmap {
                 }
                 if (max && valuesCount > max) {
                     const error = {message: 'Please provide less than ' + max + ' answer(s)'};
+                    validationResult.errors.push(error);
+                }
+                if (this.question.required && (haveScales && Object.keys(this.question.values).length !== this.question.answers.length || !haveScales && this.question.values.length === this.question.answers.length)) {
+                    const error = {message: `This question is required. ${haveScales ? "Please choose scale for every answer" : "Please provide at least 1 answer"}`};
                     validationResult.errors.push(error);
                 }
                 validationResult.errors.forEach(this.addErrorItem);
@@ -328,12 +353,12 @@ export default class Heatmap {
             // area colors
             customScales.forEach((option) => {
                 const {type, color} = option;
-                stylesElement.innerText += ".area_" + type + "{ background-color: " + color + "; opacity: 0.5; }";
-                stylesElement.innerText += ".switch-wrapper-" + type + "{ background-color: " + color + "; }";
-                stylesElement.innerText += ".switch-wrapper-" + type + " .switch-input:checked + .switch-label:after { background-color: " + color + "; }";
+                stylesElement.innerText += `.area_${type}{ background-color: ${color}; opacity: 0.5; }`;
+                stylesElement.innerText += `.switch-wrapper-${type}{ background-color: ${color}; }`;
+                stylesElement.innerText += `.switch-wrapper-${type} .switch-input:checked + .switch-label:after { background-color: ${color}; }`;
             });
         } else {
-            stylesElement.innerText += ".area_chosen { background-color: green !important; opacity: 0.5; }";
+            stylesElement.innerText += `.area_chosen { background-color: ${styles.areaChoose && styles.areaChoose.color ? styles.areaChoose.color : "green"} !important; opacity: 0.5; }`;
             stylesElement.innerText += ".area-indicator:hover { cursor: pointer; }";
         }
 

@@ -3,7 +3,7 @@
   "name": "Heatmap (multi)",
   "description": "",
   "baseQuestionType": "MultiForm",
-  "disableDefaultRendering": false,
+  "disableDefaultRendering": true,
   "iconUrl": "design/icon.svg",
   "designEntryPoint": "design/index.html",
   "runtimeEntryPoint": {

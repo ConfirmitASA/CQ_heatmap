@@ -361,10 +361,6 @@ input[type=radio]:checked + label .icon-radio::before {
 .form-input.form-input--40ch{
     width:calc(40ch + 30px);
 }
-.form-input--error {
-    border-color: #f42c2c;
-    box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgb(244, 99, 99);
-}
 /* input helpers end */
 
 /* checkbox */
@@ -441,7 +437,6 @@ input[type="color"] {
     background-color: #31363e;
     border-radius: 0.286rem;
     overflow-wrap: break-word;
-    white-space:pre-wrap;
 }
 /* tooltip end */
 

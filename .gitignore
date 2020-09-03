@@ -4,3 +4,5 @@
 /node_modules/
 /package-lock.json
 /heatmap.zip
+/design/bundle.js
+/runtime/bundle.js

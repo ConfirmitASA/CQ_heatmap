@@ -9,6 +9,8 @@ export default class HeatmapDesigner {
         this.wrapper = document.querySelector("#" + this.id);
 
         this.init();
+
+        console.log("test");
     }
 
     init = () => {

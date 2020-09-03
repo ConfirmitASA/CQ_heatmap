@@ -1,9 +1,9 @@
 {
-  "id": "1d385582-50d8-4a42-a78d-1fa432980fce",
-  "name": "Heatmap (multi)",
+  "id": "fb2d754e-abf5-4cf4-a440-df2b7afd9fb1",
+  "name": "Heatmap (grid)",
   "description": "",
-  "baseQuestionType": "MultiForm",
-  "disableDefaultRendering": false,
+  "baseQuestionType": "GridForm",
+  "disableDefaultRendering": true,
   "iconUrl": "design/icon.svg",
   "designEntryPoint": "design/index.html",
   "runtimeEntryPoint": {
