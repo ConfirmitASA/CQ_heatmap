@@ -1,12 +1,14 @@
 import {ImageWrapper} from "../components/ImageWrapper";
 import {Switch} from "../components/Switch";
 import {Tooltip} from "../components/Tooltip";
+import {ErrorBlock} from "../components/standard question/ErrorBlock";
+import {ErrorItem} from "../components/standard question/ErrorItem";
 
 export default class Heatmap {
     constructor({question, areas, imageOptions, styles, answersCount, haveScales, scaleType, customScales}) {
         this.question = question;
         this.id = question.id;
-        this.questionNode = document.querySelector("#" + this.id);
+        this.questionNode = document.querySelector(`#${this.id}`);
         this.areas = areas;
         this.imageOptions = imageOptions;
         this.styles = styles;
@@ -68,7 +70,7 @@ export default class Heatmap {
     selectPredefinedAreas = () => {
         const {areas, id} = this;
         const self = this;
-        $("#" + id + "-image-wrapper img").selectAreas({
+        $(`#${id}-image-wrapper img`).selectAreas({
             allowEdit: false,
             allowMove: false,
             allowResize: false,
@@ -89,6 +91,64 @@ export default class Heatmap {
             onChanged: null
         });
     };
+
+    onAreasLoaded = () => {
+        const {id} = this;
+        const areaSquares = document.querySelectorAll(`#${id}-image-wrapper .select-areas-background-area`);
+        areaSquares.forEach(this.createIndicatorAreaForAnswer);
+    };
+
+    createIndicatorAreaForAnswer = (area, index, areaSquares) => {
+        const {id, question, haveScales} = this;
+        const areaIndex = areaSquares.length - index;
+        const areaTitle = this.areas[index].title;
+        const indicator = this.createIndicatorNode({area, areaIndex});
+        area.parentNode.insertBefore(indicator, area.nextSibling);
+
+        if (!haveScales) {
+            this.setAreaOnClick(haveScales, indicator, areaIndex);
+        }
+
+        if (question.values) {
+            this.setExistingValues({to: "area", areaIndex});
+        }
+
+        this.createAreaTooltip({
+            title: (haveScales ? areaTitle : undefined),
+            content: (haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : areaTitle),
+            indicator,
+            areaIndex
+        });
+    };
+
+    setAreaOnClick = ({indicator, areaIndex}) => {
+        indicator.addEventListener("click", () => {
+            const values = this.question.values;
+            const areaArrayIndex = values.indexOf(areaIndex.toString());
+            if (indicator.classList.contains("area_chosen")) {
+                if (areaArrayIndex >= 0) {
+                    values.splice(areaArrayIndex, 1);
+                }
+                this.setValues({values});
+            } else {
+                if (areaArrayIndex < 0) {
+                    values.push(areaIndex);
+                }
+                this.setValues({values});
+            }
+            indicator.classList.toggle("area_chosen");
+        });
+    }
+
+    createAreaTooltip = ({title, content, indicator, areaIndex}) => {
+        const tooltip = new Tooltip({
+            id: `${id}-area-indicator-tooltip-${areaIndex}`,
+            targetId: indicator.id,
+            title,
+            content,
+            onCreated: this.onTooltipCreated.bind(this, {areaIndex, indicator})
+        });
+    }
 
     setExistingValues = ({to, areaIndex}) => {
         const {question, haveScales} = this;
@@ -113,59 +173,11 @@ export default class Heatmap {
         }
     };
 
-    onAreasLoaded = () => {
-        const {id} = this;
-        const areaSquares = document.querySelectorAll("#" + id + "-image-wrapper .select-areas-background-area");
-        areaSquares.forEach(this.createIndicatorAreaForAnswer);
-    };
-
-    createIndicatorAreaForAnswer = (area, index, areaSquares) => {
-        const {id, question, haveScales} = this;
-        const areaIndex = areaSquares.length - index;
-        const areaTitle = this.areas[index].title;
-        const indicator = this.createIndicatorNode({area, areaIndex});
-        area.parentNode.insertBefore(indicator, area.nextSibling);
-
-        if (!haveScales) {
-            indicator.addEventListener("click", () => {
-                const values = this.question.values;
-                const areaArrayIndex = values.indexOf(areaIndex.toString());
-                if (indicator.classList.contains("area_chosen")) {
-                    indicator.classList.remove("area_chosen");
-                    if (areaArrayIndex >= 0) {
-                        values.splice(areaArrayIndex, 1);
-                    }
-                    this.setValues({values});
-                } else {
-                    indicator.classList.add("area_chosen");
-                    if (areaArrayIndex < 0) {
-                        values.push(areaIndex);
-                    }
-                    this.setValues({values});
-                }
-            });
-        }
-
-        if (question.values) {
-            this.setExistingValues({to: "area", areaIndex});
-        }
-
-        const title = (haveScales ? areaTitle : undefined);
-        const content = (haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : areaTitle);
-        const tooltip = new Tooltip({
-            id: id + '-area-indicator-tooltip-' + areaIndex,
-            targetId: indicator.id,
-            title,
-            content,
-            onCreated: this.onTooltipCreated.bind(this, {areaIndex, indicator})
-        });
-    };
-
     createIndicatorNode = ({area, areaIndex}) => {
         const {id} = this;
         const borderWidth = area.style.borderWidth;
         const indicator = area.cloneNode();
-        indicator.id = id + "-area-indicator-" + areaIndex;
+        indicator.id = id + `-area-indicator-${areaIndex}`;
         indicator.classList.add("area-indicator");
         Object.assign(indicator.style, {
             backgroundPositionX: (parseFloat(indicator.style.backgroundPositionX.replace("px", "")) - borderWidth) + "px",
@@ -200,7 +212,7 @@ export default class Heatmap {
             const {customScales} = this;
             customScales.forEach((option) => {
                 const {type} = option;
-                const button = document.querySelector('.switch-wrapper-' + type + '[area-index="' + areaIndex + '"]');
+                const button = document.querySelector(`.switch-wrapper-${type}[area-index="${areaIndex}"]`);
                 if (button) {
                     button.addEventListener("click", (e) => {
                         this.onButtonClick({type, areaIndex, indicator});
@@ -221,27 +233,21 @@ export default class Heatmap {
 
         customScales.forEach((option) => {
             const {type: currentType} = option;
-            const input = document.querySelector('.switch-wrapper-' + currentType + '[area-index="' + areaIndex + '"] input');
+            const input = document.querySelector(`.switch-wrapper-${currentType}[area-index="${areaIndex}"] input`);
 
             if (currentType === type) {
                 if (input.checked) {
                     delete values[areaIndex];
                     input.checked = false;
-                    if (indicator.classList.contains("area_" + currentType)) {
-                        indicator.classList.remove("area_" + currentType);
-                    }
+                    indicator.classList.remove(`area_${currentType}`);
                 } else {
                     values[areaIndex] = currentType;
                     input.checked = true;
-                    if (!indicator.classList.contains("area_" + currentType)) {
-                        indicator.classList.add("area_" + currentType);
-                    }
+                    indicator.classList.add(`area_${currentType}`);
                 }
             } else {
                 input.checked = false;
-                if (indicator.classList.contains("area_" + currentType)) {
-                    indicator.classList.remove("area_" + currentType);
-                }
+                indicator.classList.remove(`area_${currentType}`);
             }
         });
 
@@ -286,15 +292,15 @@ export default class Heatmap {
 
             if (this.question.values) {
                 if (equal && valuesCount !== equal) {
-                    const error = {message: 'Please provide exactly ' + equal + ' answer(s)'};
+                    const error = {message: `Please provide exactly ${equal} answer(s)`};
                     validationResult.errors.push(error);
                 }
                 if (min && valuesCount < min) {
-                    const error = {message: 'Please provide at least ' + min + ' answer(s)'};
+                    const error = {message: `Please provide at least ${min} answer(s)`};
                     validationResult.errors.push(error);
                 }
                 if (max && valuesCount > max) {
-                    const error = {message: 'Please provide less than ' + max + ' answer(s)'};
+                    const error = {message: `Please provide less than ${max} answer(s)`};
                     validationResult.errors.push(error);
                 }
                 if (this.question.required && (haveScales && Object.keys(this.question.values).length !== this.question.answers.length || !haveScales && this.question.values.length === this.question.answers.length)) {
@@ -313,33 +319,16 @@ export default class Heatmap {
 
     addErrorBlock = () => {
         const {id} = this;
-        const imageWrapper = document.querySelector("#" + id + "-image-wrapper");
-
-        const errorBlock = document.createElement("div");
-        errorBlock.id = id + "_error";
-        errorBlock.classList.add("cf-question__error");
-        errorBlock.classList.add("cf-error-block");
-        errorBlock.setAttribute("role", "alert");
-        errorBlock.setAttribute("aria-labelledby", id + "_error_list");
-
-        const errorList = document.createElement("ul");
-        errorList.id = id + "_error_list";
-        errorList.classList.add("cf-error-list");
-
-        errorBlock.appendChild(errorList);
+        const imageWrapper = document.querySelector(`#${id}-image-wrapper`);
+        const errorBlock = new ErrorBlock({id});
         imageWrapper.parentNode.insertBefore(errorBlock, imageWrapper);
-
         return errorBlock;
     };
 
     addErrorItem = ({message}) => {
         const {id} = this;
-        const errorList = document.querySelector("#" + id + "_error_list");
-
-        const errorItem = document.createElement("li");
-        errorItem.classList.add("cf-error-list__item");
-        errorItem.innerText = message;
-
+        const errorList = document.querySelector(`#${id}_error_list`);
+        const errorItem = new ErrorItem({message});
         errorList.appendChild(errorItem);
     };
 
@@ -367,10 +356,10 @@ export default class Heatmap {
             if (styles.areaHighlight) {
                 const {color, border} = styles.areaHighlight;
                 if (color) {
-                    stylesElement.innerText += ".select-areas-background-area:hover { background-color: " + (color ? color : "#fff") + "; opacity: 0.5; }";
+                    stylesElement.innerText += `.select-areas-background-area:hover { background-color: ${(color ? color : "#fff")}opacity: 0.5; }`;
                 }
                 if (border) {
-                    stylesElement.innerText += ".select-areas-background-area { border: " + (border.width ? border.width : "1") + "px solid " + (border.color ? border.color : "#000") + "; }";
+                    stylesElement.innerText += `.select-areas-background-area { border: ${(border.width ? border.width : "1")}px solid ${(border.color ? border.color : "#000")}; }`;
                 }
             }
         } else {

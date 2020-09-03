@@ -18,7 +18,7 @@ export const InputWrapper = ({id, wrapperClass, components}) => {
         switch (tag) {
             case "input":
                 component.type = inputType;
-                component.addEventListener('change', onInputChange);
+                component.addEventListener("change", onInputChange);
                 if (inputDefaultValue) {
                     component.value = inputDefaultValue;
                 }

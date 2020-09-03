@@ -2,7 +2,7 @@ export const Switch = ({type, text, id}) => {
     const createSwitchWrapper = ({type, text}) => {
         const switchWrapper = document.createElement("div");
         switchWrapper.classList.add("switch-wrapper");
-        switchWrapper.classList.add("switch-wrapper-" + type);
+        switchWrapper.classList.add(`switch-wrapper-${type}`);
         switchWrapper.appendChild(createSwitch({type, text, id}));
         switchWrapper.appendChild(createSwitchLabel({text}));
         return switchWrapper;

@@ -2,6 +2,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="design-page-components.css"/>
     <link rel="stylesheet"
           href="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.selectareas.css">
     <script src="https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.1.12.4.min.js"></script>
@@ -12,7 +13,7 @@
 </head>
 <body>
 <div class="survey-settings">
-    <div class="comd-alert comd-alert--info">
+    <div class="comd-alert comd-alert--info" id="requiredInfo">
         <div class="comd-alert__text">
             If you want user to be able to choose only some of answers, remove "Required" property on the Edit
             tab
@@ -23,18 +24,16 @@
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
                 <h4 class="co-text-size-normal">Image options</h4>
-                <div class="sd-tooltip-help" data-tooltip-text="This is the main part of the Question<br/>
-Image is used to create areas on it. You need to specify its URL and exact width that you'd like it to have<br/>
-When you click on 'Draw image' button, the image is created as it will be in the survey<br/>
-You can create as many areas as you have answers in the Question, but answers should have only number codes from '1' to number of areas (or more)<br/>
-You can also add some description text to each area which will appear in tooltip"></div>
+                <div class="sd-tooltip-help" data-tooltip-text="This is the main part of the Question.<br/>
+When you click on 'Draw image' button, the image is created as it will be in the survey.<br/>
+You can create as many areas as you have answers in the Question, but answers should have only number codes from '1' to number of areas (or more)."></div>
             </div>
             <div class="co-flex co-flex--center">
                 <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
             </div>
         </header>
         <div class="comd-panel__collapse-area">
-            <div id="image-settings">
+            <div id="imageSettings">
                 <div class="node-properties">
                     <div class="node-property">
                         <label class="node-property__label" for="imageSrc">Image source
@@ -57,7 +56,7 @@ You can also add some description text to each area which will appear in tooltip
                 </div>
                 <div class="node-properties">
                     <div class="node-property button-block">
-                        <button class="comd-button comd-button--secondary-neutral" id="draw-image-btn">
+                        <button class="comd-button comd-button--secondary-neutral" id="drawImageBtn">
                             <span class="comd-button__content">
                                 <div class="comd-portal-trigger">Draw image</div>
                             </span>
@@ -69,7 +68,7 @@ You can also add some description text to each area which will appear in tooltip
                 <div class="node-properties">
                     <div class="node-property button-block">
                         <div class="button-block">
-                            <button class="comd-button comd-button--secondary-neutral" id="change-image-btn">
+                            <button class="comd-button comd-button--secondary-neutral" id="changeImageBtn">
                                 <span class="comd-button__content">
                                     <div class="comd-portal-trigger">Change image options</div>
                                 </span>
@@ -78,11 +77,11 @@ You can also add some description text to each area which will appear in tooltip
                     </div>
                 </div>
                 <div class="node-properties">
-                    <div id="heatmap-wrapper" style="width: 100%; overflow-x: auto;"></div>
+                    <div id="heatmapWrapper" style="width: 100%; overflow-x: auto;"></div>
                 </div>
                 <div class="node-properties">
                     <div class="node-property">
-                        <h4>
+                        <h4 id="areaTextsTitle">
                             Area texts in tooltip
                             <div class="sd-tooltip-help"
                                  data-tooltip-text="These texts will appear in areas' tooltips<br/>If you want to change some area's text, click on the area above"></div>
@@ -90,10 +89,10 @@ You can also add some description text to each area which will appear in tooltip
                         <div class="inputlist-container">
                             <table class="inputlist">
                                 <thead style="display: none;">
-                                    <tr>
-                                        <th class="inputlist__header"></th>
-                                        <th class="inputlist__header"></th>
-                                    </tr>
+                                <tr>
+                                    <th class="inputlist__header"></th>
+                                    <th class="inputlist__header"></th>
+                                </tr>
                                 </thead>
                                 <tbody id="areaTextList">
                                 </tbody>
@@ -105,18 +104,19 @@ You can also add some description text to each area which will appear in tooltip
         </div>
     </div>
 
-    <div class="node-properties-key-fields comd-panel comd-panel--collapsed" id="answerOptionsWrapper">
+    <div class="node-properties-key-fields comd-panel comd-panel--collapsed" id="answerOptions">
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
                 <h4 class="co-text-size-normal">Answer options</h4>
-                <div class="sd-tooltip-help" data-tooltip-text="These are not necessary options for the Question's answers"></div>
+                <div class="sd-tooltip-help"
+                     data-tooltip-text="These are not necessary options for the Question's answers"></div>
             </div>
             <div class="co-flex co-flex--center">
                 <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
             </div>
         </header>
         <div class="comd-panel__collapse-area">
-            <div class="node-properties">
+            <div class="node-properties" id="haveScalesWrapper">
                 <div class="node-property-container">
                     <div class="node-property node-property--checkbox">
                         <div class="co-toggle co-toggle--checkbox">
@@ -128,7 +128,12 @@ You can also add some description text to each area which will appear in tooltip
                             </label>
                         </div>
                     </div>
-                    <div class="node-property node-property--radio" id="activateScales">
+                </div>
+            </div>
+            <div class="node-properties" id="activateScales">
+                <div class="node-property-container">
+                    <label class="node-property__label">Type of scales</label>
+                    <div class="node-property node-property--radio">
                         <div class="comd-alert comd-alert--info" id="defaultScalesInfo">
                             <div class="comd-alert__text">
                                 If you want to use positive/neutral/negative scores, don't forget to add all
@@ -169,11 +174,11 @@ You can also add some description text to each area which will appear in tooltip
                                     <div class="inputlist-container" id="customScaleListWrapper">
                                         <table class="inputlist">
                                             <thead>
-                                                <tr>
-                                                    <th class="inputlist__header"></th>
-                                                    <th class="inputlist__header">Code</th>
-                                                    <th class="inputlist__header">Text</th>
-                                                </tr>
+                                            <tr>
+                                                <th class="inputlist__header"></th>
+                                                <th class="inputlist__header">Code</th>
+                                                <th class="inputlist__header">Text</th>
+                                            </tr>
                                             </thead>
                                             <tbody id="customScaleList">
                                             </tbody>
@@ -188,14 +193,15 @@ You can also add some description text to each area which will appear in tooltip
             <div class="node-properties" id="numberOfAnswers">
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="numberOfAnswers__type" style="margin-right: 0.5em;">Number of answers</label>
+                        <label class="node-property__label" for="numberOfAnswers__type" style="margin-right: 0.5em;">Number
+                            of answers</label>
                         <select class="form-input" name="numberOfAnswers__type" id="numberOfAnswers__type"/>
-                            <option value="equal">Equal to</option>
-                            <option value="min-max" selected>Min/max count</option>
+                        <option value="equal">Equal to</option>
+                        <option value="min-max" selected>Min/max count</option>
                         </select>
                     </div>
                 </div>
-                <div class="node-property-container" >
+                <div class="node-property-container">
                     <div class="node-property">
                         <label class="node-property__label" for="numberOfAnswers__min">Min</label>
                         <input type="number" class="form-input form-input--3ch" id="numberOfAnswers__min" min="1"
@@ -222,7 +228,7 @@ You can also add some description text to each area which will appear in tooltip
     <div class="node-properties-key-fields comd-panel comd-panel--collapsed" id="stylesWrapper">
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
-                <h4 class="co-text-size-normal">Additional styles</h4>
+                <h4 class="co-text-size-normal">Styling</h4>
             </div>
             <div class="co-flex co-flex--center">
                 <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
@@ -232,10 +238,11 @@ You can also add some description text to each area which will appear in tooltip
             <div class="node-properties">
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="areaHighlighterSelector">Type of area highlighting</label>
+                        <label class="node-property__label" for="areaHighlighterSelector">Type of area
+                            highlighting</label>
                         <select class="form-input" id="areaHighlighterSelector"/>
-                            <option value="color" selected>Background color on hover</option>
-                            <option value="width">Permanent border</option>
+                        <option value="color" selected>Background color on hover</option>
+                        <option value="width">Permanent border</option>
                         </select>
                     </div>
                 </div>
@@ -262,7 +269,9 @@ You can also add some description text to each area which will appear in tooltip
             <div class="node-properties">
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="areaChosenColor">Background color for chosen areas</label>
+                        <label class="node-property__label" for="areaChosenColor">Chosen area
+                            <div class="sd-tooltip-help" data-tooltip-text="Background color for chosen area"></div>
+                        </label>
                         <input type="color" class="form-input" id="areaChosenColor"/>
                     </div>
                 </div>
@@ -276,6 +285,6 @@ You can also add some description text to each area which will appear in tooltip
 </div>
 </body>
 <script>
-    new customQuestionsLibrary.HeatmapDesignerManager({question: customQuestion, type: "multi"});
+    new customQuestionsLibrary.HeatmapDesignerManager({question: customQuestion, type: "grid"});
 </script>
 </html>

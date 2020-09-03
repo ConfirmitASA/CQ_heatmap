@@ -6,11 +6,9 @@ export default class HeatmapDesigner {
         this.maxAreas = maxAreas ? maxAreas : 0;
         this.onAreasChanged = onAreasChanged;
         this.onAreasInit = onAreasInit;
-        this.wrapper = document.querySelector("#" + this.id);
+        this.wrapper = document.querySelector(`#${this.id}`);
 
         this.init();
-
-        console.log("test");
     }
 
     init = () => {
@@ -26,7 +24,7 @@ export default class HeatmapDesigner {
         image.style.width = width;
         wrapper.appendChild(image);
 
-        $("#" + id + " img").selectAreas({
+        $(`#${id} img`).selectAreas({
             allowEdit:true,
             allowMove:true,
             allowResize:true,
