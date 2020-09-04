@@ -5,12 +5,13 @@ import Elements from "./Elements";
 import CommonFunctionsUtil from "./CommonFunctionsUtil";
 
 export default class HeatmapDesignerManager {
-    constructor({question, type}) {
+    constructor({question}) {
         this.question = question;
-        this.type = type;
-        this.hasErrors = false;
 
         this.elements = new Elements();
+        this.type = this.elements.questionType;
+
+        this.hasErrors = false;
 
         this.render();
     }
@@ -31,7 +32,7 @@ export default class HeatmapDesignerManager {
         const {type, elements} = this;
         const {requiredInfo} = elements;
 
-        if (type) {
+        if (type !== "multi") {
             CommonFunctionsUtil.toggleElementsVisibility({elements: [requiredInfo], shouldBeShown: true})
         }
     };

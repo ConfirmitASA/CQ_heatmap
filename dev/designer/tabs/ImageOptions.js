@@ -1,5 +1,6 @@
 import CommonFunctionsUtil from "../CommonFunctionsUtil";
 import {AreaTextItem} from "../../components/AreaTextItem";
+import HeatmapDesigner from "../HeatmapDesigner";
 
 export default class ImageOptions {
     constructor({elements, saveChanges}) {
@@ -67,7 +68,7 @@ export default class ImageOptions {
                     shouldNumberAsLabelBeAdded: true
                 };
 
-                new customQuestionsLibrary.HeatmapDesigner({
+                new HeatmapDesigner({
                     wrapperId: heatmapWrapperId,
                     imageOptions: {
                         src: src,
@@ -120,7 +121,7 @@ export default class ImageOptions {
                     areaTextInput.setAttribute("disabled", "disabled");
                 } else {
                     areaTextInput.removeAttribute("disabled");
-                    areaTextInput.focus();
+                    areaTextInput.focus({preventScroll: true});
                 }
             });
         });
@@ -134,14 +135,15 @@ export default class ImageOptions {
     };
 
     setValuesFromSettings = (settings) => {
-        const {imageSrcInput, imageWidthInput, areasWrapper} = this.elements;
+        const {imageSrcInput, imageWidthInput, areasWrapper, heatmapWrapperId} = this.elements;
         const {imageOptions, areas} = settings;
 
         if (imageOptions) {
             imageSrcInput.value = imageOptions.src;
             imageWidthInput.value = imageOptions.width;
+            this.showImage = true;
 
-            if ($("#heatmap-wrapper img").length <= 0) {
+            if ($(`#${heatmapWrapperId} img`).length <= 0) {
                 this.drawImage({imageOptions, areas});
             }
         } else {

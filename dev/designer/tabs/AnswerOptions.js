@@ -40,7 +40,7 @@ export default class AnswerOptions {
         const {haveScalesWrapper, haveScalesInput, activateScalesWrapper, activateDefaultScalesInput, numberOfAnswersWrapper} = this.elements;
 
         if (type === "multi" || type === "grid") {
-            CommonFunctionsUtil.toggleElementsVisibility({elements: [CommonFunctionsUtil.getInputWrapper({input: haveScalesWrapper})]});
+            CommonFunctionsUtil.toggleElementsVisibility({elements: [haveScalesWrapper]});
         }
 
         switch (type) {
@@ -135,13 +135,14 @@ export default class AnswerOptions {
 
     setupSavingElements = () => {
         const {
-            haveScalesInput, activateDefaultScalesInput, activateCustomScalesInput,
+            haveScalesInput, activateDefaultScalesInput, activateCustomScalesInput, scalesNumberInput,
             typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput
         } = this.elements;
 
         haveScalesInput.addEventListener("change", this.saveChanges);
         activateDefaultScalesInput.addEventListener("change", this.saveChanges);
         activateCustomScalesInput.addEventListener("change", this.saveChanges);
+        scalesNumberInput.addEventListener("change", this.saveChanges);
 
         typeForNumberOfAnswersSelector.addEventListener("change", this.saveChanges);
         equalToNumberOfAnswersInput.addEventListener("change", this.saveChanges);
@@ -221,7 +222,7 @@ export default class AnswerOptions {
             shouldBeShown: answersCount.type === "equal"
         });
         CommonFunctionsUtil.toggleElementsVisibility({
-            elements: [CommonFunctionsUtil.getInputWrapper({minNumberOfAnswersInput}), CommonFunctionsUtil.getInputWrapper({maxNumberOfAnswersInput})],
+            elements: [CommonFunctionsUtil.getInputWrapper({input: minNumberOfAnswersInput}), CommonFunctionsUtil.getInputWrapper({input: maxNumberOfAnswersInput})],
             shouldBeShown: answersCount.type === "min-max"
         });
 

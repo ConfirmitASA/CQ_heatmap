@@ -1,6 +1,8 @@
 export default class Elements {
     constructor() {
+        this.questionType = "grid";
         this.heatmapWrapperId = "heatmapWrapper";
+
         this.setupElements();
     }
 

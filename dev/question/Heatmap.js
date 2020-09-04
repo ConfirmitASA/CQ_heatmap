@@ -1,11 +1,7 @@
 import {ImageWrapper} from "../components/ImageWrapper";
 import {Switch} from "../components/Switch";
 import {Tooltip} from "../components/Tooltip";
-import {QuestionText} from "../components/standard question/QuestionText";
-import {QuestionInstruction} from "../components/standard question/QuestionInstruction";
-import {QuestionErrorBlock} from "../components/standard question/QuestionErrorBlock";
-import {QuestionErrorItem} from "../components/standard question/QuestionErrorItem";
-import {QuestionContent} from "../components/standard question/QuestionContent";
+import {QuestionText, QuestionInstruction, QuestionErrorBlock, QuestionErrorItem, QuestionContent} from "../components/standard question/StandardQuestion";
 
 export default class Heatmap {
     constructor({question, areas, imageOptions, styles, answersCount, haveScales, scaleType, customScales}) {
