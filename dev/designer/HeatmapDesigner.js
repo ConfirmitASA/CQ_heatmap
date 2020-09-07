@@ -21,29 +21,32 @@ export default class HeatmapDesigner {
 
         const image = document.createElement("img");
         image.src = src;
-        image.style.width = width;
-        wrapper.appendChild(image);
+        image.style.width = width + "px";
 
-        $(`#${id} img`).selectAreas({
-            allowEdit:true,
-            allowMove:true,
-            allowResize:true,
-            allowSelect:true,
-            allowDelete:true,
-            allowNudge: true,
-            aspectRatio: 0,
-            minSize: [0, 0],
-            maxSize: [0, 0],
-            width: 0,
-            maxAreas: this.maxAreas,
-            outlineOpacity: 0.5,
-            overlayOpacity: 0.5,
-            areas: predefinedAreas,
+        image.addEventListener("load", (e) => {
+            $(`#${id} img`).selectAreas({
+                allowEdit:true,
+                allowMove:true,
+                allowResize:true,
+                allowSelect:true,
+                allowDelete:true,
+                allowNudge: true,
+                aspectRatio: 0,
+                minSize: [0, 0],
+                maxSize: [0, 0],
+                width: width,
+                maxAreas: this.maxAreas,
+                outlineOpacity: 0.5,
+                overlayOpacity: 0.5,
+                areas: predefinedAreas,
 
-            onLoaded: onAreasInit,
-            onChanging: null,
-            onChanged: onAreasChanged
+                onLoaded: onAreasInit,
+                onChanging: null,
+                onChanged: onAreasChanged
+            })
         });
+
+        wrapper.appendChild(image);
 
         return image;
     };

@@ -44,8 +44,10 @@ export default class HeatmapDesignerManager {
     };
 
     saveChanges = () => {
-        const {question, hasErrors} = this;
-        const {haveScalesInput} = this.elements;
+        const {question, elements} = this;
+        const {haveScalesInput} = elements;
+
+        this.hasErrors = false;
 
         const settings = {
             imageOptions: this.getImageOptions(),
@@ -56,11 +58,26 @@ export default class HeatmapDesignerManager {
             styles: this.getStyles()
         };
 
-        question.saveChanges(settings, hasErrors);
+        question.saveChanges(settings, this.hasErrors);
     };
 
     getImageOptions = () => {
         const {imageSrcInput, imageWidthInput} = this.elements;
+
+        if (!imageSrcInput.value || !imageWidthInput.value) {
+            this.hasErrors = true;
+        }
+
+        if (!imageSrcInput.value) {
+            imageSrcInput.classList.add("form-input--error");
+        } else {
+            imageSrcInput.classList.remove("form-input--error");
+        }
+        if (!imageWidthInput.value) {
+            imageWidthInput.classList.add("form-input--error");
+        } else {
+            imageWidthInput.classList.remove("form-input--error");
+        }
 
         return {
             src: imageSrcInput.value,
@@ -71,7 +88,16 @@ export default class HeatmapDesignerManager {
     getAreas = () => {
         const {heatmapWrapperId} = this.elements;
         const heatmapImageJQ = $(`#${heatmapWrapperId} img`);
-        return heatmapImageJQ.length > 0 ? heatmapImageJQ.selectAreas("areas") : [];
+
+        if ($(`#${heatmapWrapperId} .select-areas-overlay`).length > 0) {
+            const areas = heatmapImageJQ.selectAreas("areas");
+            if (areas.length > 0) {
+                return areas;
+            }
+        }
+
+        this.hasErrors = true;
+        return [];
     };
 
     addAreaTexts = ({areas}) => {
@@ -86,12 +112,23 @@ export default class HeatmapDesignerManager {
             }
         });
 
+        if (resultAreas.length <= 0) {
+            this.hasErrors = true;
+        }
+
         return resultAreas;
     };
 
     getAnswersCount = () => {
-        const {typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput} = this.elements;
+        const {typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput, heatmapWrapperId} = this.elements;
         const typeForNumberOfAnswers = typeForNumberOfAnswersSelector[0].selected ? "equal" : "min-max";
+
+        const areas = $(`#${heatmapWrapperId} .select-areas-overlay`).length > 0 ? $(`#${heatmapWrapperId} img`).selectAreas("areas") : [];
+
+        if (typeForNumberOfAnswers === "equal" && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length) {
+            this.hasErrors = true;
+        }
+        equalToNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === "equal" && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length);
 
         return {
             type: typeForNumberOfAnswers,
@@ -101,15 +138,56 @@ export default class HeatmapDesignerManager {
         };
     };
 
+    getScales = () => {
+        const {haveScalesInput, activateCustomScalesInput, scalesNumberInput} = this.elements;
+
+        if (haveScalesInput.checked) {
+            const scaleType = activateCustomScalesInput.checked ? "custom" : "default";
+            let customScales = undefined;
+
+            if (scaleType === "custom") {
+                customScales = [];
+                const customScaleItems = document.querySelectorAll(".custom-scale-item");
+                customScaleItems.forEach((item, index) => {
+                    const color = item.querySelector(".custom-scale-item__color").value;
+                    const codeInput = item.querySelector(".custom-scale-item__code");
+                    const code = codeInput.value;
+                    const type = codeInput.value;
+                    const label = item.querySelector(".custom-scale-item__label").value;
+                    customScales.push({color,
+                        code: code ? code : index,
+                        type: type ? type : index,
+                        label: label ? label : index
+                    });
+
+                    if (!code) {
+                        this.hasErrors = true;
+                    }
+                    codeInput.classList.toggle("form-input--error", !code);
+                });
+
+                if (customScales.length <= 0) {
+                    this.hasErrors = true;
+                }
+                scalesNumberInput.classList.toggle("form-input--error", customScales.length <= 0);
+            }
+
+            return {scaleType, customScales}
+        }
+    };
+
     getStyles = () => {
         const {areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput, areaChosenColorInput} = this.elements;
         const areaHighlighterType = areaHighlighterSelector[1].selected ? "border" : "color";
 
+        const areaHighlighterColor = areaHighlighterType === "color" && areaHoverColorInput.value ? areaHoverColorInput.value : undefined;
+        const areaHighlighterBorderEnabled = areaHighlighterType === "border" && (areaBorderWidthInput.value || areaBorderColorInput.value);
+
         return {
             areaHighlight: {
                 type: areaHighlighterType,
-                color: areaHighlighterType === "color" && areaHoverColorInput.value ? areaHoverColorInput.value : undefined,
-                border: areaHighlighterType === "border" && (areaBorderWidthInput.value || areaBorderColorInput.value)
+                color: areaHighlighterColor,
+                border: areaHighlighterBorderEnabled
                     ? {
                         width: areaBorderWidthInput.value ? areaBorderWidthInput.value : undefined,
                         color: areaBorderColorInput.value ? areaBorderColorInput.value : undefined
@@ -120,32 +198,5 @@ export default class HeatmapDesignerManager {
                 color: areaChosenColorInput.value ? areaChosenColorInput.value : undefined
             }
         };
-    };
-
-    getScales = () => {
-        const {haveScalesInput, activateCustomScalesInput} = this.elements;
-
-        if (haveScalesInput.checked) {
-            const scaleType = activateCustomScalesInput.checked ? "custom" : "default";
-            let customScales = undefined;
-
-            if (activateCustomScalesInput.checked) {
-                customScales = [];
-                const customScaleItems = document.querySelectorAll(".custom-scale-item");
-                customScaleItems.forEach((item, index) => {
-                    const color = item.querySelector(".custom-scale-item__color").value;
-                    const code = item.querySelector(".custom-scale-item__code").value;
-                    const type = item.querySelector(".custom-scale-item__code").value;
-                    const label = item.querySelector(".custom-scale-item__label").value;
-                    customScales.push({color,
-                        code: code ? code : index,
-                        type: type ? type : index,
-                        label: label ? label : index
-                    })
-                });
-            }
-
-            return {scaleType, customScales}
-        }
     };
 }

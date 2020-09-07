@@ -189,7 +189,7 @@ export default class AnswerOptions {
         activateCustomScalesInput.checked = scaleType === "custom";
 
         if (haveScales && scaleType === "custom") {
-            scalesNumberInput.value = customScales.length;
+            scalesNumberInput.value = customScales.length ? customScales.length : undefined;
             CommonFunctionsUtil.createListOfItems({
                 defaultValues: customScales,
                 listWrapper: customScaleList,

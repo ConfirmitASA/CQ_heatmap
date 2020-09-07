@@ -34,32 +34,36 @@ export default class ImageOptions {
     };
 
     onImageInputsChange = () => {
-        const {heatmapWrapper} = this.elements;
+        const {heatmapWrapper, areaTextsTitle, areaTextListWrapper} = this.elements;
         this.showImage = true;
         heatmapWrapper.innerHTML = "";
+        CommonFunctionsUtil.toggleElementsVisibility({elements: [areaTextsTitle]});
+        areaTextListWrapper.innerHTML = "";
     };
 
     setupImageButtons = () => {
         const {drawImageBtn, changeImageBtn} = this.elements;
 
         drawImageBtn.addEventListener("click", this.drawImage);
+        // drawImageBtn.addEventListener("click", this.saveChanges);
         changeImageBtn.addEventListener("click", this.showImageSettings);
     };
 
     drawImage = ({imageOptions, areas}) => {
+        const {imageSrcInput, imageWidthInput} = this.elements;
         let src, width;
+
         if (imageOptions) {
             src = imageOptions.src;
             width = imageOptions.width;
         } else {
-            const {imageSrcInput, imageWidthInput} = this.elements;
             src = imageSrcInput.value;
             width = imageWidthInput.value;
         }
 
         if (src && width) {
             const {imageSettingsWrapper, areasWrapper, areaTextsTitle, areaTextListWrapper, heatmapWrapperId} = this.elements;
-            if (this.showImage) {
+            if ($(`#${heatmapWrapperId} img`).length <= 0 && this.showImage) {
                 const textItemsOptions = {
                     listWrapper: areaTextListWrapper,
                     itemClassName: "area-text-item",
@@ -70,21 +74,24 @@ export default class ImageOptions {
 
                 new HeatmapDesigner({
                     wrapperId: heatmapWrapperId,
-                    imageOptions: {
-                        src: src,
-                        widthInput: width
-                    },
+                    imageOptions: {src, width},
                     predefinedAreas: areas && areas.length > 0 ? areas : [],
                     onAreasChanged: () => {
+                        const areas = $(`#${heatmapWrapperId} img`).selectAreas("areas");
                         CommonFunctionsUtil.createListOfItems({
                             ...textItemsOptions,
-                            itemsExpectedCount: $(`#${heatmapWrapperId} img`).selectAreas("areas").length
+                            itemsExpectedCount: areas.length
                         });
 
-                        this.setAreaIndexesAndClickForTexts();
+                        if (areas && areas.length > 0) {
+                            this.setAreaIndexesAndClickForTexts();
+                        }
 
                         const areaTextItems = areaTextListWrapper.querySelectorAll(".area-text-item");
-                        CommonFunctionsUtil.toggleElementsVisibility({elements: [areaTextsTitle], shouldBeShown: areaTextItems.length > 0});
+                        CommonFunctionsUtil.toggleElementsVisibility({
+                            elements: [areaTextsTitle],
+                            shouldBeShown: areaTextItems.length > 0
+                        });
 
                         this.saveChanges();
                     },
@@ -94,10 +101,15 @@ export default class ImageOptions {
                             defaultValues: areas && areas.length > 0 ? areas.reverse().map(area => area.title) : []
                         });
 
-                        this.setAreaIndexesAndClickForTexts();
+                        if (areas && areas.length > 0) {
+                            this.setAreaIndexesAndClickForTexts();
+                        }
 
                         const areaTextItems = areaTextListWrapper.querySelectorAll(".area-text-item");
-                        CommonFunctionsUtil.toggleElementsVisibility({elements: [areaTextsTitle], shouldBeShown: areaTextItems.length > 0});
+                        CommonFunctionsUtil.toggleElementsVisibility({
+                            elements: [areaTextsTitle],
+                            shouldBeShown: areaTextItems.length > 0
+                        });
                     }
                 });
             }
@@ -105,6 +117,9 @@ export default class ImageOptions {
             CommonFunctionsUtil.toggleElementsVisibility({elements: [areasWrapper], shouldBeShown: true})
             this.showImage = false;
         }
+
+        imageSrcInput.classList.toggle("form-input--error", !src);
+        imageWidthInput.classList.toggle("form-input--error", !width);
     };
 
     setAreaIndexesAndClickForTexts = () => {
@@ -113,7 +128,9 @@ export default class ImageOptions {
         areaNodes.forEach((area, index) => {
             const areaIndex = index + 1;
             const areaTextInput = areaTextListWrapper.querySelector(`#area-text-item${areaIndex} input`)
-            areaTextInput.setAttribute("disabled", "disabled");
+            if (areaTextInput) {
+                areaTextInput.setAttribute("disabled", "disabled");
+            }
             area.setAttribute("area-index", areaIndex);
             area.addEventListener("click", () => {
                 const deleteButton = area.nextSibling;

@@ -1,6 +1,6 @@
 {
   "id": "1d385582-50d8-4a42-a78d-1fa432980fce",
-  "name": "Heatmap (multi)",
+  "name": "Heatmap-multi (DEVELOPMENT VERSION)",
   "description": "",
   "baseQuestionType": "MultiForm",
   "disableDefaultRendering": true,
