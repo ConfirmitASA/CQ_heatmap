@@ -96,7 +96,6 @@ export default class HeatmapDesignerManager {
             }
         }
 
-        this.hasErrors = true;
         return [];
     };
 
@@ -112,9 +111,9 @@ export default class HeatmapDesignerManager {
             }
         });
 
-        if (resultAreas.length <= 0) {
-            this.hasErrors = true;
-        }
+        // if (resultAreas.length <= 0) {
+        //     this.hasErrors = true;
+        // }
 
         return resultAreas;
     };
@@ -155,9 +154,9 @@ export default class HeatmapDesignerManager {
                     const type = codeInput.value;
                     const label = item.querySelector(".custom-scale-item__label").value;
                     customScales.push({color,
-                        code: code ? code : index,
-                        type: type ? type : index,
-                        label: label ? label : index
+                        code: code ? code : (index+1),
+                        type: type ? type : (index+1),
+                        label: label ? label : (index+1)
                     });
 
                     if (!code) {
@@ -166,10 +165,10 @@ export default class HeatmapDesignerManager {
                     codeInput.classList.toggle("form-input--error", !code);
                 });
 
-                if (customScales.length <= 0) {
+                if (!scalesNumberInput.value || customScales.length <= 0) {
                     this.hasErrors = true;
                 }
-                scalesNumberInput.classList.toggle("form-input--error", customScales.length <= 0);
+                scalesNumberInput.classList.toggle("form-input--error", !scalesNumberInput.value || customScales.length <= 0);
             }
 
             return {scaleType, customScales}

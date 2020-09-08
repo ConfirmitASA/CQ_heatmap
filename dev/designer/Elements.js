@@ -28,6 +28,7 @@ export default class Elements {
         this.areaTextListWrapper = document.getElementById("areaTextList");
         this.heatmapWrapper = document.getElementById(this.heatmapWrapperId);
         this.answerOptionsWrapper = document.getElementById("answerOptions");
+        this.stylingWrapper = document.getElementById("styling");
         this.haveScalesWrapper = document.getElementById("haveScalesWrapper");
         this.activateScalesWrapper = document.getElementById("activateScales");
         this.customScalesWrapper = document.getElementById("customScales");

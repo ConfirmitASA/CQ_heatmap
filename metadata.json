@@ -1,8 +1,8 @@
 {
-  "id": "b0d32789-6a9c-4abf-96aa-0f13e5c90abb",
-  "name": "Confirmit Heatmap-grid (DEMO)",
+  "id": "1d385582-50d8-4a42-a78d-1fa432980fce",
+  "name": "Heatmap-multi (DEVELOPMENT VERSION)",
   "description": "",
-  "baseQuestionType": "GridForm",
+  "baseQuestionType": "MultiForm",
   "disableDefaultRendering": true,
   "iconUrl": "design/icon.svg",
   "designEntryPoint": "design/index.html",

@@ -6,6 +6,10 @@ export default class Styling {
         this.type = type;
         this.saveChanges = saveChanges;
 
+        this.defaultValueForAreaHover = "#ffffff";
+        this.defaultValueForAreaBorder = "#000000";
+        this.defaultValueForAreaChosen = "#008000";
+
         this.render();
     }
 
@@ -16,14 +20,16 @@ export default class Styling {
     };
 
     setDefaultAttributes = () => {
-        const {areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput, areaChosenColorInput} = this.elements;
+        const {elements, defaultValueForAreaHover, defaultValueForAreaBorder, defaultValueForAreaChosen} = this;
+        const {areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput, areaChosenColorInput} = elements;
 
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [CommonFunctionsUtil.getInputWrapper({input: areaBorderWidthInput}), CommonFunctionsUtil.getInputWrapper({input: areaBorderColorInput})]
         });
 
-        areaHoverColorInput.value = "#ffffff";
-        areaChosenColorInput.value = "#008000";
+        areaHoverColorInput.value = defaultValueForAreaHover;
+        areaBorderColorInput.value = defaultValueForAreaBorder;
+        areaChosenColorInput.value = defaultValueForAreaChosen;
 
         this.customizeToType();
     };
@@ -67,8 +73,17 @@ export default class Styling {
     };
 
     setValuesFromSettings = (settings) => {
-        const {areaHoverColorInput, areaBorderColorInput, areaBorderWidthInput, areaChosenColorInput} = this.elements;
+        const {elements, defaultValueForAreaHover, defaultValueForAreaBorder, defaultValueForAreaChosen} = this;
+        const {stylingWrapper, areaHoverColorInput, areaBorderColorInput, areaBorderWidthInput, areaChosenColorInput} = elements;
         const {styles} = settings;
+
+        if (styles && (
+            styles.areaHighlight && (styles.areaHighlight.type === "color" && styles.areaHighlight.color !== defaultValueForAreaHover ||
+            styles.areaHighlight.type === "border" && (styles.areaHighlight.border.color !== defaultValueForAreaBorder || styles.areaHighlight.border.width > 0))
+            || styles.areaChoose && styles.areaChoose.color !== defaultValueForAreaChosen)
+        ) {
+            CommonFunctionsUtil.toggleTab({elements: [stylingWrapper]});
+        }
 
         if (styles) {
             if (styles.areaHighlight) {

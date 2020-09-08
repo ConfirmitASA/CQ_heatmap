@@ -376,7 +376,7 @@ export default class Heatmap {
                     stylesElement.innerText += `.select-areas-background-area:hover { background-color: ${(color ? color : "#fff")}; opacity: 0.5; }`;
                 }
                 if (border) {
-                    stylesElement.innerText += `.select-areas-background-area { border: ${(border.width ? border.width : "1")}px solid ${(border.color ? border.color : "#000")}; }`;
+                    stylesElement.innerText += `.select-areas-background-area { border: ${(border.width ? border.width : "0")}px solid ${(border.color ? border.color : "#000")}; }`;
                 }
             }
         } else {

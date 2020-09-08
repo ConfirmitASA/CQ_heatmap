@@ -10,7 +10,7 @@ export const ImageWrapper = ({id, imageOptions}) => {
         const image = document.createElement("img");
         const {src, width} = imageOptions;
         image.src = src;
-        image.style.width = width;
+        image.style.width = `${width}px`;
         return image;
     };
 

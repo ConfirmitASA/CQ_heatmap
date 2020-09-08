@@ -32,7 +32,7 @@ export default class HeatmapDesigner {
                 allowDelete:true,
                 allowNudge: true,
                 aspectRatio: 0,
-                minSize: [0, 0],
+                minSize: [10, 10],
                 maxSize: [0, 0],
                 width: width,
                 maxAreas: this.maxAreas,

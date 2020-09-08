@@ -152,11 +152,11 @@ export default class AnswerOptions {
 
     setValuesFromSettings = (settings) => {
         const {type, elements} = this;
-        const {haveScalesInput, activateScalesWrapper} = elements;
+        const {answerOptionsWrapper, haveScalesInput, activateScalesWrapper} = elements;
         const {areas, haveScales, scaleType, customScales, answersCount} = settings;
 
-        if (haveScales || answersCount.type === "equal" && answersCount.equal || answersCount.type === "min-max" && (answersCount.min || answersCount.max)) {
-            this.toggleAnswerOptionsTab();
+        if (type !== "grid" && type !== "multi" && haveScales || answersCount.type === "equal" && answersCount.equal > 0 || answersCount.type === "min-max" && (answersCount.min > 0 || answersCount.max > 0)) {
+            CommonFunctionsUtil.toggleTab({elements: [answerOptionsWrapper]});
         }
 
         haveScalesInput.checked = haveScales;
@@ -167,12 +167,6 @@ export default class AnswerOptions {
         this.setValuesFromSettingsForDefaultScales({scaleType});
         this.setValuesFromSettingsForCustomScales({haveScales, scaleType, customScales});
         this.setValuesFromSettingsForAnswerCount({answersCount, areasCount: areas.length});
-    };
-
-    toggleAnswerOptionsTab = () => {
-        const {answerOptionsWrapper} = this.elements;
-        const answerOptionsHeader = answerOptionsWrapper.querySelector("header");
-        answerOptionsHeader.classList.add("comd-panel--collapsed");
     };
 
     setValuesFromSettingsForDefaultScales = ({scaleType}) => {

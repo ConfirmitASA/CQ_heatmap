@@ -7,7 +7,7 @@ export const InputWrapper = ({id, wrapperClass, components}) => {
         return wrapper;
     };
 
-    const createComponent = ({tag, classes, inputType, onInputChange, inputDefaultValue, labelText}) => {
+    const createComponent = ({tag, classes, inputType, onInputChange, onClick, inputDefaultValue, labelText}) => {
         const column = document.createElement("td");
         column.classList.add("inputlist__column");
 
@@ -18,7 +18,7 @@ export const InputWrapper = ({id, wrapperClass, components}) => {
         switch (tag) {
             case "input":
                 component.type = inputType;
-                component.addEventListener("change", onInputChange);
+                onInputChange && component.addEventListener("change", onInputChange);
                 if (inputDefaultValue) {
                     component.value = inputDefaultValue;
                 }
@@ -30,6 +30,8 @@ export const InputWrapper = ({id, wrapperClass, components}) => {
                 break;
         }
 
+        onClick && component.addEventListener("click", onClick);
+
         column.appendChild(component);
 
         return column;
@@ -38,8 +40,8 @@ export const InputWrapper = ({id, wrapperClass, components}) => {
     const wrapper = createWrapper({id, wrapperClass});
 
     components.forEach((options) => {
-        const {tag, classes, inputType, onInputChange, inputDefaultValue, labelText} = options;
-        const component = createComponent({tag, classes, inputType, onInputChange, inputDefaultValue, labelText});
+        const {tag, classes, inputType, onInputChange, onClick, inputDefaultValue, labelText} = options;
+        const component = createComponent({tag, classes, inputType, onInputChange, onClick, inputDefaultValue, labelText});
         wrapper.appendChild(component);
     });
 

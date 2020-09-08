@@ -15,7 +15,8 @@ export default class ImageOptions {
     render = () => {
         this.setDefaultAttributes();
         this.setupImageInputs();
-        this.setupImageButtons();
+        // this.setupImageButtons();
+        this.setupSavingElements();
     };
 
     setDefaultAttributes = () => {
@@ -23,7 +24,7 @@ export default class ImageOptions {
 
         CommonFunctionsUtil.toggleElementsVisibility({elements: [areasWrapper]});
 
-        imageWidthInput.setAttribute("min", 1);
+        imageWidthInput.setAttribute("min", 100);
     };
 
     setupImageInputs = () => {
@@ -31,6 +32,7 @@ export default class ImageOptions {
 
         imageSrcInput.addEventListener("change", this.onImageInputsChange);
         imageWidthInput.addEventListener("change", this.onImageInputsChange);
+        imageWidthInput.addEventListener("change", this.onImageWidthInputChange);
     };
 
     onImageInputsChange = () => {
@@ -39,6 +41,12 @@ export default class ImageOptions {
         heatmapWrapper.innerHTML = "";
         CommonFunctionsUtil.toggleElementsVisibility({elements: [areaTextsTitle]});
         areaTextListWrapper.innerHTML = "";
+    };
+
+    onImageWidthInputChange = (e) => {
+        const input = e.target;
+        input.value = !input.min || parseInt(input.value) > parseInt(input.min) ? input.value : input.min;
+        input.value = !input.max || parseInt(input.value) < parseInt(input.max) ? input.value : input.max;
     };
 
     setupImageButtons = () => {
@@ -69,6 +77,14 @@ export default class ImageOptions {
                     itemClassName: "area-text-item",
                     itemClass: AreaTextItem,
                     onInputChange: this.saveChanges,
+                    onClick: (e) => {
+                        const component = e.target;
+                        const itemWrapper = CommonFunctionsUtil.getInputWrapper({input: component});
+                        const areaIndex = itemWrapper.id.replace("area-text-item", "");
+                        const area = document.querySelector(`.select-areas-background-area[area-index="${areaIndex}"]`);
+                        area.click();
+                        area.previousSibling.click();
+                    },
                     shouldNumberAsLabelBeAdded: true
                 };
 
@@ -110,11 +126,13 @@ export default class ImageOptions {
                             elements: [areaTextsTitle],
                             shouldBeShown: areaTextItems.length > 0
                         });
+
+                        this.saveChanges();
                     }
                 });
             }
-            CommonFunctionsUtil.toggleElementsVisibility({elements: [imageSettingsWrapper]})
-            CommonFunctionsUtil.toggleElementsVisibility({elements: [areasWrapper], shouldBeShown: true})
+            // CommonFunctionsUtil.toggleElementsVisibility({elements: [imageSettingsWrapper]});
+            CommonFunctionsUtil.toggleElementsVisibility({elements: [areasWrapper], shouldBeShown: true});
             this.showImage = false;
         }
 
@@ -149,6 +167,13 @@ export default class ImageOptions {
 
         CommonFunctionsUtil.toggleElementsVisibility({elements: [imageSettingsWrapper], shouldBeShown: true});
         CommonFunctionsUtil.toggleElementsVisibility({elements: [areasWrapper]});
+    };
+
+    setupSavingElements = () => {
+        const {imageSrcInput, imageWidthInput} = this.elements;
+
+        imageSrcInput.addEventListener("change", this.saveChanges);
+        imageWidthInput.addEventListener("change", this.saveChanges);
     };
 
     setValuesFromSettings = (settings) => {

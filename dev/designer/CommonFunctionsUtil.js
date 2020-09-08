@@ -11,7 +11,7 @@ export default class CommonFunctionsUtil {
         });
     };
 
-    static createListOfItems = ({defaultValues, itemsExpectedCount, listWrapper, itemClassName, itemClass, onInputChange, shouldNumberAsLabelBeAdded}) => {
+    static createListOfItems = ({defaultValues, itemsExpectedCount, listWrapper, itemClassName, itemClass, onInputChange, onClick, shouldNumberAsLabelBeAdded}) => {
         const count = defaultValues ? defaultValues.length : itemsExpectedCount;
         const existingItems = listWrapper.querySelectorAll(`.${itemClassName}`);
 
@@ -24,6 +24,7 @@ export default class CommonFunctionsUtil {
                 listWrapper.appendChild(new itemClass({
                     id: `${itemClassName}${existingItems.length + i}`,
                     onInputChange,
+                    onClick,
                     defaultValue: defaultValues ? defaultValues[i - 1] : undefined,
                     labelText: shouldNumberAsLabelBeAdded ? (existingItems.length + i) : undefined
                 }));
@@ -43,5 +44,9 @@ export default class CommonFunctionsUtil {
             result = result.parentNode;
         }
         return result;
+    };
+
+    static toggleTab = ({elements}) => {
+        elements.forEach((element) => element.classList.remove("comd-panel--collapsed"));
     };
 }
