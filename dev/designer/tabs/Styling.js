@@ -16,7 +16,7 @@ export default class Styling {
     render = () => {
         this.setDefaultAttributes();
         this.setupAdditionalStyles();
-        this.setupSavingElements();
+        // this.setupSavingElements();
     };
 
     setDefaultAttributes = () => {

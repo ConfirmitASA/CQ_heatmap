@@ -23,6 +23,9 @@ export default class HeatmapDesignerManager {
         this.AnswerOptions = new AnswerOptions({elements, type, saveChanges});
         this.Styling = new Styling({elements, type, saveChanges});
 
+        const {surveySettings} = elements;
+        surveySettings.addEventListener('input', saveChanges);
+
         this.question.onSettingsReceived = this.setValuesFromSettings;
 
         this.customizeToType();
@@ -57,6 +60,8 @@ export default class HeatmapDesignerManager {
             ...this.getScales(),
             styles: this.getStyles()
         };
+
+        //this.question.onSettingsReceived = () => {};
 
         question.saveChanges(settings, this.hasErrors);
     };
@@ -111,9 +116,9 @@ export default class HeatmapDesignerManager {
             }
         });
 
-        // if (resultAreas.length <= 0) {
-        //     this.hasErrors = true;
-        // }
+        if (resultAreas.length <= 0) {
+            this.hasErrors = true;
+        }
 
         return resultAreas;
     };
@@ -124,10 +129,12 @@ export default class HeatmapDesignerManager {
 
         const areas = $(`#${heatmapWrapperId} .select-areas-overlay`).length > 0 ? $(`#${heatmapWrapperId} img`).selectAreas("areas") : [];
 
-        if (typeForNumberOfAnswers === "equal" && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length) {
+        if (typeForNumberOfAnswers === "equal" && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length ||
+            typeForNumberOfAnswers === "min-max" && minNumberOfAnswersInput.value && minNumberOfAnswersInput.value > areas.length) {
             this.hasErrors = true;
         }
         equalToNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === "equal" && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length);
+        minNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === "min-max" && minNumberOfAnswersInput.value && minNumberOfAnswersInput.value > areas.length);
 
         return {
             type: typeForNumberOfAnswers,
@@ -156,7 +163,7 @@ export default class HeatmapDesignerManager {
                     customScales.push({color,
                         code: code ? code : (index+1),
                         type: type ? type : (index+1),
-                        label: label ? label : (index+1)
+                        label: label ? label : ""
                     });
 
                     if (!code) {

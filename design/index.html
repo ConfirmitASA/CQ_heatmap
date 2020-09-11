@@ -12,11 +12,10 @@
     <script src="bundle.js"></script>
 </head>
 <body>
-<div class="survey-settings">
+<div class="survey-settings" id="survey-settings">
     <div class="comd-alert comd-alert--info" id="requiredInfo">
         <div class="comd-alert__text">
-            If you want user to be able to choose only some of answers, remove "Required" property on the Edit
-            tab
+            If the respondent is to be able to select only some of the available answers, disable the Required property on the Edit tab
         </div>
     </div>
 
@@ -24,9 +23,14 @@
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
                 <h4 class="co-text-size-normal">Image options</h4>
-                <div class="sd-tooltip-help" data-tooltip-text="This is the main part of the Question.<br/>
-When you click on 'Draw image' button, the image is created as it will be in the survey.<br/>
-You can create as many areas as you have answers in the Question, but answers should have only number codes from '1' to number of areas (or more)."></div>
+<!--                <div class="sd-tooltip-help" data-tooltip-text="Set the source and the size of the image.<br/>-->
+<!--                Then click Display image to show the image as it will be presented in the survey.<br/>-->
+<!--                You can create as many areas as you have answers in the question.<br/>-->
+<!--                Note that the question’s answer codes must be sequential from 1."></div>-->
+                <div class="sd-tooltip-help" data-tooltip-text="Set the source and the size of the image.<br/>
+                The image will automatically appear as it will be presented in the survey.<br/>
+                You can create as many areas as you have answers in the question.<br/>
+                Note that the question’s answer codes must be sequential from 1."></div>
             </div>
             <div class="co-flex co-flex--center">
                 <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
@@ -38,7 +42,7 @@ You can create as many areas as you have answers in the Question, but answers sh
                     <div class="node-property">
                         <label class="node-property__label" for="imageSrc">Image source
                             <div class="sd-tooltip-help"
-                                 data-tooltip-text="This image will be used in question to show areas on it<br/>Upload the image in File Library and paste the link of uploaded image here"></div>
+                                 data-tooltip-text="Upload the image you wish to use to the File Library, then copy the link to the image into this field"></div>
                         </label>
                         <input type="text" class="form-input form-input--full-width" name="imageSrc" id="imageSrc">
                     </div>
@@ -47,7 +51,7 @@ You can create as many areas as you have answers in the Question, but answers sh
                     <div class="node-property">
                         <label class="node-property__label" for="imageWidth">Image width
                             <div class="sd-tooltip-help"
-                                 data-tooltip-text="This is the exact width of the image that will be used in the survey<br/>Provide the actual width of the image for better experience<br/>Min width = 100"></div>
+                                 data-tooltip-text="Specify the required width of the image in pixels"></div>
                         </label>
                         <input type="number" class="form-input form-input--4ch" name="imageWidth" id="imageWidth"
                                value="" min="1">
@@ -58,7 +62,7 @@ You can create as many areas as you have answers in the Question, but answers sh
 <!--                    <div class="node-property button-block">-->
 <!--                        <button class="comd-button comd-button&#45;&#45;secondary-neutral" id="drawImageBtn">-->
 <!--                            <span class="comd-button__content">-->
-<!--                                <div class="comd-portal-trigger">Draw image</div>-->
+<!--                                <div class="comd-portal-trigger">Display image</div>-->
 <!--                            </span>-->
 <!--                        </button>-->
 <!--                    </div>-->
@@ -77,23 +81,17 @@ You can create as many areas as you have answers in the Question, but answers sh
 <!--                    </div>-->
 <!--                </div>-->
                 <div class="node-properties">
-                    <div id="heatmapWrapper" style="width: 100%; overflow-x: auto;"></div>
+                    <div id="heatmapWrapper"></div>
                 </div>
                 <div class="node-properties">
                     <div class="node-property">
                         <h4 id="areaTextsTitle">
-                            Area texts in tooltip
+                            Tooltips for area texts
                             <div class="sd-tooltip-help"
-                                 data-tooltip-text="These texts will appear in areas' tooltips<br/>If you want to change some area's text, click on the area above"></div>
+                                 data-tooltip-text="Create tooltip texts for the areas.<br/>Click on an area in the image; the tooltip field is highlighted for editing."></div>
                         </h4>
                         <div class="inputlist-container">
                             <table class="inputlist">
-                                <thead style="display: none;">
-                                <tr>
-                                    <th class="inputlist__header"></th>
-                                    <th class="inputlist__header"></th>
-                                </tr>
-                                </thead>
                                 <tbody id="areaTextList">
                                 </tbody>
                             </table>
@@ -104,12 +102,18 @@ You can create as many areas as you have answers in the Question, but answers sh
         </div>
     </div>
 
+    <div class="comd-alert comd-alert--info" id="minMaxInfo">
+        <div class="comd-alert__text">
+            If you want to set min/max/equal parameters, use the same inputs on the Edit tab
+        </div>
+    </div>
+
     <div class="node-properties-key-fields comd-panel comd-panel--collapsed" id="answerOptions">
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
                 <h4 class="co-text-size-normal">Answer options</h4>
                 <div class="sd-tooltip-help"
-                     data-tooltip-text="These are not necessary options for the Question's answers"></div>
+                     data-tooltip-text="These options can be used but are not required"></div>
             </div>
             <div class="co-flex co-flex--center">
                 <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
@@ -162,11 +166,11 @@ You can create as many areas as you have answers in the Question, but answers sh
                                         <span>Custom scales</span>
                                     </label>
                                 </div>
-                                <div style="padding-left: 22px;" id="customScales">
+                                <div id="customScales">
                                     <div class="node-input-area">
                                         <label class="sd-label node-input-area__label">Number of scales
                                             <div class="sd-tooltip-help"
-                                                 data-tooltip-text="Provide the actual number of scales in the Question (based on answers from 'Edit' tab)"></div>
+                                                 data-tooltip-text="Specify the number of scale values to be used.<br/>Should be the same as the answers defined in the Edit tab."></div>
                                         </label>
                                         <input class="node-input-area__input form-control input-sm form-input form-input--2ch"
                                                type="number" id="scalesNumber" min="1"/>
@@ -193,7 +197,7 @@ You can create as many areas as you have answers in the Question, but answers sh
             <div class="node-properties" id="numberOfAnswers">
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="numberOfAnswers__type" style="margin-right: 0.5em;">Number
+                        <label class="node-property__label" for="numberOfAnswers__type">Number
                             of answers</label>
                         <select class="form-input" name="numberOfAnswers__type" id="numberOfAnswers__type"/>
                         <option value="equal">Equal to</option>
@@ -269,8 +273,8 @@ You can create as many areas as you have answers in the Question, but answers sh
             <div class="node-properties">
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="areaChosenColor">Chosen area
-                            <div class="sd-tooltip-help" data-tooltip-text="Background color for chosen area"></div>
+                        <label class="node-property__label" for="areaChosenColor">Selected area
+                            <div class="sd-tooltip-help" data-tooltip-text="The background color for the selected area"></div>
                         </label>
                         <input type="color" class="form-input" id="areaChosenColor"/>
                     </div>

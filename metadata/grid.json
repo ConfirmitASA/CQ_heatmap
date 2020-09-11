@@ -1,6 +1,6 @@
 {
   "id": "fb2d754e-abf5-4cf4-a440-df2b7afd9fb1",
-  "name": "Heatmap-grid (DEVELOPMENT VERSION)",
+  "name": "HeatMap-grid (DEVELOPMENT VERSION)",
   "description": "",
   "baseQuestionType": "GridForm",
   "disableDefaultRendering": true,

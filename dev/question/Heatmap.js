@@ -305,7 +305,7 @@ export default class Heatmap {
     subscribeToQuestion = () => {
         const {questionNode, answersCount, haveScales} = this;
 
-        const errorList = document.querySelector(".cf-question__error .cf-error-list");
+        const errorList = questionNode.querySelector(".cf-question__error .cf-error-list");
 
         this.question.validationEvent.on((validationResult) => {
             const valuesCount = Object.keys(this.question.values).length;
@@ -317,19 +317,20 @@ export default class Heatmap {
 
             if (this.question.values) {
                 if (equal && valuesCount !== equal) {
-                    const error = {message: `Please provide exactly ${equal} answer(s)`};
+                    const error = {message: `Please provide exactly ${equal} answer(s).`};
                     validationResult.errors.push(error);
                 }
                 if (min && valuesCount < min) {
-                    const error = {message: `Please provide at least ${min} answer(s)`};
+                    const error = {message: `Please provide at least ${min} answer(s).`};
                     validationResult.errors.push(error);
                 }
                 if (max && valuesCount > max) {
-                    const error = {message: `Please provide less than ${max} answer(s)`};
+                    const error = {message: `Please provide less than ${max} answer(s).`};
                     validationResult.errors.push(error);
                 }
-                if (this.question.required && (haveScales && Object.keys(this.question.values).length !== this.question.answers.length || !haveScales && this.question.values.length === this.question.answers.length)) {
-                    const error = {message: `This question is required. ${haveScales ? "Please choose scale for every answer" : "Please provide at least 1 answer"}`};
+                // multi question (when !haveScales) has standard Confirmit error on "required"
+                if (this.question.required && (haveScales && Object.keys(this.question.values).length !== this.question.answers.length)) {
+                    const error = {message: "This question is required. Please select a scale for each answer."};
                     validationResult.errors.push(error);
                 }
                 validationResult.errors.forEach(this.addErrorItem);

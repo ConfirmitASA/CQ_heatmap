@@ -16,7 +16,7 @@ export default class ImageOptions {
         this.setDefaultAttributes();
         this.setupImageInputs();
         // this.setupImageButtons();
-        this.setupSavingElements();
+        // this.setupSavingElements();
     };
 
     setDefaultAttributes = () => {
@@ -32,7 +32,8 @@ export default class ImageOptions {
 
         imageSrcInput.addEventListener("change", this.onImageInputsChange);
         imageWidthInput.addEventListener("change", this.onImageInputsChange);
-        imageWidthInput.addEventListener("change", this.onImageWidthInputChange);
+
+        // imageWidthInput.addEventListener("change", this.onImageWidthInputChange);
     };
 
     onImageInputsChange = () => {
@@ -53,7 +54,6 @@ export default class ImageOptions {
         const {drawImageBtn, changeImageBtn} = this.elements;
 
         drawImageBtn.addEventListener("click", this.drawImage);
-        // drawImageBtn.addEventListener("click", this.saveChanges);
         changeImageBtn.addEventListener("click", this.showImageSettings);
     };
 
@@ -182,7 +182,7 @@ export default class ImageOptions {
 
         if (imageOptions) {
             imageSrcInput.value = imageOptions.src;
-            imageWidthInput.value = imageOptions.width;
+            imageWidthInput.value = CommonFunctionsUtil.correctValueToMinMaxInInput({input: imageWidthInput, value: imageOptions.width});
             this.showImage = true;
 
             if ($(`#${heatmapWrapperId} img`).length <= 0) {

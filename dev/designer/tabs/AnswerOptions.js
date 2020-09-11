@@ -14,8 +14,7 @@ export default class AnswerOptions {
         this.setDefaultAttributes();
         this.setupScaleElements();
         this.setupMinMaxEqualInputs();
-        this.connectMinMaxInputs();
-        this.setupSavingElements();
+        // this.setupSavingElements();
     };
 
     setDefaultAttributes = () => {
@@ -37,21 +36,23 @@ export default class AnswerOptions {
 
     customizeToType = () => {
         const {type} = this;
-        const {haveScalesWrapper, haveScalesInput, activateScalesWrapper, activateDefaultScalesInput, numberOfAnswersWrapper} = this.elements;
-
-        if (type === "multi" || type === "grid") {
-            CommonFunctionsUtil.toggleElementsVisibility({elements: [haveScalesWrapper]});
-        }
+        const {minMaxInfo, answerOptionsWrapper, haveScalesWrapper, haveScalesInput, activateScalesWrapper, activateDefaultScalesInput, numberOfAnswersWrapper} = this.elements;
 
         switch (type) {
             case "multi":
                 // CommonFunctionsUtil.toggleElementsVisibility({elements: [numberOfAnswersWrapper]});
+                CommonFunctionsUtil.toggleElementsVisibility({elements: [answerOptionsWrapper, haveScalesWrapper]});
                 break;
 
             case "grid":
                 haveScalesInput.checked = true;
                 CommonFunctionsUtil.toggleElementsVisibility({elements: [activateScalesWrapper], shouldBeShown: true});
+                CommonFunctionsUtil.toggleElementsVisibility({elements: [minMaxInfo, haveScalesWrapper]});
                 activateDefaultScalesInput.checked = true;
+                break;
+
+            default:
+                CommonFunctionsUtil.toggleElementsVisibility({elements: [minMaxInfo]});
         }
     };
 
@@ -59,7 +60,7 @@ export default class AnswerOptions {
         const {haveScalesInput, activateScalesWrapper, activateDefaultScalesInput, defaultScalesInfo,
             activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, customScaleList, scalesNumberInput} = this.elements;
 
-        haveScalesInput.addEventListener("change", () => {
+        haveScalesInput.addEventListener("input", () => {
             CommonFunctionsUtil.toggleElementsVisibility({
                 elements: [activateScalesWrapper],
                 shouldBeShown: haveScalesInput.checked
@@ -71,21 +72,21 @@ export default class AnswerOptions {
             });
         });
 
-        activateDefaultScalesInput.addEventListener("change", () => {
+        activateDefaultScalesInput.addEventListener("input", () => {
             activateDefaultScalesInput.checked = true;
             activateCustomScalesInput.checked = false;
             CommonFunctionsUtil.toggleElementsVisibility({elements: [customScalesWrapper]});
             CommonFunctionsUtil.toggleElementsVisibility({elements: [defaultScalesInfo], shouldBeShown: true});
         });
 
-        activateCustomScalesInput.addEventListener("change", () => {
+        activateCustomScalesInput.addEventListener("input", () => {
             activateDefaultScalesInput.checked = false;
             activateCustomScalesInput.checked = true;
             CommonFunctionsUtil.toggleElementsVisibility({elements: [defaultScalesInfo]});
             CommonFunctionsUtil.toggleElementsVisibility({elements: [customScalesWrapper], shouldBeShown: true});
         });
 
-        scalesNumberInput.addEventListener("change", () => {
+        scalesNumberInput.addEventListener("input", () => {
             const scalesNumberInputValue = scalesNumberInput.value;
             CommonFunctionsUtil.toggleElementsVisibility({
                 elements: [customScaleListWrapper],
@@ -93,21 +94,20 @@ export default class AnswerOptions {
             });
         });
 
-        scalesNumberInput.addEventListener("change", () => {
+        scalesNumberInput.addEventListener("input", () => {
             CommonFunctionsUtil.createListOfItems({
                 itemsExpectedCount: parseInt(scalesNumberInput.value),
                 listWrapper: customScaleList,
                 itemClassName: "custom-scale-item",
                 itemClass: CustomScaleItem,
-                onInputChange: this.saveChanges
+                onInputChange: undefined //this.saveChanges
             });
         });
     };
 
     setupMinMaxEqualInputs = () => {
         const {typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput} = this.elements;
-
-        typeForNumberOfAnswersSelector.addEventListener("change", (e) => {
+        typeForNumberOfAnswersSelector.addEventListener("input", (e) => {
             const selector = e.target;
             CommonFunctionsUtil.toggleElementsVisibility({
                 elements: [CommonFunctionsUtil.getInputWrapper({input: equalToNumberOfAnswersInput})],
@@ -118,16 +118,18 @@ export default class AnswerOptions {
                 shouldBeShown: selector[1].selected
             });
         });
+
+        this.connectMinMaxInputs();
     };
 
     connectMinMaxInputs = () => {
         const {minNumberOfAnswersInput, maxNumberOfAnswersInput} = this.elements;
 
-        minNumberOfAnswersInput.addEventListener("change", function () {
+        minNumberOfAnswersInput.addEventListener("input", function () {
             const minValue = minNumberOfAnswersInput.value;
             maxNumberOfAnswersInput.setAttribute("min", minValue);
         });
-        maxNumberOfAnswersInput.addEventListener("change", function () {
+        maxNumberOfAnswersInput.addEventListener("input", function () {
             const maxValue = maxNumberOfAnswersInput.value;
             minNumberOfAnswersInput.setAttribute("max", maxValue);
         });
@@ -155,7 +157,14 @@ export default class AnswerOptions {
         const {answerOptionsWrapper, haveScalesInput, activateScalesWrapper} = elements;
         const {areas, haveScales, scaleType, customScales, answersCount} = settings;
 
-        if (type !== "grid" && type !== "multi" && haveScales || answersCount.type === "equal" && answersCount.equal > 0 || answersCount.type === "min-max" && (answersCount.min > 0 || answersCount.max > 0)) {
+        const equalHasValue = answersCount.type === "equal" && answersCount.equal > 0;
+        const minMaxHasValue = answersCount.type === "min-max" && (answersCount.min > 0 || answersCount.max > 0);
+        const customScalesHaveValues = scaleType === "custom" && customScales.length > 0;
+        const shouldBeOpenedForNonTyped = type !== "grid" && type !== "multi" && haveScales;
+        const shouldBeOpenedForMulti = type === "multi" && (equalHasValue || minMaxHasValue);
+        const shouldBeOpenedForGrid = type === "grid" && (equalHasValue || minMaxHasValue || customScalesHaveValues);
+
+        if (shouldBeOpenedForNonTyped || shouldBeOpenedForMulti || shouldBeOpenedForGrid) {
             CommonFunctionsUtil.toggleTab({elements: [answerOptionsWrapper]});
         }
 
@@ -189,7 +198,7 @@ export default class AnswerOptions {
                 listWrapper: customScaleList,
                 itemClassName: "custom-scale-item",
                 itemClass: CustomScaleItem,
-                onInputChange: this.saveChanges
+                onInputChange: undefined //this.saveChanges
             });
         }
 
@@ -223,13 +232,14 @@ export default class AnswerOptions {
         if (answersCount.equal) {
             equalToNumberOfAnswersInput.value = answersCount.equal;
         }
+
         if (answersCount.max) {
-            maxNumberOfAnswersInput.value = answersCount.max;
+            maxNumberOfAnswersInput.value = CommonFunctionsUtil.correctValueToMinMaxInInput({input: maxNumberOfAnswersInput, value: answersCount.max});
         }
         if (answersCount.min) {
-            minNumberOfAnswersInput.value = answersCount.min;
+            minNumberOfAnswersInput.value = CommonFunctionsUtil.correctValueToMinMaxInInput({input: minNumberOfAnswersInput, value: answersCount.min});
         }
-
-        maxNumberOfAnswersInput.setAttribute("max", areasCount);
+        maxNumberOfAnswersInput.min = minNumberOfAnswersInput.value;
+        minNumberOfAnswersInput.max = maxNumberOfAnswersInput.value;
     };
 }

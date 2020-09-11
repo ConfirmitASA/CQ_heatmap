@@ -49,4 +49,13 @@ export default class CommonFunctionsUtil {
     static toggleTab = ({elements}) => {
         elements.forEach((element) => element.classList.remove("comd-panel--collapsed"));
     };
+
+    static correctValueToMinMaxInInput = ({input, value}) => {
+        let currentValue = value ? value : input.value;
+
+        currentValue = !input.min || !currentValue || parseInt(currentValue) > parseInt(input.min) ? currentValue : input.min;
+        currentValue = !input.max || !currentValue || parseInt(currentValue) < parseInt(input.max) ? currentValue : input.max;
+
+        return currentValue;
+    };
 }

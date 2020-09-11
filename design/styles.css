@@ -1,3 +1,12 @@
+#heatmapWrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+#customScales {
+    padding-left: 22px;
+}
+
 .sd-tooltip-help {
     vertical-align: text-bottom;
 }

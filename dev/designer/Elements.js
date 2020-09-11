@@ -7,6 +7,8 @@ export default class Elements {
     }
 
     setupElements = () => {
+        this.surveySettings = document.getElementById("survey-settings");
+
         this.imageSrcInput = document.getElementById("imageSrc");
         this.imageWidthInput = document.getElementById("imageWidth");
         this.haveScalesInput = document.getElementById("haveScales");
@@ -20,8 +22,8 @@ export default class Elements {
 
         this.areaHighlighterSelector = document.getElementById("areaHighlighterSelector");
 
-        this.changeImageBtn = document.getElementById("changeImageBtn");
         this.drawImageBtn = document.getElementById("drawImageBtn");
+        this.changeImageBtn = document.getElementById("changeImageBtn");
 
         this.imageSettingsWrapper = document.getElementById("imageSettings");
         this.areasWrapper = document.getElementById("areas");
@@ -35,8 +37,9 @@ export default class Elements {
         this.customScaleListWrapper = document.getElementById("customScaleListWrapper");
         this.customScaleList = document.getElementById("customScaleList");
 
-        this.defaultScalesInfo = document.getElementById("defaultScalesInfo");
         this.requiredInfo = document.getElementById("requiredInfo");
+        this.minMaxInfo = document.getElementById("minMaxInfo");
+        this.defaultScalesInfo = document.getElementById("defaultScalesInfo");
 
         this.numberOfAnswersWrapper = document.getElementById("numberOfAnswers");
         this.typeForNumberOfAnswersSelector = document.getElementById("numberOfAnswers__type");
