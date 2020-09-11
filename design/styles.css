@@ -18,3 +18,8 @@
     border: 1px solid #ff0000;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgb(255 0 0 / 0.6);
 }
+
+/* to fix crosshair cursor on blurred white image */
+.select-areas-overlay {
+    opacity: 0.45!important;
+}

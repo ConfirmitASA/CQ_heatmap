@@ -30,8 +30,8 @@ export default class ImageOptions {
     setupImageInputs = () => {
         const {imageSrcInput, imageWidthInput} = this.elements;
 
-        imageSrcInput.addEventListener("change", this.onImageInputsChange);
-        imageWidthInput.addEventListener("change", this.onImageInputsChange);
+        imageSrcInput.addEventListener("input", this.onImageInputsChange);
+        imageWidthInput.addEventListener("input", this.onImageInputsChange);
 
         // imageWidthInput.addEventListener("change", this.onImageWidthInputChange);
     };
@@ -76,7 +76,7 @@ export default class ImageOptions {
                     listWrapper: areaTextListWrapper,
                     itemClassName: "area-text-item",
                     itemClass: AreaTextItem,
-                    onInputChange: this.saveChanges,
+                    onInputChange: undefined, //this.saveChanges,
                     onClick: (e) => {
                         const component = e.target;
                         const itemWrapper = CommonFunctionsUtil.getInputWrapper({input: component});
@@ -127,7 +127,7 @@ export default class ImageOptions {
                             shouldBeShown: areaTextItems.length > 0
                         });
 
-                        this.saveChanges();
+                        // this.saveChanges();
                     }
                 });
             }
