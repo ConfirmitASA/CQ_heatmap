@@ -130,11 +130,13 @@ export default class HeatmapDesignerManager {
         const areas = $(`#${heatmapWrapperId} .select-areas-overlay`).length > 0 ? $(`#${heatmapWrapperId} img`).selectAreas("areas") : [];
 
         if (typeForNumberOfAnswers === "equal" && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length ||
-            typeForNumberOfAnswers === "min-max" && minNumberOfAnswersInput.value && minNumberOfAnswersInput.value > areas.length) {
+            typeForNumberOfAnswers === "min-max" && minNumberOfAnswersInput.value && minNumberOfAnswersInput.value > areas.length ||
+            typeForNumberOfAnswers === "min-max" && maxNumberOfAnswersInput.value && maxNumberOfAnswersInput.value > areas.length) {
             this.hasErrors = true;
         }
         equalToNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === "equal" && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length);
         minNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === "min-max" && minNumberOfAnswersInput.value && minNumberOfAnswersInput.value > areas.length);
+        maxNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === "min-max" && maxNumberOfAnswersInput.value && maxNumberOfAnswersInput.value > areas.length);
 
         return {
             type: typeForNumberOfAnswers,

@@ -39,6 +39,8 @@ export default class Heatmap {
         ];
         this.customScales = (scaleType === "custom" && customScales) ? customScales : defaultScales;
 
+        this.isBackClicked = false;
+
         this.init();
     }
 
@@ -164,7 +166,7 @@ export default class Heatmap {
     }
 
     createAreaTooltip = ({title, content, indicator, areaIndex}) => {
-        const {id} = this.id;
+        const {id} = this;
         const tooltip = new Tooltip({
             id: `${id}-area-indicator-tooltip-${areaIndex}`,
             targetId: indicator.id,
@@ -175,19 +177,19 @@ export default class Heatmap {
     }
 
     setExistingValues = ({to, areaIndex}) => {
-        const {question, haveScales} = this;
+        const {id, question, haveScales} = this;
         const {values} = question;
 
         switch (to) {
             case "tooltip":
-                const button = document.querySelector(`.switch-wrapper-${values[areaIndex]}[area-index="${areaIndex}"]`);
+                const button = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch-wrapper-${values[areaIndex]}[area-index="${areaIndex}"]`);
                 if (button) {
                     button.click();
                 }
                 break;
             case "area":
             default:
-                const area = document.querySelector(`.select-areas-background-area.area-indicator[area-index="${areaIndex}"]`);
+                const area = document.querySelector(`#${id} .select-areas-background-area.area-indicator[area-index="${areaIndex}"]`);
                 const className = haveScales ? `area_${values[areaIndex]}` : "area_chosen";
                 if (area && !area.classList.contains(className) &&
                     (question.type === "Multi" && values.indexOf(areaIndex.toString()) >= 0 || question.type === "Grid" && values[areaIndex])) {
@@ -230,13 +232,13 @@ export default class Heatmap {
     };
 
     onTooltipCreated = ({areaIndex, indicator}) => {
-        const {question, haveScales} = this;
+        const {id, question, haveScales} = this;
 
         if (haveScales) {
             const {customScales} = this;
             customScales.forEach((option) => {
                 const {type} = option;
-                const button = document.querySelector(`.switch-wrapper-${type}[area-index="${areaIndex}"]`);
+                const button = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch-wrapper-${type}[area-index="${areaIndex}"]`);
                 if (button) {
                     button.addEventListener("click", (e) => {
                         this.onButtonClick({type, areaIndex, indicator});
@@ -252,12 +254,12 @@ export default class Heatmap {
     };
 
     onButtonClick = ({type, areaIndex, indicator}) => {
-        const {customScales} = this;
+        const {id, customScales} = this;
         const values = this.question.values;
 
         customScales.forEach((option) => {
             const {type: currentType} = option;
-            const input = document.querySelector(`.switch-wrapper-${currentType}[area-index="${areaIndex}"] input`);
+            const input = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch-wrapper-${currentType}[area-index="${areaIndex}"] input`);
 
             if (currentType === type) {
                 if (input.checked) {
@@ -305,9 +307,18 @@ export default class Heatmap {
     subscribeToQuestion = () => {
         const {questionNode, answersCount, haveScales} = this;
 
-        const errorList = questionNode.querySelector(".cf-question__error .cf-error-list");
+        const errorBlock = questionNode.querySelector(".cf-question__error");
+        const errorList = errorBlock.querySelector(".cf-error-list");
+
+        Confirmit.page.beforeNavigateEvent.on((navigation) => {
+            this.isBackClicked = !navigation.next;
+        });
 
         this.question.validationEvent.on((validationResult) => {
+            if (this.isBackClicked) {
+                return;
+            }
+
             const valuesCount = Object.keys(this.question.values).length;
             const equal = parseInt(answersCount.equal);
             const min = parseInt(answersCount.min);
@@ -317,27 +328,37 @@ export default class Heatmap {
 
             if (this.question.values) {
                 if (equal && valuesCount !== equal) {
-                    const error = {message: `Please provide exactly ${equal} answer(s).`};
+                    const error = {message: `Please select ${equal} answer${parseInt(equal) > 1 ? "s" : ""}.`};
                     validationResult.errors.push(error);
                 }
-                if (min && valuesCount < min) {
-                    const error = {message: `Please provide at least ${min} answer(s).`};
+
+                if (min && max) {
+                    const error = {message: `Please select between ${min} and ${max} answers.`};
                     validationResult.errors.push(error);
+                } else {
+                    if (min && valuesCount < min) {
+                        const error = {message: `Please select at least ${min} answer${parseInt(min) > 1 ? "s" : ""}.`};
+                        validationResult.errors.push(error);
+                    }
+                    if (max && valuesCount > max) {
+                        const error = {message: `Please do not select more than ${max} answer${parseInt(max) > 1 ? "s" : ""}.`};
+                        validationResult.errors.push(error);
+                    }
                 }
-                if (max && valuesCount > max) {
-                    const error = {message: `Please provide less than ${max} answer(s).`};
-                    validationResult.errors.push(error);
-                }
+
                 // multi question (when !haveScales) has standard Confirmit error on "required"
                 if (this.question.required && (haveScales && Object.keys(this.question.values).length !== this.question.answers.length)) {
                     const error = {message: "This question is required. Please select a scale for each answer."};
                     validationResult.errors.push(error);
                 }
+
                 validationResult.errors.forEach(this.addErrorItem);
                 if (validationResult.errors.length > 0) {
                     questionNode.classList.add("cf-question--error");
+                    errorBlock.classList.add("cf-error-block--bottom");
                 } else {
                     questionNode.classList.remove("cf-question--error");
+                    errorBlock.classList.remove("cf-error-block--bottom");
                 }
             }
         });
@@ -351,7 +372,7 @@ export default class Heatmap {
     };
 
     setDynamicStyles = () => {
-        const {customScales, styles, questionNode, haveScales} = this;
+        const {id, customScales, styles, questionNode, haveScales} = this;
 
         const stylesElement = document.createElement("style");
         stylesElement.innerText = "";
@@ -360,13 +381,13 @@ export default class Heatmap {
             // area colors
             customScales.forEach((option) => {
                 const {type, color} = option;
-                stylesElement.innerText += `.area_${type}{ background-color: ${color}; opacity: 0.5; }`;
-                stylesElement.innerText += `.switch-wrapper-${type}{ background-color: ${color}; }`;
-                stylesElement.innerText += `.switch-wrapper-${type} .switch-input:checked + .switch-label:after { background-color: ${color}; }`;
+                stylesElement.innerText += `#${id} .area_${type}{ background-color: ${color}; opacity: 0.5; }`;
+                stylesElement.innerText += `*[id^=${id}-area-indicator-tooltip-] .switch-wrapper-${type}{ background-color: ${color}; }`;
+                stylesElement.innerText += `*[id^=${id}-area-indicator-tooltip-] .switch-wrapper-${type} .switch-input:checked + .switch-label:after { background-color: ${color}; }`;
             });
         } else {
-            stylesElement.innerText += `.area_chosen { background-color: ${styles.areaChoose && styles.areaChoose.color ? styles.areaChoose.color : "green"} !important; opacity: 0.5; }`;
-            stylesElement.innerText += ".area-indicator:hover { cursor: pointer; }";
+            stylesElement.innerText += `#${id} .area_chosen { background-color: ${styles.areaChoose && styles.areaChoose.color ? styles.areaChoose.color : "green"} !important; opacity: 0.5; }`;
+            stylesElement.innerText += `#${id} .area-indicator:hover { cursor: pointer; }`;
         }
 
         // area highlighting
@@ -374,14 +395,14 @@ export default class Heatmap {
             if (styles.areaHighlight) {
                 const {color, border} = styles.areaHighlight;
                 if (color) {
-                    stylesElement.innerText += `.select-areas-background-area:hover { background-color: ${(color ? color : "#fff")}; opacity: 0.5; }`;
+                    stylesElement.innerText += `#${id} .select-areas-background-area:hover { background-color: ${(color ? color : "#fff")}; opacity: 0.5; }`;
                 }
                 if (border) {
-                    stylesElement.innerText += `.select-areas-background-area { border: ${(border.width ? border.width : "0")}px solid ${(border.color ? border.color : "#000")}; }`;
+                    stylesElement.innerText += `#${id} .select-areas-background-area { border: ${(border.width ? border.width : "0")}px solid ${(border.color ? border.color : "#000")}; }`;
                 }
             }
         } else {
-            stylesElement.innerText += ".select-areas-background-area:hover { background-color: #fff; opacity: 0.5; }";
+            stylesElement.innerText += `#${id} .select-areas-background-area:hover { background-color: #fff; opacity: 0.5; }`;
         }
 
         questionNode.appendChild(stylesElement);
