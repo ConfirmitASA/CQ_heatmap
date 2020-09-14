@@ -2,6 +2,7 @@ import {ImageWrapper} from "../components/ImageWrapper";
 import {Switch} from "../components/Switch";
 import {Tooltip} from "../components/Tooltip";
 import {QuestionText, QuestionInstruction, QuestionErrorBlock, QuestionErrorItem, QuestionContent} from "../components/standard question/StandardQuestion";
+import {CUSTOM_SCALE_TYPE, MIN_MAX_TYPE, EQUAL_TYPE} from "../Constants";
 
 export default class Heatmap {
     constructor({question, areas, imageOptions, styles, answersCount, haveScales, scaleType, customScales}) {
@@ -13,13 +14,14 @@ export default class Heatmap {
         this.styles = styles;
         this.answersCount = answersCount
             ? {
-                equal: answersCount.type === "equal" && answersCount.equal && answersCount.equal !== "0" ? answersCount.equal : undefined,
-                max: answersCount.type === "min-max" && answersCount.max && answersCount.max !== "0" ? answersCount.max : undefined,
-                min: answersCount.type === "min-max" && answersCount.min && answersCount.min !== "0" ? answersCount.min : undefined
+                equal: answersCount.type === EQUAL_TYPE && answersCount.equal && answersCount.equal !== "0" ? answersCount.equal : undefined,
+                max: answersCount.type === MIN_MAX_TYPE && answersCount.max && answersCount.max !== "0" ? answersCount.max : undefined,
+                min: answersCount.type === MIN_MAX_TYPE && answersCount.min && answersCount.min !== "0" ? answersCount.min : undefined
             }
             : {};
 
         this.haveScales = haveScales;
+
         const defaultScales = [
             {
                 type: "positive",
@@ -37,7 +39,7 @@ export default class Heatmap {
                 color: "red"
             }
         ];
-        this.customScales = (scaleType === "custom" && customScales) ? customScales : defaultScales;
+        this.customScales = (scaleType === CUSTOM_SCALE_TYPE && customScales) ? customScales : defaultScales;
 
         this.isBackClicked = false;
 
@@ -105,7 +107,7 @@ export default class Heatmap {
     };
 
     createIndicatorAreaForAnswer = (area, index, areaSquares) => {
-        const {id, question, haveScales} = this;
+        const {question, haveScales} = this;
         const areaIndex = areaSquares.length - index;
         const areaTitle = this.areas[index].title;
         const indicator = this.createIndicatorNode({area, areaIndex});

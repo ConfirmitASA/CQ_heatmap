@@ -1,4 +1,5 @@
 import CommonFunctionsUtil from "../CommonFunctionsUtil";
+import {COLOR_HIGHLIGHT_TYPE, BORDER_HIGHLIGHT_TYPE} from "../../Constants";
 
 export default class Styling {
     constructor({elements, type, saveChanges}) {
@@ -78,8 +79,8 @@ export default class Styling {
         const {styles} = settings;
 
         if (styles && (
-            styles.areaHighlight && (styles.areaHighlight.type === "color" && styles.areaHighlight.color !== defaultValueForAreaHover ||
-            styles.areaHighlight.type === "border" && (styles.areaHighlight.border.color !== defaultValueForAreaBorder || styles.areaHighlight.border.width > 0))
+            styles.areaHighlight && (styles.areaHighlight.type === COLOR_HIGHLIGHT_TYPE && styles.areaHighlight.color !== defaultValueForAreaHover ||
+            styles.areaHighlight.type === BORDER_HIGHLIGHT_TYPE && (styles.areaHighlight.border.color !== defaultValueForAreaBorder || styles.areaHighlight.border.width > 0))
             || styles.areaChoose && styles.areaChoose.color !== defaultValueForAreaChosen)
         ) {
             CommonFunctionsUtil.toggleTab({elements: [stylingWrapper]});
@@ -97,18 +98,18 @@ export default class Styling {
 
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [CommonFunctionsUtil.getInputWrapper({input: areaHoverColorInput})],
-            shouldBeShown: !styles || !styles.areaHighlight || styles.areaHighlight.type === "color"
+            shouldBeShown: !styles || !styles.areaHighlight || styles.areaHighlight.type === COLOR_HIGHLIGHT_TYPE
         });
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [CommonFunctionsUtil.getInputWrapper({input: areaBorderWidthInput}), CommonFunctionsUtil.getInputWrapper({input: areaBorderColorInput})],
-            shouldBeShown: styles && styles.areaHighlight && styles.areaHighlight.type === "border"
+            shouldBeShown: styles && styles.areaHighlight && styles.areaHighlight.type === BORDER_HIGHLIGHT_TYPE
         });
     };
 
     setValuesFromSettingsForAreaHighlight = ({styles}) => {
         const {areaHighlighterSelector, areaHoverColorInput, areaBorderColorInput, areaBorderWidthInput} = this.elements;
 
-        if (styles.areaHighlight.type === "border") {
+        if (styles.areaHighlight.type === BORDER_HIGHLIGHT_TYPE) {
             areaHighlighterSelector[1].selected = true;
         } else {
             areaHighlighterSelector[0].selected = true;

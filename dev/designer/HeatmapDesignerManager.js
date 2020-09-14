@@ -3,6 +3,7 @@ import AnswerOptions from "./tabs/AnswerOptions";
 import Styling from "./tabs/Styling";
 import Elements from "./Elements";
 import CommonFunctionsUtil from "./CommonFunctionsUtil";
+import {DEFAULT_SCALE_TYPE, CUSTOM_SCALE_TYPE, MIN_MAX_TYPE, EQUAL_TYPE, COLOR_HIGHLIGHT_TYPE, BORDER_HIGHLIGHT_TYPE} from "../Constants";
 
 export default class HeatmapDesignerManager {
     constructor({question}) {
@@ -73,16 +74,8 @@ export default class HeatmapDesignerManager {
             this.hasErrors = true;
         }
 
-        if (!imageSrcInput.value) {
-            imageSrcInput.classList.add("form-input--error");
-        } else {
-            imageSrcInput.classList.remove("form-input--error");
-        }
-        if (!imageWidthInput.value) {
-            imageWidthInput.classList.add("form-input--error");
-        } else {
-            imageWidthInput.classList.remove("form-input--error");
-        }
+        imageSrcInput.classList.toggle("form-input--error", !imageSrcInput.value);
+        imageWidthInput.classList.toggle("form-input--error", !imageWidthInput.value);
 
         return {
             src: imageSrcInput.value,
@@ -125,24 +118,24 @@ export default class HeatmapDesignerManager {
 
     getAnswersCount = () => {
         const {typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput, heatmapWrapperId} = this.elements;
-        const typeForNumberOfAnswers = typeForNumberOfAnswersSelector[0].selected ? "equal" : "min-max";
+        const typeForNumberOfAnswers = typeForNumberOfAnswersSelector[0].selected ? EQUAL_TYPE : MIN_MAX_TYPE;
 
         const areas = $(`#${heatmapWrapperId} .select-areas-overlay`).length > 0 ? $(`#${heatmapWrapperId} img`).selectAreas("areas") : [];
 
-        if (typeForNumberOfAnswers === "equal" && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length ||
-            typeForNumberOfAnswers === "min-max" && minNumberOfAnswersInput.value && minNumberOfAnswersInput.value > areas.length ||
-            typeForNumberOfAnswers === "min-max" && maxNumberOfAnswersInput.value && maxNumberOfAnswersInput.value > areas.length) {
+        if (typeForNumberOfAnswers === EQUAL_TYPE && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length ||
+            typeForNumberOfAnswers === MIN_MAX_TYPE && minNumberOfAnswersInput.value && minNumberOfAnswersInput.value > areas.length ||
+            typeForNumberOfAnswers === MIN_MAX_TYPE && maxNumberOfAnswersInput.value && maxNumberOfAnswersInput.value > areas.length) {
             this.hasErrors = true;
         }
-        equalToNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === "equal" && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length);
-        minNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === "min-max" && minNumberOfAnswersInput.value && minNumberOfAnswersInput.value > areas.length);
-        maxNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === "min-max" && maxNumberOfAnswersInput.value && maxNumberOfAnswersInput.value > areas.length);
+        equalToNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === EQUAL_TYPE && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length);
+        minNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === MIN_MAX_TYPE && minNumberOfAnswersInput.value && minNumberOfAnswersInput.value > areas.length);
+        maxNumberOfAnswersInput.classList.toggle("form-input--error", typeForNumberOfAnswers === MIN_MAX_TYPE && maxNumberOfAnswersInput.value && maxNumberOfAnswersInput.value > areas.length);
 
         return {
             type: typeForNumberOfAnswers,
-            equal: typeForNumberOfAnswers === "equal" && equalToNumberOfAnswersInput.value ? equalToNumberOfAnswersInput.value : undefined,
-            max: typeForNumberOfAnswers === "min-max" && maxNumberOfAnswersInput.value ? maxNumberOfAnswersInput.value : undefined,
-            min: typeForNumberOfAnswers === "min-max" && minNumberOfAnswersInput.value ? minNumberOfAnswersInput.value : undefined
+            equal: typeForNumberOfAnswers === EQUAL_TYPE && equalToNumberOfAnswersInput.value ? equalToNumberOfAnswersInput.value : undefined,
+            max: typeForNumberOfAnswers === MIN_MAX_TYPE && maxNumberOfAnswersInput.value ? maxNumberOfAnswersInput.value : undefined,
+            min: typeForNumberOfAnswers === MIN_MAX_TYPE && minNumberOfAnswersInput.value ? minNumberOfAnswersInput.value : undefined
         };
     };
 
@@ -150,10 +143,10 @@ export default class HeatmapDesignerManager {
         const {haveScalesInput, activateCustomScalesInput, scalesNumberInput} = this.elements;
 
         if (haveScalesInput.checked) {
-            const scaleType = activateCustomScalesInput.checked ? "custom" : "default";
+            const scaleType = activateCustomScalesInput.checked ? CUSTOM_SCALE_TYPE : DEFAULT_SCALE_TYPE;
             let customScales = undefined;
 
-            if (scaleType === "custom") {
+            if (scaleType === CUSTOM_SCALE_TYPE) {
                 customScales = [];
                 const customScaleItems = document.querySelectorAll(".custom-scale-item");
                 customScaleItems.forEach((item, index) => {
@@ -186,10 +179,10 @@ export default class HeatmapDesignerManager {
 
     getStyles = () => {
         const {areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput, areaChosenColorInput} = this.elements;
-        const areaHighlighterType = areaHighlighterSelector[1].selected ? "border" : "color";
+        const areaHighlighterType = areaHighlighterSelector[1].selected ? BORDER_HIGHLIGHT_TYPE : COLOR_HIGHLIGHT_TYPE;
 
-        const areaHighlighterColor = areaHighlighterType === "color" && areaHoverColorInput.value ? areaHoverColorInput.value : undefined;
-        const areaHighlighterBorderEnabled = areaHighlighterType === "border" && (areaBorderWidthInput.value || areaBorderColorInput.value);
+        const areaHighlighterColor = areaHighlighterType === COLOR_HIGHLIGHT_TYPE && areaHoverColorInput.value ? areaHoverColorInput.value : undefined;
+        const areaHighlighterBorderEnabled = areaHighlighterType === BORDER_HIGHLIGHT_TYPE && (areaBorderWidthInput.value || areaBorderColorInput.value);
 
         return {
             areaHighlight: {

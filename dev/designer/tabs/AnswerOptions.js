@@ -1,5 +1,6 @@
 import CommonFunctionsUtil from "../CommonFunctionsUtil";
 import {CustomScaleItem} from "../../components/CustomScaleItem";
+import {DEFAULT_SCALE_TYPE, CUSTOM_SCALE_TYPE, MIN_MAX_TYPE, EQUAL_TYPE} from "../../Constants";
 
 export default class AnswerOptions {
     constructor({elements, type, saveChanges}) {
@@ -157,9 +158,9 @@ export default class AnswerOptions {
         const {answerOptionsWrapper, haveScalesInput, activateScalesWrapper} = elements;
         const {areas, haveScales, scaleType, customScales, answersCount} = settings;
 
-        const equalHasValue = answersCount.type === "equal" && answersCount.equal > 0;
-        const minMaxHasValue = answersCount.type === "min-max" && (answersCount.min > 0 || answersCount.max > 0);
-        const customScalesHaveValues = scaleType === "custom" && customScales.length > 0;
+        const equalHasValue = answersCount.type === EQUAL_TYPE && answersCount.equal > 0;
+        const minMaxHasValue = answersCount.type === MIN_MAX_TYPE && (answersCount.min > 0 || answersCount.max > 0);
+        const customScalesHaveValues = scaleType === CUSTOM_SCALE_TYPE && customScales.length > 0;
         const shouldBeOpenedForNonTyped = type !== "grid" && type !== "multi" && haveScales;
         const shouldBeOpenedForMulti = type === "multi" && (equalHasValue || minMaxHasValue);
         const shouldBeOpenedForGrid = type === "grid" && (equalHasValue || minMaxHasValue || customScalesHaveValues);
@@ -175,23 +176,23 @@ export default class AnswerOptions {
 
         this.setValuesFromSettingsForDefaultScales({scaleType});
         this.setValuesFromSettingsForCustomScales({haveScales, scaleType, customScales});
-        this.setValuesFromSettingsForAnswerCount({answersCount, areasCount: areas.length});
+        this.setValuesFromSettingsForAnswerCount({answersCount});
     };
 
     setValuesFromSettingsForDefaultScales = ({scaleType}) => {
         const {activateDefaultScalesInput, defaultScalesInfo} = this.elements;
-        activateDefaultScalesInput.checked = scaleType === "default";
+        activateDefaultScalesInput.checked = scaleType === DEFAULT_SCALE_TYPE;
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [defaultScalesInfo],
-            shouldBeShown: scaleType === "default"
+            shouldBeShown: scaleType === DEFAULT_SCALE_TYPE
         });
     };
 
     setValuesFromSettingsForCustomScales = ({haveScales, scaleType, customScales}) => {
         const {activateCustomScalesInput, scalesNumberInput, customScalesWrapper, customScaleListWrapper, customScaleList} = this.elements;
-        activateCustomScalesInput.checked = scaleType === "custom";
+        activateCustomScalesInput.checked = scaleType === CUSTOM_SCALE_TYPE;
 
-        if (haveScales && scaleType === "custom") {
+        if (haveScales && scaleType === CUSTOM_SCALE_TYPE) {
             scalesNumberInput.value = customScales.length ? customScales.length : undefined;
             CommonFunctionsUtil.createListOfItems({
                 defaultValues: customScales,
@@ -204,29 +205,29 @@ export default class AnswerOptions {
 
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [customScalesWrapper],
-            shouldBeShown: haveScales && scaleType === "custom"
+            shouldBeShown: haveScales && scaleType === CUSTOM_SCALE_TYPE
         });
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [customScaleListWrapper],
-            shouldBeShown: haveScales && scaleType === "custom" && customScales.length > 0
+            shouldBeShown: haveScales && scaleType === CUSTOM_SCALE_TYPE && customScales.length > 0
         });
     };
 
-    setValuesFromSettingsForAnswerCount = ({answersCount, areasCount}) => {
+    setValuesFromSettingsForAnswerCount = ({answersCount}) => {
         const {typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput} = this.elements;
 
-        if (answersCount.type === "equal") {
+        if (answersCount.type === EQUAL_TYPE) {
             typeForNumberOfAnswersSelector[0].selected = true;
         } else {
             typeForNumberOfAnswersSelector[1].selected = true;
         }
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [CommonFunctionsUtil.getInputWrapper({input: equalToNumberOfAnswersInput})],
-            shouldBeShown: answersCount.type === "equal"
+            shouldBeShown: answersCount.type === EQUAL_TYPE
         });
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [CommonFunctionsUtil.getInputWrapper({input: minNumberOfAnswersInput}), CommonFunctionsUtil.getInputWrapper({input: maxNumberOfAnswersInput})],
-            shouldBeShown: answersCount.type === "min-max"
+            shouldBeShown: answersCount.type === MIN_MAX_TYPE
         });
 
         if (answersCount.equal) {
