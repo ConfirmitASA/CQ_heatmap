@@ -1,5 +1,5 @@
-import CommonFunctionsUtil from "../CommonFunctionsUtil";
-import {AreaTextItem} from "../../components/AreaTextItem";
+import CommonFunctionsUtil from "../../CommonFunctionsUtil";
+import AreaTextItem from "../../components/AreaTextItem";
 import HeatmapDesigner from "../HeatmapDesigner";
 
 export default class ImageOptions {
@@ -32,6 +32,10 @@ export default class ImageOptions {
 
         imageSrcInput.addEventListener("input", this.onImageInputsChange);
         imageWidthInput.addEventListener("input", this.onImageInputsChange);
+
+        imageWidthInput.addEventListener("input", (e) => {
+            imageWidthInput.value = e.target.value.replace(/\D+/g, '');
+        });
 
         // imageWidthInput.addEventListener("change", this.onImageWidthInputChange);
     };

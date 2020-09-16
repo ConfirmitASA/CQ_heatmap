@@ -1,5 +1,5 @@
-import CommonFunctionsUtil from "../CommonFunctionsUtil";
-import {CustomScaleItem} from "../../components/CustomScaleItem";
+import CommonFunctionsUtil from "../../CommonFunctionsUtil";
+import CustomScaleItem from "../../components/CustomScaleItem";
 import {DEFAULT_SCALE_TYPE, CUSTOM_SCALE_TYPE, MIN_MAX_TYPE, EQUAL_TYPE} from "../../Constants";
 
 export default class AnswerOptions {
@@ -88,16 +88,13 @@ export default class AnswerOptions {
         });
 
         scalesNumberInput.addEventListener("input", () => {
-            const scalesNumberInputValue = scalesNumberInput.value;
+            const scalesNumberInputValue = parseInt(scalesNumberInput.value);
             CommonFunctionsUtil.toggleElementsVisibility({
                 elements: [customScaleListWrapper],
                 shouldBeShown: scalesNumberInputValue
             });
-        });
-
-        scalesNumberInput.addEventListener("input", () => {
             CommonFunctionsUtil.createListOfItems({
-                itemsExpectedCount: parseInt(scalesNumberInput.value),
+                itemsExpectedCount: scalesNumberInputValue,
                 listWrapper: customScaleList,
                 itemClassName: "custom-scale-item",
                 itemClass: CustomScaleItem,
@@ -120,19 +117,18 @@ export default class AnswerOptions {
             });
         });
 
-        this.connectMinMaxInputs();
-    };
-
-    connectMinMaxInputs = () => {
-        const {minNumberOfAnswersInput, maxNumberOfAnswersInput} = this.elements;
-
-        minNumberOfAnswersInput.addEventListener("input", function () {
-            const minValue = minNumberOfAnswersInput.value;
+        minNumberOfAnswersInput.addEventListener("input", (e) => {
+            const minValue = e.target.value.replace(/\D+/g, '');
+            minNumberOfAnswersInput.value = minValue;
             maxNumberOfAnswersInput.setAttribute("min", minValue);
         });
-        maxNumberOfAnswersInput.addEventListener("input", function () {
-            const maxValue = maxNumberOfAnswersInput.value;
+        maxNumberOfAnswersInput.addEventListener("input", (e) => {
+            const maxValue = e.target.value.replace(/\D+/g, '');
+            maxNumberOfAnswersInput.value = maxValue;
             minNumberOfAnswersInput.setAttribute("max", maxValue);
+        });
+        equalToNumberOfAnswersInput.addEventListener("input", (e) => {
+            equalToNumberOfAnswersInput.value = e.target.value.replace(/\D+/g, '');
         });
     };
 
@@ -156,7 +152,7 @@ export default class AnswerOptions {
     setValuesFromSettings = (settings) => {
         const {type, elements} = this;
         const {answerOptionsWrapper, haveScalesInput, activateScalesWrapper} = elements;
-        const {areas, haveScales, scaleType, customScales, answersCount} = settings;
+        const {haveScales, scaleType, customScales, answersCount} = settings;
 
         const equalHasValue = answersCount.type === EQUAL_TYPE && answersCount.equal > 0;
         const minMaxHasValue = answersCount.type === MIN_MAX_TYPE && (answersCount.min > 0 || answersCount.max > 0);
@@ -221,6 +217,18 @@ export default class AnswerOptions {
         } else {
             typeForNumberOfAnswersSelector[1].selected = true;
         }
+
+        // const elementsToChangeVisibility = [
+        //     {
+        //         shouldBeShown: answersCount.type === EQUAL_TYPE,
+        //         elements: [CommonFunctionsUtil.getInputWrapper({input: equalToNumberOfAnswersInput})]
+        //     },
+        //     {
+        //         shouldBeShown: answersCount.type === MIN_MAX_TYPE,
+        //         elements: [CommonFunctionsUtil.getInputWrapper({input: minNumberOfAnswersInput}), CommonFunctionsUtil.getInputWrapper({input: maxNumberOfAnswersInput})]
+        //     }
+        // ];
+        // elementsToChangeVisibility.forEach((elementsOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementsOptions));
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [CommonFunctionsUtil.getInputWrapper({input: equalToNumberOfAnswersInput})],
             shouldBeShown: answersCount.type === EQUAL_TYPE

@@ -1,4 +1,4 @@
-import CommonFunctionsUtil from "../CommonFunctionsUtil";
+import CommonFunctionsUtil from "../../CommonFunctionsUtil";
 import {COLOR_HIGHLIGHT_TYPE, BORDER_HIGHLIGHT_TYPE} from "../../Constants";
 
 export default class Styling {
@@ -50,7 +50,7 @@ export default class Styling {
     setupAdditionalStyles = () => {
         const {areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput} = this.elements;
 
-        areaHighlighterSelector.addEventListener("change", (e) => {
+        areaHighlighterSelector.addEventListener("input", (e) => {
             const selector = e.target;
             CommonFunctionsUtil.toggleElementsVisibility({
                 elements: [CommonFunctionsUtil.getInputWrapper({input: areaHoverColorInput})],
@@ -60,6 +60,10 @@ export default class Styling {
                 elements: [CommonFunctionsUtil.getInputWrapper({input: areaBorderWidthInput}), CommonFunctionsUtil.getInputWrapper({input: areaBorderColorInput})],
                 shouldBeShown: selector[1].selected
             });
+        });
+
+        areaBorderWidthInput.addEventListener("input", (e) => {
+            areaBorderWidthInput.value = e.target.value.replace(/\D+/g, '');
         });
     };
 
