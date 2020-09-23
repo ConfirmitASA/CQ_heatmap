@@ -29,7 +29,6 @@ export default class Config {
             ...elements,
             imageSettingsWrapper: settingsWrapper.querySelector(".settings-wrapper.settings-wrapper--image"),
             imageSrcInput: settingsWrapper.querySelector("#imageSrc"),
-            imageWidthInput: settingsWrapper.querySelector("#imageWidth"),
             areasWrapper: settingsWrapper.querySelector(".settings-wrapper.settings-wrapper--areas"),
             heatmapWrapper: settingsWrapper.querySelector(`#${Config.heatmapWrapperId}`)
         }

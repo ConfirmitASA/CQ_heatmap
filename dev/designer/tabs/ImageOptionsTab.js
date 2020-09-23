@@ -20,15 +20,11 @@ export default class ImageOptionsTab extends AbstractTab {
     }
 
     setValues = ({values}) => {
-        const {imageSrcInput, imageWidthInput, areasWrapper} = this.elements;
+        const {imageSrcInput, areasWrapper} = this.elements;
         const {imageOptions, areas} = values;
 
         if (imageOptions) {
             imageSrcInput.value = imageOptions.src;
-            imageWidthInput.value = CommonFunctionsUtil.correctValueToMinMaxInInput({
-                input: imageWidthInput,
-                value: imageOptions.width
-            });
 
             this.state.showImage = true;
             this.drawImage({areas});
@@ -38,10 +34,10 @@ export default class ImageOptionsTab extends AbstractTab {
     };
 
     get values() {
-        const {imageSrcInput, imageWidthInput, areaTextListWrapper} = this.elements;
+        const {imageSrcInput, areaTextListWrapper} = this.elements;
 
         const src = imageSrcInput.value;
-        const width = imageWidthInput.value;
+        const width = this.getHeatmapImageWidth();
         const areas = this.getAreas();
 
         const areaTextItems = areaTextListWrapper.querySelectorAll(".area-text-item__text");
@@ -56,16 +52,14 @@ export default class ImageOptionsTab extends AbstractTab {
     };
 
     raiseErrors = () => {
-        const {imageSrcInput, imageWidthInput, heatmapWrapper} = this.elements;
+        const {imageSrcInput, heatmapWrapper} = this.elements;
 
         const src = imageSrcInput.value;
-        const width = imageWidthInput.value;
         const areas = this.getAreas();
 
         this.state.hasErrors = DesignerErrorManager.handleSeveralErrors({
             errors: [
                 {type: ERROR_TYPES.INPUT, element: imageSrcInput, errorCondition: !src},
-                {type: ERROR_TYPES.INPUT, element: imageWidthInput, errorCondition: !width},
                 {type: ERROR_TYPES.WRAPPER, element: heatmapWrapper, errorCondition: areas.length <= 0}
             ]
         });
@@ -84,19 +78,18 @@ export default class ImageOptionsTab extends AbstractTab {
         return areas;
     };
 
+    getHeatmapImageWidth = () => {
+        const {heatmapWrapper} = this.elements;
+        const heatmapWrapperImg = heatmapWrapper.querySelector("img");
+        return heatmapWrapperImg ? heatmapWrapperImg.innerWidth : 0;
+    };
+
     render = () => {
-        const {imageWidthInput, areasWrapper} = this.elements;
+        const {areasWrapper} = this.elements;
 
         this.setDefaultAttributes({
             elementsToChangeVisibility: [{
                 elements: [areasWrapper]
-            }],
-            elementsToSetAttribute: [{
-                element: imageWidthInput,
-                attribute: {
-                    name: "min",
-                    value: MIN_VALUE_FOR_IMAGE_WIDTH
-                }
             }]
         });
 
@@ -104,12 +97,8 @@ export default class ImageOptionsTab extends AbstractTab {
     };
 
     setupImageInputs = () => {
-        const {imageSrcInput, imageWidthInput} = this.elements;
-
+        const {imageSrcInput} = this.elements;
         imageSrcInput.addEventListener("input", this.handleImageInputsChange);
-        imageWidthInput.addEventListener("input", this.handleImageInputsChange);
-
-        imageWidthInput.addEventListener("input", CommonFunctionsUtil.removeMathSignsFromPositiveIntCallback);
     };
 
     handleImageInputsChange = () => {
@@ -121,14 +110,13 @@ export default class ImageOptionsTab extends AbstractTab {
     };
 
     drawImage = ({areas}) => {
-        const {imageSrcInput, imageWidthInput} = this.elements;
+        const {imageSrcInput} = this.elements;
         const src = imageSrcInput.value;
-        const width = imageWidthInput.value;
 
-        if (src && width) {
-            const {heatmapWrapper, areasWrapper, imageSettingsWrapper} = this.elements;
+        if (src) {
+            const {heatmapWrapper, areasWrapper} = this.elements;
             if (!heatmapWrapper.querySelector("img") && this.state.showImage) {
-                new HeatmapDesigner(this.getHeatmapDesignerOptions({src, width, areas}));
+                new HeatmapDesigner(this.getHeatmapDesignerOptions({src, areas}));
             }
 
             const elementsToChangeVisibility = [
@@ -140,13 +128,13 @@ export default class ImageOptionsTab extends AbstractTab {
         }
     };
 
-    getHeatmapDesignerOptions = ({src, width, areas}) => {
+    getHeatmapDesignerOptions = ({src, areas}) => {
         const {heatmapWrapperId} = Config;
         const textItemsOptions = this.getTextItemsOptions();
 
         return {
             wrapperId: heatmapWrapperId,
-            imageOptions: {src, width},
+            imageOptions: {src, width: this.getHeatmapImageWidth()},
             predefinedAreas: areas && areas.length > 0 ? areas : [],
             onAreasChanged: () => {
                 const areas = this.getAreas();

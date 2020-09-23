@@ -11,6 +11,7 @@ const MIN_VALUE_FOR_MINMAX = 1;
 const MIN_VALUE_FOR_IMAGE_WIDTH = 100;
 
 const HAVE_SCALES_WRAPPER_LEVEL_FROM_INPUT = 4;
+const AREA_CHOSEN_COLOR_WRAPPER_LEVEL_FROM_INPUT = 3;
 
 const QUESTION_TYPES = {
     GRID: "Grid",
@@ -29,17 +30,17 @@ const MAX_SIZES_FOR_AREA = [0, 0]; // [0, 0] is equal to undefined
 
 const DEFAULT_SCALES = [
     {
-        type: "positive",
+        code: "positive",
         label: "Positive",
         color: "green"
     },
     {
-        type: "neutral",
+        code: "neutral",
         label: "Neutral",
         color: "#aaa"
     },
     {
-        type: "negative",
+        code: "negative",
         label: "Negative",
         color: "red"
     }
@@ -86,6 +87,7 @@ export {
     MIN_VALUE_FOR_MINMAX,
     MIN_VALUE_FOR_IMAGE_WIDTH,
     HAVE_SCALES_WRAPPER_LEVEL_FROM_INPUT,
+    AREA_CHOSEN_COLOR_WRAPPER_LEVEL_FROM_INPUT,
     QUESTION_TYPES,
     DEFAULT_COLORS,
     MIN_SIZES_FOR_AREA,

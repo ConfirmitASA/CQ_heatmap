@@ -1,6 +1,12 @@
 import CommonFunctionsUtil from "../CommonFunctionsUtil";
 
-import {CUSTOM_SCALE_TYPE, EQUAL_TYPE, MIN_MAX_TYPE, QUESTION_TYPES} from "../Constants";
+import {
+    AREA_CHOSEN_COLOR_WRAPPER_LEVEL_FROM_INPUT,
+    CUSTOM_SCALE_TYPE,
+    EQUAL_TYPE,
+    MIN_MAX_TYPE,
+    QUESTION_TYPES
+} from "../Constants";
 
 export default class QuestionTypesHandlerMakerForDesigner {
     constructor({type, elements}) {
@@ -48,7 +54,7 @@ class QuestionTypesHandlerForDesigner {
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [CommonFunctionsUtil.getInputWrapper({
                 input: areaChosenColorInput,
-                level: 3
+                level: AREA_CHOSEN_COLOR_WRAPPER_LEVEL_FROM_INPUT
             })],
             shouldBeShown: true
         });
@@ -117,7 +123,7 @@ class MultiHandler extends QuestionTypesHandlerForDesigner {
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [CommonFunctionsUtil.getInputWrapper({
                 input: areaChosenColorInput,
-                level: 3
+                level: AREA_CHOSEN_COLOR_WRAPPER_LEVEL_FROM_INPUT
             })],
             shouldBeShown: true
         });

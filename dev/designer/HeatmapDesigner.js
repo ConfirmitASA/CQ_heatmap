@@ -17,9 +17,8 @@ export default class HeatmapDesigner {
 
     render() {
         const {wrapper, imageOptions, id, predefinedAreas, onAreasChanged, onAreasInit} = this;
-        const {width} = imageOptions;
 
-        const imageWrapper = ElementsMaker.createCustomElement({type: ELEMENTS.CUSTOM.IMAGE_WRAPPER, elementOptions:{id: "heatmap-image-wrapper", ...imageOptions}});
+        const imageWrapper = ElementsMaker.createCustomElement({type: ELEMENTS.CUSTOM.IMAGE_WRAPPER, elementOptions:{id: "heatmap-image-wrapper", src: imageOptions.src}});
         const image = imageWrapper.querySelector("img");
 
         image.addEventListener("load", () =>
@@ -33,7 +32,6 @@ export default class HeatmapDesigner {
                 aspectRatio: 0,
                 minSize: MIN_SIZES_FOR_AREA,
                 maxSize: MAX_SIZES_FOR_AREA,
-                width: width,
                 maxAreas: this.maxAreas,
                 outlineOpacity: 0.5,
                 overlayOpacity: 0.5,
