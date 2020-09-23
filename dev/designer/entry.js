@@ -1,16 +1,7 @@
-import HeatmapDesignerManager from "./HeatmapDesignerManager";
-
-if (window.NodeList && !NodeList.prototype.forEach) {
-    NodeList.prototype.forEach = function (callback, thisArg) {
-        thisArg = thisArg || window;
-        for (var i = 0; i < this.length; i++) {
-            callback.call(thisArg, this[i], i, this);
-        }
-    };
-}
+import HeatmapDesignerWindow from "./HeatmapDesignerWindow";
 
 if (window && !window.customQuestionsLibrary) {
     window.customQuestionsLibrary = {};
 }
 
-window.customQuestionsLibrary.HeatmapDesignerManager = HeatmapDesignerManager;
+window.customQuestionsLibrary.HeatmapDesignerManager = HeatmapDesignerWindow;

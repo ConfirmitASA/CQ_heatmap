@@ -1,5 +1,9 @@
+import ElementsMaker from "../components/ElementsMaker";
+
+import {ELEMENTS, MAX_SIZES_FOR_AREA, MIN_SIZES_FOR_AREA} from "../Constants";
+
 export default class HeatmapDesigner {
-    constructor ({wrapperId, imageOptions, predefinedAreas, maxAreas, onAreasChanged, onAreasInit}) {
+    constructor({wrapperId, imageOptions, predefinedAreas, maxAreas, onAreasChanged, onAreasInit}) {
         this.id = wrapperId;
         this.imageOptions = imageOptions;
         this.predefinedAreas = predefinedAreas;
@@ -8,32 +12,27 @@ export default class HeatmapDesigner {
         this.onAreasInit = onAreasInit;
         this.wrapper = document.querySelector(`#${this.id}`);
 
-        this.init();
+        this.render();
     }
 
-    init = () => {
-        return this.render();
-    };
-
-    render = () => {
+    render() {
         const {wrapper, imageOptions, id, predefinedAreas, onAreasChanged, onAreasInit} = this;
-        const {src, width} = imageOptions;
+        const {width} = imageOptions;
 
-        const image = document.createElement("img");
-        image.src = src;
-        image.style.width = width + "px";
+        const imageWrapper = ElementsMaker.createCustomElement({type: ELEMENTS.CUSTOM.IMAGE_WRAPPER, elementOptions:{id: "heatmap-image-wrapper", ...imageOptions}});
+        const image = imageWrapper.querySelector("img");
 
-        image.addEventListener("load", (e) => {
+        image.addEventListener("load", () =>
             $(`#${id} img`).selectAreas({
-                allowEdit:true,
-                allowMove:true,
-                allowResize:true,
-                allowSelect:true,
-                allowDelete:true,
+                allowEdit: true,
+                allowMove: true,
+                allowResize: true,
+                allowSelect: true,
+                allowDelete: true,
                 allowNudge: true,
                 aspectRatio: 0,
-                minSize: [10, 10],
-                maxSize: [0, 0],
+                minSize: MIN_SIZES_FOR_AREA,
+                maxSize: MAX_SIZES_FOR_AREA,
                 width: width,
                 maxAreas: this.maxAreas,
                 outlineOpacity: 0.5,
@@ -44,10 +43,10 @@ export default class HeatmapDesigner {
                 onChanging: null,
                 onChanged: onAreasChanged
             })
-        });
+        );
 
-        wrapper.appendChild(image);
+        wrapper.appendChild(imageWrapper);
 
-        return image;
-    };
+        return imageWrapper;
+    }
 }

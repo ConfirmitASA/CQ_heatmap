@@ -1,8 +1,9 @@
-import {ImageWrapper} from "../components/ImageWrapper";
-import {Switch} from "../components/Switch";
 import {Tooltip} from "../components/Tooltip";
-import {QuestionText, QuestionInstruction, QuestionErrorBlock, QuestionErrorItem, QuestionContent} from "../components/standard question/StandardQuestion";
-import {CUSTOM_SCALE_TYPE, MIN_MAX_TYPE, EQUAL_TYPE} from "../Constants";
+import ElementsMaker from "../components/ElementsMaker";
+import ValidationLibrary from "./ValidationLbrary";
+import QuestionTypesHandlerMakerForQuestion from "./QuestionTypesHandlerMakerForQuestion";
+
+import {CUSTOM_SCALE_TYPE, MIN_MAX_TYPE, EQUAL_TYPE, DEFAULT_SCALES, ELEMENTS} from "../Constants";
 
 export default class Heatmap {
     constructor({question, areas, imageOptions, styles, answersCount, haveScales, scaleType, customScales}) {
@@ -22,57 +23,63 @@ export default class Heatmap {
 
         this.haveScales = haveScales;
 
-        const defaultScales = [
-            {
-                type: "positive",
-                label: "Positive",
-                color: "green"
-            },
-            {
-                type: "neutral",
-                label: "Neutral",
-                color: "#aaa"
-            },
-            {
-                type: "negative",
-                label: "Negative",
-                color: "red"
-            }
-        ];
-        this.customScales = (scaleType === CUSTOM_SCALE_TYPE && customScales) ? customScales : defaultScales;
+        this.customScales = (scaleType === CUSTOM_SCALE_TYPE && customScales) ? customScales : DEFAULT_SCALES;
 
-        this.isBackClicked = false;
+        this.state = {
+            isBackClicked: false
+        };
 
-        this.init();
+        this.questionTypeHandler = new QuestionTypesHandlerMakerForQuestion({type: question.type});
+
+        this.render();
     }
 
-    init = () => {
-        const wrapper = this.render();
+    render = () => {
+        const wrapper = this.setupWrapper();
         this.subscribeToQuestion();
         this.setDynamicStyles();
 
         return wrapper;
     };
 
-    render = () => {
-        const {question, id, questionNode, imageOptions} = this;
+    setupWrapper = () => {
+        const {id, imageOptions} = this;
 
-        const text = new QuestionText({id, text: question.text});
-        const instruction = new QuestionInstruction({id, text: question.instruction});
-        const errorBlock = new QuestionErrorBlock({id});
-        const questionContent = new QuestionContent({id});
+        const wrapper = ElementsMaker.createCustomElement({
+            type: ELEMENTS.CUSTOM.IMAGE_WRAPPER,
+            elementOptions: {id: `${id}-image-wrapper`, ...imageOptions}
+        });
+        this.setupQuestionElements({wrapper});
 
-        const wrapper = new ImageWrapper({id: `${id}-image-wrapper`, imageOptions});
-        questionContent.appendChild(wrapper);
+        this.selectPredefinedAreas();
+
+        return wrapper;
+    };
+
+    setupQuestionElements = ({wrapper}) => {
+        const {question, id, questionNode} = this;
+
+        const text = ElementsMaker.createQuestionElement({
+            type: ELEMENTS.QUESTION.TEXT,
+            elementOptions: {questionId: id, text: question.text}
+        });
+        const instruction = ElementsMaker.createQuestionElement({
+            type: ELEMENTS.QUESTION.INSTRUCTION,
+            elementOptions: {questionId: id, text: question.instruction}
+        });
+        const errorBlock = ElementsMaker.createQuestionElement({
+            type: ELEMENTS.QUESTION.ERROR_BLOCK,
+            elementOptions: {questionId: id}
+        });
+        const questionContent = ElementsMaker.createQuestionElement({
+            type: ELEMENTS.QUESTION.CONTENT,
+            elementOptions: {questionId: id, children: [wrapper]}
+        });
 
         questionNode.appendChild(text);
         questionNode.appendChild(instruction);
         questionNode.appendChild(errorBlock);
         questionNode.appendChild(questionContent);
-
-        this.selectPredefinedAreas();
-
-        return wrapper;
     };
 
     selectPredefinedAreas = () => {
@@ -90,7 +97,6 @@ export default class Heatmap {
             overlayOpacity: 0,
             areas: areas,
 
-            // callbacks
             onLoaded: function () {
                 $(this).removeClass("blurred");
                 self.onAreasLoaded();
@@ -103,11 +109,11 @@ export default class Heatmap {
     onAreasLoaded = () => {
         const {id} = this;
         const areaSquares = document.querySelectorAll(`#${id}-image-wrapper .select-areas-background-area`);
-        areaSquares.forEach(this.createIndicatorAreaForAnswer);
+        areaSquares.forEach(this.createIndicatorAreaForAnswerCallback);
     };
 
-    createIndicatorAreaForAnswer = (area, index, areaSquares) => {
-        const {question, haveScales} = this;
+    createIndicatorAreaForAnswerCallback = (area, index, areaSquares) => {
+        const {haveScales} = this;
         const areaIndex = areaSquares.length - index;
         const areaTitle = this.areas[index].title;
         const indicator = this.createIndicatorNode({area, areaIndex});
@@ -117,9 +123,7 @@ export default class Heatmap {
             this.setAreaOnClick({indicator, areaIndex});
         }
 
-        if (question.values) {
-            this.setExistingValues({to: "area", areaIndex});
-        }
+        this.setExistingValues({to: "area", areaIndex});
 
         this.createAreaTooltip({
             title: (haveScales ? areaTitle : undefined),
@@ -132,69 +136,42 @@ export default class Heatmap {
     setAreaOnClick = ({indicator, areaIndex}) => {
         indicator.addEventListener("click", () => {
             const {question} = this;
-            const {type, values, scales} = question;
-            switch (type) {
-                case "Multi":
-                    const areaArrayIndex = values.indexOf(areaIndex.toString());
-                    if (indicator.classList.contains("area_chosen")) {
-                        if (areaArrayIndex >= 0) {
-                            values.splice(areaArrayIndex, 1);
-                        }
-                        this.setValues({values});
-                    } else {
-                        if (areaArrayIndex < 0) {
-                            values.push(areaIndex);
-                        }
-                        this.setValues({values});
-                    }
-                    break;
-
-                case "Grid":
-                default:
-                    if (indicator.classList.contains("area_chosen")) {
-                        if (values[areaIndex]) {
-                            values[areaIndex] = undefined;
-                        }
-                        this.setValues({values});
-                    } else {
-                        if (!values[areaIndex]) {
-                            values[areaIndex] = scales[0].code;
-                        }
-                        this.setValues({values});
-                    }
-            }
+            const {values, scales} = question;
+            this.setValues({values: this.questionTypeHandler.handleAreaClick({indicator, values, scales, index: areaIndex})});
             indicator.classList.toggle("area_chosen");
         });
-    }
+    };
 
     createAreaTooltip = ({title, content, indicator, areaIndex}) => {
         const {id} = this;
-        const tooltip = new Tooltip({
+        new Tooltip({
             id: `${id}-area-indicator-tooltip-${areaIndex}`,
             targetId: indicator.id,
             title,
             content,
             onCreated: this.onTooltipCreated.bind(this, {areaIndex, indicator})
         });
-    }
+    };
 
     setExistingValues = ({to, areaIndex}) => {
         const {id, question, haveScales} = this;
         const {values} = question;
 
+        if (question.values) {
+            return;
+        }
+
         switch (to) {
             case "tooltip":
-                const button = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch-wrapper-${values[areaIndex]}[area-index="${areaIndex}"]`);
+                const button = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch--${values[areaIndex]}[area-index="${areaIndex}"]`);
                 if (button) {
                     button.click();
                 }
                 break;
             case "area":
-            default:
                 const area = document.querySelector(`#${id} .select-areas-background-area.area-indicator[area-index="${areaIndex}"]`);
                 const className = haveScales ? `area_${values[areaIndex]}` : "area_chosen";
-                if (area && !area.classList.contains(className) &&
-                    (question.type === "Multi" && values.indexOf(areaIndex.toString()) >= 0 || question.type === "Grid" && values[areaIndex])) {
+                if (area && !area.classList.contains(className) && this.questionTypeHandler.checkIfValueExists({values, index: areaIndex})) {
                     area.classList.add(className);
                 }
                 break;
@@ -224,9 +201,16 @@ export default class Heatmap {
         const buttonsWrapper = document.createElement("div");
 
         customScales.forEach((option) => {
-            const {type, label} = option;
-            const button = new Switch({type, text: label, id: `scale-button-${type}-${areaIndex}`});
-            button.setAttribute("area-index", areaIndex);
+            const {code, label} = option;
+            const button = ElementsMaker.createCustomElement({
+                type: ELEMENTS.CUSTOM.SWITCH,
+                elementOptions: {
+                    modifier: code,
+                    text: label,
+                    id: `scale-button-${code}-${areaIndex}`,
+                    attributes: [{name: "area-index", value: areaIndex}]
+                }
+            });
             buttonsWrapper.appendChild(button);
         });
 
@@ -234,48 +218,46 @@ export default class Heatmap {
     };
 
     onTooltipCreated = ({areaIndex, indicator}) => {
-        const {id, question, haveScales} = this;
+        const {id, haveScales} = this;
 
         if (haveScales) {
             const {customScales} = this;
             customScales.forEach((option) => {
-                const {type} = option;
-                const button = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch-wrapper-${type}[area-index="${areaIndex}"]`);
+                const {code} = option;
+                const button = document.querySelector(`*[id^="${id}-area-indicator-tooltip-"] .switch--${code}[area-index="${areaIndex}"]`);
                 if (button) {
                     button.addEventListener("click", (e) => {
-                        this.onButtonClick({type, areaIndex, indicator});
+                        this.onButtonClick({code, areaIndex, indicator});
                         e.preventDefault();
                     });
                 }
             });
         }
 
-        if (question.values) {
-            this.setExistingValues({to: "tooltip", areaIndex});
-        }
+        this.setExistingValues({to: "tooltip", areaIndex});
     };
 
-    onButtonClick = ({type, areaIndex, indicator}) => {
+    onButtonClick = ({code, areaIndex, indicator}) => {
         const {id, customScales} = this;
         const values = this.question.values;
 
         customScales.forEach((option) => {
-            const {type: currentType} = option;
-            const input = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch-wrapper-${currentType}[area-index="${areaIndex}"] input`);
+            const {code: currentCode} = option;
+            const input = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch--${currentCode}[area-index="${areaIndex}"] input`);
 
-            if (currentType === type) {
+            if (currentCode === code) {
                 if (input.checked) {
                     delete values[areaIndex];
                     input.checked = false;
-                    indicator.classList.remove(`area_${currentType}`);
+                    indicator.classList.remove(`area_${currentCode}`);
                 } else {
-                    values[areaIndex] = currentType;
+                    values[areaIndex] = currentCode;
                     input.checked = true;
-                    indicator.classList.add(`area_${currentType}`);
+                    indicator.classList.add(`area_${currentCode}`);
                 }
             } else {
                 input.checked = false;
-                indicator.classList.remove(`area_${currentType}`);
+                indicator.classList.remove(`area_${currentCode}`);
             }
         });
 
@@ -284,92 +266,81 @@ export default class Heatmap {
 
     setValues = ({values}) => {
         const {question} = this;
-        const {type} = question;
-        const allValues = this.question.values;
-        if (type !== "Multi") {
-            this.question.answers.forEach(({code}) => {
-                allValues[code] = undefined;
-            });
-            Object.keys(values).forEach((key) => {
-                allValues[key] = values[key];
-            });
-            Object.keys(allValues).forEach((key) => {
-                this.question.setValue(key, allValues[key]);
-            });
-        } else {
-            this.question.answers.forEach(({code}) => {
-                this.question.setValue(code, 0);
-            });
-            values.forEach((code) => {
-                this.question.setValue(code, 1);
-            });
-        }
+        this.questionTypeHandler.setValues({question, values});
     };
 
     subscribeToQuestion = () => {
-        const {questionNode, answersCount, haveScales} = this;
+        const {haveScales} = this;
 
-        const errorBlock = questionNode.querySelector(".cf-question__error");
-        const errorList = errorBlock.querySelector(".cf-error-list");
+        const validationCallback = this.getValidationCallback();
 
         Confirmit.page.beforeNavigateEvent.on((navigation) => {
-            this.isBackClicked = !navigation.next;
+            this.state.isBackClicked = !navigation.next;
         });
 
         this.question.validationEvent.on((validationResult) => {
-            if (this.isBackClicked) {
+            if (this.state.isBackClicked) {
                 return;
             }
 
-            const valuesCount = Object.keys(this.question.values).length;
-            const equal = parseInt(answersCount.equal);
-            const min = parseInt(answersCount.min);
-            const max = parseInt(answersCount.max);
-
-            errorList.innerHTML = "";
-
             if (this.question.values) {
-                if (equal && valuesCount !== equal) {
-                    const error = {message: `Please select ${equal} answer${parseInt(equal) > 1 ? "s" : ""}.`};
-                    validationResult.errors.push(error);
-                }
-
-                if (min && max) {
-                    const error = {message: `Please select between ${min} and ${max} answers.`};
-                    validationResult.errors.push(error);
-                } else {
-                    if (min && valuesCount < min) {
-                        const error = {message: `Please select at least ${min} answer${parseInt(min) > 1 ? "s" : ""}.`};
-                        validationResult.errors.push(error);
-                    }
-                    if (max && valuesCount > max) {
-                        const error = {message: `Please do not select more than ${max} answer${parseInt(max) > 1 ? "s" : ""}.`};
-                        validationResult.errors.push(error);
-                    }
-                }
+                validationCallback(validationResult);
 
                 // multi question (when !haveScales) has standard Confirmit error on "required"
                 if (this.question.required && (haveScales && Object.keys(this.question.values).length !== this.question.answers.length)) {
                     const error = {message: "This question is required. Please select a scale for each answer."};
                     validationResult.errors.push(error);
                 }
-
-                validationResult.errors.forEach(this.addErrorItem);
-                if (validationResult.errors.length > 0) {
-                    questionNode.classList.add("cf-question--error");
-                    errorBlock.classList.add("cf-error-block--bottom");
-                } else {
-                    questionNode.classList.remove("cf-question--error");
-                    errorBlock.classList.remove("cf-error-block--bottom");
-                }
             }
+
+            this.setupErrorItems({validationResult});
         });
     };
+
+    getValidationCallback = () => {
+        const {answersCount} = this;
+
+        const equal = parseInt(answersCount.equal);
+        const min = parseInt(answersCount.min);
+        const max = parseInt(answersCount.max);
+
+        return ValidationLibrary.getQuestionValidationCallback({
+            currentQuestion: this.question, validators: [
+                ValidationLibrary.validationMethods.getEqualValidator({
+                    equal,
+                    message: `Please select ${equal} answer${parseInt(equal) > 1 ? "s" : ""}.`
+                }),
+                ValidationLibrary.validationMethods.getMinMaxValidator({
+                    min, max,
+                    generalErrorMessage: `Please select between ${min} and ${max} answers.`,
+                    minErrorMessage: `Please select at least ${min} answer${parseInt(min) > 1 ? "s" : ""}.`,
+                    maxErrorMessage: `Please do not select more than ${max} answer${parseInt(max) > 1 ? "s" : ""}.`
+                })
+            ]
+        });
+    };
+
+    setupErrorItems = ({validationResult}) => {
+        const {questionNode} = this;
+
+        const errorBlock = questionNode.querySelector(".cf-question__error");
+        const errorList = errorBlock.querySelector(".cf-error-list");
+
+        errorList.innerHTML = "";
+
+        validationResult.errors.forEach(this.addErrorItem);
+
+        questionNode.classList.toggle("cf-question--error", validationResult.errors.length > 0);
+        errorBlock.classList.toggle("cf-error-block--bottom", validationResult.errors.length > 0);
+    }
 
     addErrorItem = ({message}) => {
         const {id} = this;
         const errorList = document.querySelector(`#${id}_error_list`);
-        const errorItem = new QuestionErrorItem({message});
+        const errorItem = ElementsMaker.createQuestionElement({
+            type: ELEMENTS.QUESTION.ERROR_ITEM,
+            elementOptions: {text: message}
+        });
         errorList.appendChild(errorItem);
     };
 
@@ -382,10 +353,10 @@ export default class Heatmap {
         if (haveScales) {
             // area colors
             customScales.forEach((option) => {
-                const {type, color} = option;
-                stylesElement.innerText += `#${id} .area_${type}{ background-color: ${color}; opacity: 0.5; }`;
-                stylesElement.innerText += `*[id^=${id}-area-indicator-tooltip-] .switch-wrapper-${type}{ background-color: ${color}; }`;
-                stylesElement.innerText += `*[id^=${id}-area-indicator-tooltip-] .switch-wrapper-${type} .switch-input:checked + .switch-label:after { background-color: ${color}; }`;
+                const {code, color} = option;
+                stylesElement.innerText += `#${id} .area_${code}{ background-color: ${color}; opacity: 0.5; }`;
+                stylesElement.innerText += `*[id^=${id}-area-indicator-tooltip-] .switch--${code}{ background-color: ${color}; }`;
+                stylesElement.innerText += `*[id^=${id}-area-indicator-tooltip-] .switch--${code} .switch__slider.slider .slider__input:checked + .slider__toggle:after { background-color: ${color}; }`;
             });
         } else {
             stylesElement.innerText += `#${id} .area_chosen { background-color: ${styles.areaChoose && styles.areaChoose.color ? styles.areaChoose.color : "green"} !important; opacity: 0.5; }`;

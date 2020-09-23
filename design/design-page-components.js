@@ -11,9 +11,10 @@ document.addEventListener('DOMContentLoaded', function(){
 
     function tooltipShow(element) {
         let text = element.dataset.tooltipText;
+        let elementPosition = element.getBoundingClientRect();
         let position = {
-            left: element.offsetLeft,
-            top: element.offsetTop
+            left: elementPosition.left + pageXOffset,
+            top: elementPosition.top + pageYOffset
         };
         let ttBox = document.getElementById("tooltipBox");
         ttBox.style.display = "block";
@@ -57,4 +58,6 @@ document.addEventListener('DOMContentLoaded', function(){
             el.getElementsByClassName("collapse-button")[0].style.transform = "rotateZ(0deg)";
         }
     }
+
+    document.querySelectorAll("input")
 });

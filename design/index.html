@@ -12,22 +12,18 @@
     <script src="bundle.js"></script>
 </head>
 <body>
-<div class="survey-settings" id="survey-settings">
-    <div class="comd-alert comd-alert--info" id="requiredInfo">
+<div id="heatmapSettings">
+    <div class="comd-alert comd-alert--info info info--required">
         <div class="comd-alert__text">
             If the respondent is to be able to select only some of the available answers, disable the Required property
             on the Edit tab
         </div>
     </div>
 
-    <div class="node-properties-key-fields comd-panel">
+    <div class="node-properties-key-fields comd-panel tab tab--image-options">
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
                 <h4 class="co-text-size-normal">Image options</h4>
-                <!--                <div class="sd-tooltip-help" data-tooltip-text="Set the source and the size of the image.<br/>-->
-                <!--                Then click Display image to show the image as it will be presented in the survey.<br/>-->
-                <!--                You can create as many areas as you have answers in the question.<br/>-->
-                <!--                Note that the question's answer codes must be sequential from 1."></div>-->
                 <div class="sd-tooltip-help" data-tooltip-text="Set the source and the size of the image.<br/>
                 The image will automatically appear as it will be presented in the survey.<br/>
                 You can create as many areas as you have answers in the question.<br/>
@@ -38,7 +34,7 @@
             </div>
         </header>
         <div class="comd-panel__collapse-area">
-            <div id="imageSettings">
+            <div class="settings-wrapper settings-wrapper--image">
                 <div class="node-properties">
                     <div class="node-property">
                         <label class="node-property__label" for="imageSrc">Image source
@@ -59,41 +55,21 @@
                         <span>px</span>
                     </div>
                 </div>
-                <!--                <div class="node-properties">-->
-                <!--                    <div class="node-property button-block">-->
-                <!--                        <button class="comd-button comd-button&#45;&#45;secondary-neutral" id="drawImageBtn">-->
-                <!--                            <span class="comd-button__content">-->
-                <!--                                <div class="comd-portal-trigger">Display image</div>-->
-                <!--                            </span>-->
-                <!--                        </button>-->
-                <!--                    </div>-->
-                <!--                </div>-->
             </div>
-            <div id="areas">
-                <!--                <div class="node-properties">-->
-                <!--                    <div class="node-property button-block">-->
-                <!--                        <div class="button-block">-->
-                <!--                            <button class="comd-button comd-button&#45;&#45;secondary-neutral" id="changeImageBtn">-->
-                <!--                                <span class="comd-button__content">-->
-                <!--                                    <div class="comd-portal-trigger">Change image options</div>-->
-                <!--                                </span>-->
-                <!--                            </button>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
-                <!--                </div>-->
+            <div class="settings-wrapper settings-wrapper--areas">
                 <div class="node-properties">
                     <div id="heatmapWrapper"></div>
                 </div>
                 <div class="node-properties">
                     <div class="node-property">
-                        <h4 id="areaTextsTitle">
+                        <h4>
                             Tooltips for area texts
                             <div class="sd-tooltip-help"
                                  data-tooltip-text="Create tooltip texts for the areas.<br/>Click on an area in the image; the tooltip field is highlighted for editing."></div>
                         </h4>
                         <div class="inputlist-container">
                             <table class="inputlist">
-                                <tbody id="areaTextList">
+                                <tbody>
                                 </tbody>
                             </table>
                         </div>
@@ -103,13 +79,13 @@
         </div>
     </div>
 
-    <div class="comd-alert comd-alert--info" id="minMaxInfo">
+    <div class="comd-alert comd-alert--info info info--min-max">
         <div class="comd-alert__text">
             If you want to set min/max/equal parameters, use the same inputs on the Edit tab
         </div>
     </div>
 
-    <div class="node-properties-key-fields comd-panel comd-panel--collapsed" id="answerOptions">
+    <div class="node-properties-key-fields comd-panel comd-panel--collapsed tab tab--answer-options">
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
                 <h4 class="co-text-size-normal">Answer options</h4>
@@ -121,7 +97,7 @@
             </div>
         </header>
         <div class="comd-panel__collapse-area">
-            <div class="node-properties" id="haveScalesWrapper">
+            <div class="node-properties">
                 <div class="node-property-container">
                     <div class="node-property node-property--checkbox">
                         <div class="co-toggle co-toggle--checkbox">
@@ -135,11 +111,11 @@
                     </div>
                 </div>
             </div>
-            <div class="node-properties" id="activateScales">
+            <div class="node-properties settings-wrapper settings-wrapper--scales">
                 <div class="node-property-container">
                     <label class="node-property__label">Type of scales</label>
                     <div class="node-property node-property--radio">
-                        <div class="comd-alert comd-alert--info" id="defaultScalesInfo">
+                        <div class="comd-alert comd-alert--info info info--default-scales">
                             <div class="comd-alert__text">
                                 If you want to use positive/neutral/negative scores, don't forget to add all
                                 three scales (with "positive", "neutral" and "negative" as codes)
@@ -167,7 +143,7 @@
                                         <span>Custom scales</span>
                                     </label>
                                 </div>
-                                <div id="customScales">
+                                <div class="custom-scales-wrapper">
                                     <div class="node-input-area">
                                         <label class="sd-label node-input-area__label">Number of scales
                                             <div class="sd-tooltip-help"
@@ -176,7 +152,7 @@
                                         <input class="node-input-area__input form-control input-sm form-input form-input--2ch"
                                                type="number" id="scalesNumber" min="1"/>
                                     </div>
-                                    <div class="inputlist-container" id="customScaleListWrapper">
+                                    <div class="inputlist-container">
                                         <table class="inputlist">
                                             <thead>
                                             <tr>
@@ -185,7 +161,7 @@
                                                 <th class="inputlist__header">Text</th>
                                             </tr>
                                             </thead>
-                                            <tbody id="customScaleList">
+                                            <tbody>
                                             </tbody>
                                         </table>
                                     </div>
@@ -195,12 +171,12 @@
                     </div>
                 </div>
             </div>
-            <div class="node-properties" id="numberOfAnswers">
+            <div class="node-properties">
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="numberOfAnswers__type">Number
+                        <label class="node-property__label" for="typeForNumberOfAnswers">Number
                             of answers</label>
-                        <select class="form-input" name="numberOfAnswers__type" id="numberOfAnswers__type"/>
+                        <select class="form-input" name="typeForNumberOfAnswers" id="typeForNumberOfAnswers"/>
                         <option value="equal">Equal to</option>
                         <option value="min-max" selected>Min/max count</option>
                         </select>
@@ -208,27 +184,30 @@
                 </div>
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="numberOfAnswers__min">Min</label>
-                        <input type="number" class="form-input form-input--3ch" id="numberOfAnswers__min" value="" min="1"/>
+                        <label class="node-property__label" for="minAnswers">Min</label>
+                        <input type="number" class="form-input form-input--3ch" id="minAnswers" value=""
+                               min="1"/>
                     </div>
                 </div>
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="numberOfAnswers__max">Max</label>
-                        <input type="number" class="form-input form-input--3ch" id="numberOfAnswers__max" value="" min="1"/>
+                        <label class="node-property__label" for="maxAnswers">Max</label>
+                        <input type="number" class="form-input form-input--3ch" id="maxAnswers" value=""
+                               min="1"/>
                     </div>
                 </div>
                 <div class="node-property-container">
                     <div class="node-property">
-                        <label class="node-property__label" for="numberOfAnswers__equal">Count</label>
-                        <input type="number" class="form-input form-input--3ch" id="numberOfAnswers__equal" value="" min="1"/>
+                        <label class="node-property__label" for="equalAnswers">Count</label>
+                        <input type="number" class="form-input form-input--3ch" id="equalAnswers" value=""
+                               min="1"/>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="node-properties-key-fields comd-panel comd-panel--collapsed" id="styling">
+    <div class="node-properties-key-fields comd-panel comd-panel--collapsed tab tab--styling">
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
             <div class="node-properties__toggle co-flex co-flex--center">
                 <h4 class="co-text-size-normal">Styling</h4>
