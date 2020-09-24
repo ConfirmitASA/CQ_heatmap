@@ -3,7 +3,7 @@ import CommonFunctionsUtil from "./CommonFunctionsUtil";
 import {HAVE_SCALES_WRAPPER_LEVEL_FROM_INPUT, QUESTION_TYPES} from "./Constants";
 
 export default class Config {
-    static questionType = QUESTION_TYPES.MULTI;
+    static questionType = QUESTION_TYPES.GRID;
     static heatmapWrapperId = "heatmapWrapper";
 
     constructor() {
@@ -49,7 +49,6 @@ export default class Config {
             haveScalesInput: settingsWrapper.querySelector("#haveScales"),
             activateDefaultScalesInput: settingsWrapper.querySelector("#activateDefaultScales"),
             activateCustomScalesInput: settingsWrapper.querySelector("#activateCustomScales"),
-            scalesNumberInput: settingsWrapper.querySelector("#scalesNumber"),
             numberOfAnswersWrapper: settingsWrapper.querySelector(".settings-wrapper.settings-wrapper--answers-number"),
             typeForNumberOfAnswersSelector: settingsWrapper.querySelector("#typeForNumberOfAnswers"),
             minNumberOfAnswersInput: settingsWrapper.querySelector("#minAnswers"),

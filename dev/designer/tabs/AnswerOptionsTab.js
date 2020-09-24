@@ -7,7 +7,10 @@ import {
     CUSTOM_SCALE_TYPE,
     MIN_MAX_TYPE,
     EQUAL_TYPE,
-    MIN_VALUE_FOR_MINMAX, ERROR_TYPES, ELEMENTS
+    MIN_VALUE_FOR_MINMAX,
+    ERROR_TYPES,
+    ELEMENTS,
+    DEFAULT_SCALES
 } from "../../Constants";
 
 export default class AnswerOptionsTab extends AbstractTab {
@@ -24,13 +27,13 @@ export default class AnswerOptionsTab extends AbstractTab {
     }
 
     setValues = ({values}) => {
-        const {elements, questionTypeHandler} = this;
+        const {elements, questionTypeHandler, questionScales} = this;
         const {answerOptionsTabWrapper, haveScalesInput} = elements;
-        const {haveScales, scaleType, customScales, answersCount} = values;
+        const {haveScales, scaleType, scales, answersCount} = values;
 
         this.state.hasErrors = false;
 
-        if (questionTypeHandler.shouldAnswerOptionsTabBeOpened({values})) {
+        if (questionTypeHandler.shouldAnswerOptionsTabBeOpened({values, questionScales})) {
             CommonFunctionsUtil.toggleTab({elements: [answerOptionsTabWrapper]});
         }
 
@@ -38,7 +41,7 @@ export default class AnswerOptionsTab extends AbstractTab {
         questionTypeHandler.customizeAnswerOptionsTabToTypeOnSettingsReceived({haveScales});
 
         this.setValuesFromSettingsForDefaultScales({scaleType});
-        this.setValuesFromSettingsForCustomScales({haveScales, scaleType, customScales});
+        this.setValuesFromSettingsForCustomScales({haveScales, scaleType, scales});
         this.setValuesFromSettingsForAnswerCount({answersCount});
     };
 
@@ -51,17 +54,36 @@ export default class AnswerOptionsTab extends AbstractTab {
         });
     };
 
-    setValuesFromSettingsForCustomScales = ({haveScales, scaleType, customScales}) => {
-        const {activateCustomScalesInput, scalesNumberInput, customScalesWrapper, customScaleListWrapper, customScaleList} = this.elements;
+    setValuesFromSettingsForCustomScales = ({haveScales, scaleType, scales}) => {
+        const {activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, customScaleList} = this.elements;
         activateCustomScalesInput.checked = scaleType === CUSTOM_SCALE_TYPE;
 
         if (haveScales && scaleType === CUSTOM_SCALE_TYPE) {
-            scalesNumberInput.value = customScales.length ? customScales.length : undefined;
+            let newScales = this.questionScales;
+            newScales = newScales.map((newScale) => {
+                const oldScale = scales.find((scale) => scale.code === newScale.code);
+                return oldScale
+                    ? {
+                        ...newScale,
+                        color: oldScale.color
+                    }
+                    : newScale;
+            });
+
             CommonFunctionsUtil.createListOfItems({
-                defaultValues: customScales,
+                defaultValues: newScales,
                 listWrapper: customScaleList,
                 itemClassName: "custom-scale-item",
                 itemClass: ELEMENTS.CUSTOM.CUSTOM_SCALE_ITEM
+            });
+
+            // check for translation's change
+            const customScaleItems = customScaleListWrapper.querySelectorAll(".custom-scale-item");
+            customScaleItems.forEach((item) => {
+                const code = item.querySelector(".custom-scale-item__code").innerText;
+                const textItem = item.querySelector(".custom-scale-item__label");
+                const scale = newScales.find((scale) => scale.code === code);
+                textItem.innerText = scale.text;
             });
         }
 
@@ -72,7 +94,7 @@ export default class AnswerOptionsTab extends AbstractTab {
             },
             {
                 elements: [customScaleListWrapper],
-                shouldBeShown: haveScales && scaleType === CUSTOM_SCALE_TYPE && customScales.length > 0
+                shouldBeShown: haveScales && scaleType === CUSTOM_SCALE_TYPE && scales.length > 0
             }
         ];
         elementsToChangeVisibility.forEach((elementsOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementsOptions));
@@ -118,23 +140,25 @@ export default class AnswerOptionsTab extends AbstractTab {
         const typeForNumberOfAnswers = this.getTypeForNumberOfAnswers();
 
         let scaleType;
-        let customScales;
+        let scales;
         if (haveScalesInput.checked) {
             scaleType = this.getScaleType();
             if (scaleType === CUSTOM_SCALE_TYPE) {
-                customScales = [];
+                scales = [];
                 const customScaleItems = document.querySelectorAll(".custom-scale-item");
                 customScaleItems.forEach((item, index) => {
                     const color = item.querySelector(".custom-scale-item__color").value;
                     const codeInput = item.querySelector(".custom-scale-item__code");
                     const code = codeInput.value;
-                    const label = item.querySelector(".custom-scale-item__label").value;
-                    customScales.push({
+                    const text = item.querySelector(".custom-scale-item__label").value;
+                    scales.push({
                         color,
                         code: code ? code : (index + 1),
-                        label: label ? label : ""
+                        text: text ? text : ""
                     });
                 });
+            } else {
+                scales = DEFAULT_SCALES.map((scale, index) => ({...scale, code: this.questionScales[index] ? this.questionScales[index].code : scale.code}));
             }
         }
 
@@ -145,10 +169,10 @@ export default class AnswerOptionsTab extends AbstractTab {
                 max: typeForNumberOfAnswers === MIN_MAX_TYPE && maxNumberOfAnswersInput.value ? maxNumberOfAnswersInput.value : undefined,
                 min: typeForNumberOfAnswers === MIN_MAX_TYPE && minNumberOfAnswersInput.value ? minNumberOfAnswersInput.value : undefined
             },
-            scales: haveScalesInput.checked
+            scaleOptions: haveScalesInput.checked
                 ? {
                     scaleType,
-                    customScales
+                    scales
                 }
                 : undefined
         };
@@ -165,23 +189,10 @@ export default class AnswerOptionsTab extends AbstractTab {
     };
 
     raiseErrors = ({areas}) => {
-        const {activateCustomScalesInput, equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput, scalesNumberInput} = this.elements;
+        const {equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput} = this.elements;
         const typeForNumberOfAnswers = this.getTypeForNumberOfAnswers();
 
-        if (!activateCustomScalesInput.checked) {
-            this.state.hasErrors = false;
-            return false;
-        }
-
-        const customScaleItems = document.querySelectorAll(".custom-scale-item");
-        customScaleItems.forEach((item) => {
-            const codeInput = item.querySelector(".custom-scale-item__code");
-            const code = codeInput.value;
-            this.state.hasErrors = DesignerErrorManager.handleInputError({
-                element: codeInput,
-                errorCondition: !code
-            });
-        });
+        this.raiseErrorsForScales({scaleType: DEFAULT_SCALE_TYPE});
 
         const hasInputErrors = DesignerErrorManager.handleSeveralErrors({
             errors: [
@@ -199,11 +210,6 @@ export default class AnswerOptionsTab extends AbstractTab {
                     type: ERROR_TYPES.INPUT,
                     element: maxNumberOfAnswersInput,
                     errorCondition: typeForNumberOfAnswers === MIN_MAX_TYPE && maxNumberOfAnswersInput.value && maxNumberOfAnswersInput.value > areas.length
-                },
-                {
-                    type: ERROR_TYPES.INPUT,
-                    element: scalesNumberInput,
-                    errorCondition: !scalesNumberInput.value || customScaleItems.length <= 0
                 }
             ]
         });
@@ -212,15 +218,31 @@ export default class AnswerOptionsTab extends AbstractTab {
         return this.state.hasErrors;
     };
 
+    raiseErrorsForScales = ({scaleType}) => {
+        const {activateDefaultScalesInput, activateCustomScalesInput} = this.elements;
+        const customScaleItems = document.querySelectorAll(".custom-scale-item");
+
+        const input = scaleType === DEFAULT_SCALE_TYPE ? activateDefaultScalesInput : activateCustomScalesInput;
+        const expectedScalesCount = scaleType === DEFAULT_SCALE_TYPE ? DEFAULT_SCALES.length : customScaleItems.length;
+
+        const hasInputErrors = DesignerErrorManager.handleInputError({
+            element: input,
+            errorCondition: input.checked && (!this.questionScales || this.questionScales.length !== expectedScalesCount)
+        });
+
+        this.state.hasErrors = this.state.hasErrors || hasInputErrors;
+
+        return this.state.hasErrors;
+    }
+
     render = () => {
         const {
-            scaleSettingsWrapper, customScalesWrapper, customScaleListWrapper,
-            equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput
+            scaleSettingsWrapper, customScalesWrapper, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput
         } = this.elements;
 
         this.setDefaultAttributes({
             elementsToChangeVisibility: [{
-                elements: [scaleSettingsWrapper, customScalesWrapper, customScaleListWrapper, CommonFunctionsUtil.getInputWrapper({input: equalToNumberOfAnswersInput})]
+                elements: [scaleSettingsWrapper, customScalesWrapper, CommonFunctionsUtil.getInputWrapper({input: equalToNumberOfAnswersInput})]
             }],
             elementsToSetAttribute: [
                 {element: minNumberOfAnswersInput, attribute: {name: "min", MIN_VALUE_FOR_MINMAX}},
@@ -235,12 +257,11 @@ export default class AnswerOptionsTab extends AbstractTab {
     };
 
     setupScaleElements = () => {
-        const {haveScalesInput, activateDefaultScalesInput, activateCustomScalesInput, scalesNumberInput} = this.elements;
+        const {haveScalesInput, activateDefaultScalesInput, activateCustomScalesInput} = this.elements;
 
         haveScalesInput.addEventListener("input", this.handleHaveScalesInputCallback);
         activateDefaultScalesInput.addEventListener("input", this.handleActivateDefaultScalesInputCallback);
         activateCustomScalesInput.addEventListener("input", this.handleActivateCustomScalesInputCallback);
-        scalesNumberInput.addEventListener("input", this.handleScalesNumberInputCallback);
     };
 
     handleHaveScalesInputCallback = () => {
@@ -269,7 +290,7 @@ export default class AnswerOptionsTab extends AbstractTab {
     };
 
     handleActivateCustomScalesInputCallback = () => {
-        const {activateDefaultScalesInput, defaultScalesInfo, activateCustomScalesInput, customScalesWrapper} = this.elements;
+        const {activateDefaultScalesInput, defaultScalesInfo, activateCustomScalesInput, customScalesWrapper, customScaleList} = this.elements;
 
         const elementsToChangeVisibility = [
             {elements: [defaultScalesInfo]},
@@ -279,19 +300,9 @@ export default class AnswerOptionsTab extends AbstractTab {
 
         activateDefaultScalesInput.checked = false;
         activateCustomScalesInput.checked = true;
-    };
-
-    handleScalesNumberInputCallback = () => {
-        const {customScaleListWrapper, customScaleList, scalesNumberInput} = this.elements;
-        const scalesNumberInputValue = parseInt(scalesNumberInput.value);
-
-        CommonFunctionsUtil.toggleElementsVisibility({
-            elements: [customScaleListWrapper],
-            shouldBeShown: scalesNumberInputValue
-        });
 
         CommonFunctionsUtil.createListOfItems({
-            itemsExpectedCount: scalesNumberInputValue,
+            defaultValues: this.questionScales,
             listWrapper: customScaleList,
             itemClassName: "custom-scale-item",
             itemClass: ELEMENTS.CUSTOM.CUSTOM_SCALE_ITEM

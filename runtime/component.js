@@ -7,7 +7,7 @@ register(function (question, customQuestionSettings, questionViewSettings) {
         answersCount: customQuestionSettings.answersCount,
         haveScales: customQuestionSettings.haveScales,
         scaleType: customQuestionSettings.scaleType,
-        customScales: customQuestionSettings.customScales,
+        scales: customQuestionSettings.scales,
         styles: customQuestionSettings.styles
     });
 });

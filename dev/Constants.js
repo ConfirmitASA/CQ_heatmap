@@ -30,18 +30,18 @@ const MAX_SIZES_FOR_AREA = [0, 0]; // [0, 0] is equal to undefined
 
 const DEFAULT_SCALES = [
     {
-        code: "positive",
-        label: "Positive",
+        code: "1",
+        text: "Positive",
         color: "green"
     },
     {
-        code: "neutral",
-        label: "Neutral",
+        code: "2",
+        text: "Neutral",
         color: "#aaa"
     },
     {
-        code: "negative",
-        label: "Negative",
+        code: "3",
+        text: "Negative",
         color: "red"
     }
 ];

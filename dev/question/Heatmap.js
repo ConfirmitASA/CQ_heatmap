@@ -3,10 +3,10 @@ import ElementsMaker from "../components/ElementsMaker";
 import ValidationLibrary from "./ValidationLbrary";
 import QuestionTypesHandlerMakerForQuestion from "./QuestionTypesHandlerMakerForQuestion";
 
-import {CUSTOM_SCALE_TYPE, MIN_MAX_TYPE, EQUAL_TYPE, DEFAULT_SCALES, ELEMENTS} from "../Constants";
+import {MIN_MAX_TYPE, EQUAL_TYPE, ELEMENTS} from "../Constants";
 
 export default class Heatmap {
-    constructor({question, areas, imageOptions, styles, answersCount, haveScales, scaleType, customScales}) {
+    constructor({question, areas, imageOptions, styles, answersCount, haveScales, scales}) {
         this.question = question;
         this.id = question.id;
         this.questionNode = document.querySelector(`#${this.id}`);
@@ -23,7 +23,9 @@ export default class Heatmap {
 
         this.haveScales = haveScales;
 
-        this.customScales = (scaleType === CUSTOM_SCALE_TYPE && customScales) ? customScales : DEFAULT_SCALES;
+        this.scales = scales;
+
+        this.currentLanguage = Confirmit.page.surveyInfo.language;
 
         this.state = {
             isBackClicked: false
@@ -35,11 +37,23 @@ export default class Heatmap {
     }
 
     render = () => {
+        this.checkAnswersAndScales();
+
         const wrapper = this.setupWrapper();
         this.subscribeToQuestion();
         this.setDynamicStyles();
 
         return wrapper;
+    };
+
+    checkAnswersAndScales = () => {
+        const {question, areas, scales} = this;
+        if (areas.length !== question.answers.length) {
+            throw new Error("Number of areas is not equal to number of answers");
+        }
+        if (scales.length !== question.scales.length) {
+            throw new Error("Number of custom scales is not equal to number of question scales");
+        }
     };
 
     setupWrapper = () => {
@@ -197,16 +211,17 @@ export default class Heatmap {
     };
 
     createButtonsWrapperWithAreaAttributes = ({areaIndex}) => {
-        const {customScales} = this;
+        const {scales, currentLanguage} = this;
         const buttonsWrapper = document.createElement("div");
 
-        customScales.forEach((option) => {
-            const {code, label} = option;
+        scales.forEach((option) => {
+            const {code, texts} = option;
+            const text = texts.find((text) => text.language === currentLanguage);
             const button = ElementsMaker.createCustomElement({
                 type: ELEMENTS.CUSTOM.SWITCH,
                 elementOptions: {
                     modifier: code,
-                    text: label,
+                    text: text ? text.text : "",
                     id: `scale-button-${code}-${areaIndex}`,
                     attributes: [{name: "area-index", value: areaIndex}]
                 }
@@ -221,8 +236,8 @@ export default class Heatmap {
         const {id, haveScales} = this;
 
         if (haveScales) {
-            const {customScales} = this;
-            customScales.forEach((option) => {
+            const {scales} = this;
+            scales.forEach((option) => {
                 const {code} = option;
                 const button = document.querySelector(`*[id^="${id}-area-indicator-tooltip-"] .switch--${code}[area-index="${areaIndex}"]`);
                 if (button) {
@@ -238,10 +253,10 @@ export default class Heatmap {
     };
 
     onButtonClick = ({code, areaIndex, indicator}) => {
-        const {id, customScales} = this;
+        const {id, scales} = this;
         const values = this.question.values;
 
-        customScales.forEach((option) => {
+        scales.forEach((option) => {
             const {code: currentCode} = option;
             const input = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch--${currentCode}[area-index="${areaIndex}"] input`);
 
@@ -345,14 +360,14 @@ export default class Heatmap {
     };
 
     setDynamicStyles = () => {
-        const {id, customScales, styles, questionNode, haveScales} = this;
+        const {id, scales, styles, questionNode, haveScales} = this;
 
         const stylesElement = document.createElement("style");
         stylesElement.innerText = "";
 
         if (haveScales) {
             // area colors
-            customScales.forEach((option) => {
+            scales.forEach((option) => {
                 const {code, color} = option;
                 stylesElement.innerText += `#${id} .area_${code}{ background-color: ${color}; opacity: 0.5; }`;
                 stylesElement.innerText += `*[id^=${id}-area-indicator-tooltip-] .switch--${code}{ background-color: ${color}; }`;

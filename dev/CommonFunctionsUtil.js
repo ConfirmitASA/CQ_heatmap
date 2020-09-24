@@ -24,7 +24,8 @@ const CommonFunctionsUtil = {
         if (existingItems.length < count) {
             for (let i = 1; i <= count - existingItems.length; i++) {
                 listWrapper.appendChild(ElementsMaker.createCustomElement({
-                    type: itemClass, elementOptions: {
+                    type: itemClass,
+                    elementOptions: {
                         id: `${itemClassName}${existingItems.length + i}`,
                         events: [
                             {type: "input", callback: onInputChange},

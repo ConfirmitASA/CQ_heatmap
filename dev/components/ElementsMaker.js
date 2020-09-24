@@ -80,25 +80,23 @@ const ElementsMaker = {
                         wrapperClass: "custom-scale-item",
                         children: [
                             ElementsMaker.createHTMLElement({
+                                tag: ELEMENTS.HTML.LABEL,
+                                classes: ["custom-scale-item__code"],
+                                events: [events.find((event) => event.type === ELEMENTS.HTML.INPUT)],
+                                innerText: value ? value.code : undefined
+                            }),
+                            ElementsMaker.createHTMLElement({
+                                tag: ELEMENTS.HTML.LABEL,
+                                classes: ["custom-scale-item__label"],
+                                events: [events.find((event) => event.type === ELEMENTS.HTML.INPUT)],
+                                innerText: value ? value.text : undefined
+                            }),
+                            ElementsMaker.createHTMLElement({
                                 tag: ELEMENTS.HTML.INPUT,
                                 classes: ["custom-scale-item__color", "form-input", "form-input--2ch"],
                                 type: "color",
                                 events: [events.find((event) => event.type === ELEMENTS.HTML.INPUT)],
                                 value: value ? value.color : undefined
-                            }),
-                            ElementsMaker.createHTMLElement({
-                                tag: ELEMENTS.HTML.INPUT,
-                                classes: ["custom-scale-item__code", "form-input", "form-input--8ch"],
-                                type: "text",
-                                events: [events.find((event) => event.type === ELEMENTS.HTML.INPUT)],
-                                value: value ? value.code : undefined
-                            }),
-                            ElementsMaker.createHTMLElement({
-                                tag: ELEMENTS.HTML.INPUT,
-                                classes: ["custom-scale-item__label", "form-input", "form-input--40ch"],
-                                type: "text",
-                                events: [events.find((event) => event.type === ELEMENTS.HTML.INPUT)],
-                                value: value ? value.label : undefined
                             })
                         ]
                     }

@@ -4,7 +4,7 @@ import Config from "../../Config";
 import AbstractTab from "./AbstractTab";
 import DesignerErrorManager from "../DesignerErrorManager";
 
-import {ELEMENTS, ERROR_TYPES, MIN_VALUE_FOR_IMAGE_WIDTH} from "../../Constants";
+import {ELEMENTS, ERROR_TYPES} from "../../Constants";
 
 export default class ImageOptionsTab extends AbstractTab {
     constructor({elements, saveChanges}) {
@@ -51,16 +51,16 @@ export default class ImageOptionsTab extends AbstractTab {
         return {imageOptions: {src, width}, areas};
     };
 
-    raiseErrors = () => {
+    raiseErrors = ({answers, areasFromSettings}) => {
         const {imageSrcInput, heatmapWrapper} = this.elements;
 
         const src = imageSrcInput.value;
-        const areas = this.getAreas();
+        const areas = areasFromSettings ? areasFromSettings : this.getAreas();
 
         this.state.hasErrors = DesignerErrorManager.handleSeveralErrors({
             errors: [
                 {type: ERROR_TYPES.INPUT, element: imageSrcInput, errorCondition: !src},
-                {type: ERROR_TYPES.WRAPPER, element: heatmapWrapper, errorCondition: areas.length <= 0}
+                {type: ERROR_TYPES.WRAPPER, element: heatmapWrapper, errorCondition: areas.length <= 0 || areas.length !== answers.length}
             ]
         });
 

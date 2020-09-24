@@ -31,23 +31,52 @@ export default class HeatmapDesignerWindow {
         const {settingsWrapper} = elements;
         settingsWrapper.addEventListener("input", saveChanges);
 
+        this.question.onInit = this.setSettingsOnInitCallback;
         this.question.onSettingsReceived = this.setValuesFromSettingsCallback;
 
         questionTypeHandler.customizeDesignerWindowToType();
     };
 
-    setValuesFromSettingsCallback = (settings) => {
-        const {ImageOptions, AnswerOptions, Styling} = this.tabs;
+    setSettingsOnInitCallback = (settings, uiSettings, questionSettings, projectSettings) => {
+        this.question.language = uiSettings.currentLanguage;
+        this.question.answers = questionSettings.answers;
+        this.question.scales = questionSettings.scales;
 
-        if (!settings) return;
-
-        ImageOptions.setValues({values: settings});
-        AnswerOptions.setValues({values: settings});
-        Styling.setValues({values: settings});
+        this.tabs.AnswerOptions.questionScales = this.getScalesWithCurrentLanguage({scales: questionSettings.scales});
     };
 
-    saveChanges = () => {
+    getScalesWithCurrentLanguage = ({scales}) => {
+        return scales.map((scale) => {
+            const currentLanguageText = scale.texts.find((textOptions) => textOptions.language === this.question.language);
+            return {
+                ...scale,
+                text: currentLanguageText ? currentLanguageText.text : ""
+            }
+        })
+    };
+
+    setValuesFromSettingsCallback = (settings, uiSettings) => {
+        const {question, tabs} = this;
+        const {scales} = question;
+        const {ImageOptions, AnswerOptions, Styling} = tabs;
+
+        if (uiSettings) {
+            this.question.language = uiSettings.currentLanguage;
+            this.tabs.AnswerOptions.questionScales = this.getScalesWithCurrentLanguage({scales});
+        }
+
+        if (settings) {
+            ImageOptions.setValues({values: settings});
+            AnswerOptions.setValues({values: {...settings, scales: this.getScalesWithCurrentLanguage({scales})}});
+            Styling.setValues({values: settings});
+
+            this.saveChanges(settings.areas);
+        }
+    };
+
+    saveChanges = (areasFromSettings) => {
         const {question, elements, tabs} = this;
+        const {answers, scales} = question;
         const {ImageOptions, AnswerOptions, Styling} = tabs;
         const {haveScalesInput} = elements;
 
@@ -59,14 +88,14 @@ export default class HeatmapDesignerWindow {
 
         const {imageOptions, areas} = ImageOptions.values;
         settings.imageOptions = imageOptions;
-        settings.areas = areas;
-        this.state.hasErrors = ImageOptions.raiseErrors() || this.state.hasErrors;
+        settings.areas = areas && areas.length > 0 ? areas : (areasFromSettings && areasFromSettings.length > 0 ? areasFromSettings : []);
+        this.state.hasErrors = ImageOptions.raiseErrors({answers, areasFromSettings: settings.areas}) || this.state.hasErrors;
 
-        const {answersCount, scales} = AnswerOptions.values;
+        const {answersCount, scaleOptions} = AnswerOptions.values;
         settings.answersCount = answersCount;
-        if (scales) {
-            settings.scaleType = scales.scaleType;
-            settings.customScales = scales.customScales;
+        if (scaleOptions) {
+            settings.scaleType = scaleOptions.scaleType;
+            settings.scales = scales.map((scale, index) => ({...scale, color: scaleOptions.scales[index].color}));
         }
         this.state.hasErrors = AnswerOptions.raiseErrors({areas: ImageOptions.getAreas()}) || this.state.hasErrors;
 
