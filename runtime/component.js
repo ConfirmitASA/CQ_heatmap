@@ -8,6 +8,7 @@ register(function (question, customQuestionSettings, questionViewSettings) {
         haveScales: customQuestionSettings.haveScales,
         scaleType: customQuestionSettings.scaleType,
         scales: customQuestionSettings.scales,
-        styles: customQuestionSettings.styles
+        styles: customQuestionSettings.styles,
+        mobileThreshold: questionViewSettings.mobileThreshold
     });
 });

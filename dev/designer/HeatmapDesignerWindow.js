@@ -3,6 +3,7 @@ import AnswerOptionsTab from "./tabs/AnswerOptionsTab";
 import StylingTab from "./tabs/StylingTab";
 import Config from "../Config";
 import QuestionTypesHandlerMakerForDesigner from "./QuestionTypesHandlerMakerForDesigner";
+import CommonFunctionsUtil from "../CommonFunctionsUtil";
 
 export default class HeatmapDesignerWindow {
     constructor({question}) {
@@ -10,10 +11,14 @@ export default class HeatmapDesignerWindow {
 
         this.config = new Config();
         this.elements = this.config.elements;
-        this.questionTypeHandler = new QuestionTypesHandlerMakerForDesigner({type: Config.questionType, elements: this.elements});
+        this.questionTypeHandler = new QuestionTypesHandlerMakerForDesigner({
+            type: Config.questionType,
+            elements: this.elements
+        });
 
         this.state = {
-            hasErrors: false
+            hasErrors: false,
+            hasBeenCheckedForErrorsOnInit: false
         };
 
         this.render();
@@ -38,11 +43,17 @@ export default class HeatmapDesignerWindow {
     };
 
     setSettingsOnInitCallback = (settings, uiSettings, questionSettings, projectSettings) => {
+        const {activateDefaultScalesInput} = this.elements;
+
         this.question.language = uiSettings.currentLanguage;
         this.question.answers = questionSettings.answers;
         this.question.scales = questionSettings.scales;
 
-        this.tabs.AnswerOptions.questionScales = this.getScalesWithCurrentLanguage({scales: questionSettings.scales});
+        this.tabs.AnswerOptions.questionScales = CommonFunctionsUtil.updateScales({
+            newScales: settings.scales,
+            oldScales: this.getScalesWithCurrentLanguage({scales: questionSettings.scales}),
+            isDefault: activateDefaultScalesInput.checked
+        });
     };
 
     getScalesWithCurrentLanguage = ({scales}) => {
@@ -56,13 +67,18 @@ export default class HeatmapDesignerWindow {
     };
 
     setValuesFromSettingsCallback = (settings, uiSettings) => {
-        const {question, tabs} = this;
+        const {question, tabs, elements} = this;
         const {scales} = question;
         const {ImageOptions, AnswerOptions, Styling} = tabs;
+        const {activateDefaultScalesInput} = elements;
 
         if (uiSettings) {
             this.question.language = uiSettings.currentLanguage;
-            this.tabs.AnswerOptions.questionScales = this.getScalesWithCurrentLanguage({scales});
+            this.tabs.AnswerOptions.questionScales = CommonFunctionsUtil.updateScales({
+                newScales: settings.scales,
+                oldScales: this.getScalesWithCurrentLanguage({scales: this.question.scales}),
+                isDefault: activateDefaultScalesInput.checked
+            });
         }
 
         if (settings) {
@@ -70,7 +86,10 @@ export default class HeatmapDesignerWindow {
             AnswerOptions.setValues({values: {...settings, scales: this.getScalesWithCurrentLanguage({scales})}});
             Styling.setValues({values: settings});
 
-            this.saveChanges(settings.areas);
+            if (!this.state.hasBeenCheckedForErrorsOnInit) {
+                this.saveChanges(settings.areas);
+                this.state.hasBeenCheckedForErrorsOnInit = true;
+            }
         }
     };
 
@@ -78,7 +97,7 @@ export default class HeatmapDesignerWindow {
         const {question, elements, tabs} = this;
         const {answers, scales} = question;
         const {ImageOptions, AnswerOptions, Styling} = tabs;
-        const {haveScalesInput} = elements;
+        const {haveScalesInput, activateDefaultScalesInput} = elements;
 
         this.state.hasErrors = false;
 
@@ -89,13 +108,16 @@ export default class HeatmapDesignerWindow {
         const {imageOptions, areas} = ImageOptions.values;
         settings.imageOptions = imageOptions;
         settings.areas = areas && areas.length > 0 ? areas : (areasFromSettings && areasFromSettings.length > 0 ? areasFromSettings : []);
-        this.state.hasErrors = ImageOptions.raiseErrors({answers, areasFromSettings: settings.areas}) || this.state.hasErrors;
+        this.state.hasErrors = ImageOptions.raiseErrors({
+            answers,
+            areasFromSettings: settings.areas
+        }) || this.state.hasErrors;
 
         const {answersCount, scaleOptions} = AnswerOptions.values;
         settings.answersCount = answersCount;
         if (scaleOptions) {
             settings.scaleType = scaleOptions.scaleType;
-            settings.scales = scales.map((scale, index) => ({...scale, color: scaleOptions.scales[index].color}));
+            settings.scales = CommonFunctionsUtil.updateScales({newScales: scaleOptions.scales, oldScales: scales, isDefault: activateDefaultScalesInput.checked});
         }
         this.state.hasErrors = AnswerOptions.raiseErrors({areas: ImageOptions.getAreas()}) || this.state.hasErrors;
 

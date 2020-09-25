@@ -73,6 +73,13 @@ const CommonFunctionsUtil = {
     removeMathSignsFromPositiveIntCallback: (e) => {
         e.target.value = e.target.value.replace(/\D+/g, '');
         return e.target.value;
+    },
+
+    updateScales: ({newScales, oldScales, isDefault}) => {
+        return oldScales.map((scale) => {
+            const newScale = newScales.find((s) => s.code.toString() === scale.code.toString());
+            return !isDefault ? {...scale, color: newScale ? newScale.color : (scale.color ? scale.color : "#000000")} : (newScale ? newScale : scale);
+        });
     }
 }
 

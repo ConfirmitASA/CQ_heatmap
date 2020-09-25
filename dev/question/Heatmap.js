@@ -6,13 +6,16 @@ import QuestionTypesHandlerMakerForQuestion from "./QuestionTypesHandlerMakerFor
 import {MIN_MAX_TYPE, EQUAL_TYPE, ELEMENTS} from "../Constants";
 
 export default class Heatmap {
-    constructor({question, areas, imageOptions, styles, answersCount, haveScales, scales}) {
+    constructor({question, areas, imageOptions, styles, answersCount, haveScales, scales, mobileThreshold}) {
         this.question = question;
         this.id = question.id;
-        this.questionNode = document.querySelector(`#${this.id}`);
         this.areas = areas;
         this.imageOptions = imageOptions;
         this.styles = styles;
+        this.haveScales = haveScales;
+        this.scales = scales;
+        this.mobileThreshold = mobileThreshold;
+
         this.answersCount = answersCount
             ? {
                 equal: answersCount.type === EQUAL_TYPE && answersCount.equal && answersCount.equal !== "0" ? answersCount.equal : undefined,
@@ -21,10 +24,7 @@ export default class Heatmap {
             }
             : {};
 
-        this.haveScales = haveScales;
-
-        this.scales = scales;
-
+        this.questionNode = document.querySelector(`#${this.id}`);
         this.currentLanguage = Confirmit.page.surveyInfo.language;
 
         this.state = {
@@ -37,23 +37,14 @@ export default class Heatmap {
     }
 
     render = () => {
-        this.checkAnswersAndScales();
+        const {question, areas, scales} = this;
+        this.questionTypeHandler.checkAnswersAndScales({question, areas, scales});
 
         const wrapper = this.setupWrapper();
         this.subscribeToQuestion();
         this.setDynamicStyles();
 
         return wrapper;
-    };
-
-    checkAnswersAndScales = () => {
-        const {question, areas, scales} = this;
-        if (areas.length !== question.answers.length) {
-            throw new Error("Number of areas is not equal to number of answers");
-        }
-        if (scales.length !== question.scales.length) {
-            throw new Error("Number of custom scales is not equal to number of question scales");
-        }
     };
 
     setupWrapper = () => {
@@ -151,7 +142,14 @@ export default class Heatmap {
         indicator.addEventListener("click", () => {
             const {question} = this;
             const {values, scales} = question;
-            this.setValues({values: this.questionTypeHandler.handleAreaClick({indicator, values, scales, index: areaIndex})});
+            this.setValues({
+                values: this.questionTypeHandler.handleAreaClick({
+                    indicator,
+                    values,
+                    scales,
+                    index: areaIndex
+                })
+            });
             indicator.classList.toggle("area_chosen");
         });
     };
@@ -185,7 +183,10 @@ export default class Heatmap {
             case "area":
                 const area = document.querySelector(`#${id} .select-areas-background-area.area-indicator[area-index="${areaIndex}"]`);
                 const className = haveScales ? `area_${values[areaIndex]}` : "area_chosen";
-                if (area && !area.classList.contains(className) && this.questionTypeHandler.checkIfValueExists({values, index: areaIndex})) {
+                if (area && !area.classList.contains(className) && this.questionTypeHandler.checkIfValueExists({
+                    values,
+                    index: areaIndex
+                })) {
                     area.classList.add(className);
                 }
                 break;
@@ -216,12 +217,12 @@ export default class Heatmap {
 
         scales.forEach((option) => {
             const {code, texts} = option;
-            const text = texts.find((text) => text.language === currentLanguage);
+            let textWrapper = texts ? texts.find((text) => text.language === currentLanguage) : option;
             const button = ElementsMaker.createCustomElement({
                 type: ELEMENTS.CUSTOM.SWITCH,
                 elementOptions: {
                     modifier: code,
-                    text: text ? text.text : "",
+                    text: textWrapper && textWrapper.text ? textWrapper.text : "",
                     id: `scale-button-${code}-${areaIndex}`,
                     attributes: [{name: "area-index", value: areaIndex}]
                 }
@@ -360,10 +361,26 @@ export default class Heatmap {
     };
 
     setDynamicStyles = () => {
-        const {id, scales, styles, questionNode, haveScales} = this;
+        const {id, scales, styles, questionNode, haveScales, mobileThreshold} = this;
 
         const stylesElement = document.createElement("style");
         stylesElement.innerText = "";
+
+        // area highlighting
+        if (styles) {
+            if (styles.areaHighlight) {
+                const {preHighlightOnMobiles, color, border} = styles.areaHighlight;
+                if (color) {
+                    stylesElement.innerText += `#${id} .select-areas-background-area${preHighlightOnMobiles && window.innerWidth <= mobileThreshold ? "" : ":hover"}` +
+                        `{ background-color: ${(color ? color : "#fff")}; opacity: 0.5; }`;
+                }
+                if (border) {
+                    stylesElement.innerText += `#${id} .select-areas-background-area { border: ${(border.width ? border.width : "0")}px solid ${(border.color ? border.color : "#000")}; }`;
+                }
+            }
+        } else {
+            stylesElement.innerText += `#${id} .select-areas-background-area:hover { background-color: #fff; opacity: 0.5; }`;
+        }
 
         if (haveScales) {
             // area colors
@@ -376,21 +393,6 @@ export default class Heatmap {
         } else {
             stylesElement.innerText += `#${id} .area_chosen { background-color: ${styles.areaChoose && styles.areaChoose.color ? styles.areaChoose.color : "green"} !important; opacity: 0.5; }`;
             stylesElement.innerText += `#${id} .area-indicator:hover { cursor: pointer; }`;
-        }
-
-        // area highlighting
-        if (styles) {
-            if (styles.areaHighlight) {
-                const {color, border} = styles.areaHighlight;
-                if (color) {
-                    stylesElement.innerText += `#${id} .select-areas-background-area:hover { background-color: ${(color ? color : "#fff")}; opacity: 0.5; }`;
-                }
-                if (border) {
-                    stylesElement.innerText += `#${id} .select-areas-background-area { border: ${(border.width ? border.width : "0")}px solid ${(border.color ? border.color : "#000")}; }`;
-                }
-            }
-        } else {
-            stylesElement.innerText += `#${id} .select-areas-background-area:hover { background-color: #fff; opacity: 0.5; }`;
         }
 
         questionNode.appendChild(stylesElement);

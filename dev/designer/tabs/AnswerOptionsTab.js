@@ -55,20 +55,12 @@ export default class AnswerOptionsTab extends AbstractTab {
     };
 
     setValuesFromSettingsForCustomScales = ({haveScales, scaleType, scales}) => {
-        const {activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, customScaleList} = this.elements;
+        const {activateDefaultScalesInput, activateCustomScalesInput, customScalesWrapper, customScaleListWrapper, customScaleList} = this.elements;
         activateCustomScalesInput.checked = scaleType === CUSTOM_SCALE_TYPE;
 
         if (haveScales && scaleType === CUSTOM_SCALE_TYPE) {
-            let newScales = this.questionScales;
-            newScales = newScales.map((newScale) => {
-                const oldScale = scales.find((scale) => scale.code === newScale.code);
-                return oldScale
-                    ? {
-                        ...newScale,
-                        color: oldScale.color
-                    }
-                    : newScale;
-            });
+            const newScales = CommonFunctionsUtil.updateScales({newScales: this.questionScales, oldScales: scales, isDefault: activateDefaultScalesInput.checked})
+            this.questionScales = newScales;
 
             CommonFunctionsUtil.createListOfItems({
                 defaultValues: newScales,
@@ -82,7 +74,7 @@ export default class AnswerOptionsTab extends AbstractTab {
             customScaleItems.forEach((item) => {
                 const code = item.querySelector(".custom-scale-item__code").innerText;
                 const textItem = item.querySelector(".custom-scale-item__label");
-                const scale = newScales.find((scale) => scale.code === code);
+                const scale = newScales.find((scale) => scale.code.toString() === code.toString());
                 textItem.innerText = scale.text;
             });
         }

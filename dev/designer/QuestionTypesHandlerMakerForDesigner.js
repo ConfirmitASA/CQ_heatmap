@@ -2,7 +2,7 @@ import CommonFunctionsUtil from "../CommonFunctionsUtil";
 
 import {
     AREA_CHOSEN_COLOR_WRAPPER_LEVEL_FROM_INPUT,
-    CUSTOM_SCALE_TYPE, DEFAULT_SCALE_TYPE,
+    CUSTOM_SCALE_TYPE, DEFAULT_SCALE_TYPE, DEFAULT_SCALES,
     EQUAL_TYPE,
     MIN_MAX_TYPE,
     QUESTION_TYPES
@@ -78,7 +78,7 @@ class GridHandler extends QuestionTypesHandlerForDesigner {
         const {scaleType, scales, answersCount} = values;
         const equalHasValue = answersCount.type === EQUAL_TYPE && answersCount.equal > 0;
         const minMaxHasValue = answersCount.type === MIN_MAX_TYPE && (answersCount.min > 0 || answersCount.max > 0);
-        const defaultScalesHaveErrors = questionScales ? scales.length !== questionScales.length : true;
+        const defaultScalesHaveErrors = questionScales ? DEFAULT_SCALES.length !== questionScales.length : true;
         const customScalesHaveValues = scaleType === CUSTOM_SCALE_TYPE && scales.length > 0;
         return equalHasValue || minMaxHasValue || customScalesHaveValues || defaultScalesHaveErrors;
     };

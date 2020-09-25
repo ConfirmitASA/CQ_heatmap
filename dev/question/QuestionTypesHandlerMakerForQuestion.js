@@ -18,6 +18,15 @@ class QuestionTypesHandlerForQuestion {
     handleAreaClick = () => {};
     checkIfValueExists = () => {};
     setValues = () => {};
+
+    checkAnswersAndScales = ({question, areas, scales}) => {
+        if (areas && areas.length !== question.answers.length) {
+            throw new Error("Number of areas is not equal to number of answers");
+        }
+        if (scales && scales.length !== question.scales.length) {
+            throw new Error("Number of custom scales is not equal to number of question scales");
+        }
+    };
 }
 
 class GridHandler extends QuestionTypesHandlerForQuestion {
