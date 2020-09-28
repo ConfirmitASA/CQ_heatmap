@@ -113,6 +113,16 @@ export default class ImageOptionsTab extends AbstractTab {
             const {heatmapWrapper, areasWrapper} = this.elements;
             if (!heatmapWrapper.querySelector("img")) {
                 new HeatmapDesigner(this.getHeatmapDesignerOptions({src, areas}));
+            } else {
+                // check for translation's change
+                const {areaTextListWrapper} = this.elements;
+                const areaTextItems = Array.prototype.slice.call(areaTextListWrapper.querySelectorAll(".area-text-item"));
+                areaTextItems.forEach((item) => {
+                    const index = areaTextItems.length - parseInt(item.querySelector(".area-text-item__index").innerText);
+                    const textItem = item.querySelector(".area-text-item__text");
+                    const area = areas.find((area) => parseInt(area.id) === index);
+                    textItem.value = area.title;
+                });
             }
 
             const elementsToChangeVisibility = [

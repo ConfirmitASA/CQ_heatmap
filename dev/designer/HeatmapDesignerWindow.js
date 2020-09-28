@@ -60,10 +60,20 @@ export default class HeatmapDesignerWindow {
 
     getScalesWithCurrentLanguage = ({scales}) => {
         return scales.map((scale) => {
-            const currentLanguageText = scale.texts.find((textOptions) => textOptions.language === this.question.language);
+            const currentLanguageText = scale.texts && scale.texts.find((textOptions) => textOptions.language === this.question.language);
             return {
                 ...scale,
                 text: currentLanguageText ? currentLanguageText.text : ""
+            }
+        })
+    };
+
+    getAreaTitlesWithCurrentLanguage = ({areas}) => {
+        return areas.map((area) => {
+            const currentLanguageTitle = area.titles && area.titles.find((titleOptions) => titleOptions.language === this.question.language);
+            return {
+                ...area,
+                title: currentLanguageTitle ? currentLanguageTitle.title : ""
             }
         })
     };
@@ -86,7 +96,7 @@ export default class HeatmapDesignerWindow {
         }
 
         if (settings) {
-            ImageOptions.setValues({values: settings});
+            ImageOptions.setValues({values: {...settings, areas: this.getAreaTitlesWithCurrentLanguage({areas: settings.areas})}});
             AnswerOptions.setValues({values: {...settings, scales: this.getScalesWithCurrentLanguage({scales})}});
             Styling.setValues({values: settings});
 
@@ -110,6 +120,7 @@ export default class HeatmapDesignerWindow {
         };
 
         const {imageOptions, areas} = ImageOptions.values;
+        this.setTitlesForDifferentLanguagesInAreas({areas});
         settings.imageOptions = imageOptions;
         settings.areas = areas && areas.length > 0 ? areas : (areasFromSettings && areasFromSettings.length > 0 ? areasFromSettings : []);
         this.state.hasErrors = ImageOptions.raiseErrors({
@@ -130,4 +141,31 @@ export default class HeatmapDesignerWindow {
 
         question.saveChanges(settings, this.state.hasErrors);
     };
+
+    setTitlesForDifferentLanguagesInAreas = ({areas}) => {
+        const {language} = this.question;
+
+        areas.forEach((area) => {
+            if (area.titles) {
+                const languageIndex = area.titles.findIndex((title) => title.language === language);
+                if (languageIndex >= 0) {
+                    area.titles[languageIndex] = {
+                        language,
+                        title: area.title
+                    };
+                } else {
+                    area.titles.push({
+                        language,
+                        title: area.title
+                    });
+                }
+            } else {
+                area.titles = [];
+                area.titles.push({
+                    language,
+                    title: area.title
+                });
+            }
+        });
+    }
 }

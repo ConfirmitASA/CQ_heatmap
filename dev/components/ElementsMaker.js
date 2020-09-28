@@ -59,6 +59,7 @@ const ElementsMaker = {
                         children: [
                             ElementsMaker.createHTMLElement({
                                 tag: ELEMENTS.HTML.LABEL,
+                                classes: ["area-text-item__index"],
                                 innerText: text,
                                 events: [events.find((event) => event.type === "click")]
                             }),

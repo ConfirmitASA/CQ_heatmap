@@ -121,7 +121,8 @@ export default class Heatmap {
     createIndicatorAreaForAnswerCallback = (area, index, areaSquares) => {
         const {haveScales} = this;
         const areaIndex = areaSquares.length - index;
-        const areaTitle = this.areas[index].title;
+        let areaTitle = this.areas[index].titles.find((titleOptions) => titleOptions.language === this.currentLanguage);
+        areaTitle = areaTitle ? areaTitle.title : "";
         const indicator = this.createIndicatorNode({area, areaIndex});
         area.parentNode.insertBefore(indicator, area.nextSibling);
 
