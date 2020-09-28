@@ -1,13 +1,14 @@
+import CommonFunctionsUtil from "../CommonFunctionsUtil";
 import {ERROR_TYPES} from "../Constants";
 
 export default class DesignerErrorManager {
     static handleInputError({element, errorCondition}) {
-        element.classList.toggle("form-input--error", errorCondition);
+        CommonFunctionsUtil.toggleClassForHTMLElement({element, className: "form-input--error", condition: errorCondition});
         return errorCondition;
     }
 
     static handleWrapperError({element, errorCondition}) {
-        element.classList.toggle("wrapper--error", errorCondition);
+        CommonFunctionsUtil.toggleClassForHTMLElement({element, className: "wrapper--error", condition: errorCondition});
         return errorCondition;
     }
 

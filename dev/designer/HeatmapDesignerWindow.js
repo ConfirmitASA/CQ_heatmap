@@ -49,11 +49,13 @@ export default class HeatmapDesignerWindow {
         this.question.answers = questionSettings.answers;
         this.question.scales = questionSettings.scales;
 
-        this.tabs.AnswerOptions.questionScales = CommonFunctionsUtil.updateScales({
-            newScales: settings.scales,
-            oldScales: this.getScalesWithCurrentLanguage({scales: questionSettings.scales}),
-            isDefault: activateDefaultScalesInput.checked
-        });
+        this.tabs.AnswerOptions.questionScales = settings
+            ? CommonFunctionsUtil.updateScales({
+                newScales: settings.scales,
+                oldScales: this.getScalesWithCurrentLanguage({scales: questionSettings.scales}),
+                isDefault: activateDefaultScalesInput.checked
+            })
+            : this.getScalesWithCurrentLanguage({scales: questionSettings.scales});
     };
 
     getScalesWithCurrentLanguage = ({scales}) => {
@@ -74,11 +76,13 @@ export default class HeatmapDesignerWindow {
 
         if (uiSettings) {
             this.question.language = uiSettings.currentLanguage;
-            this.tabs.AnswerOptions.questionScales = CommonFunctionsUtil.updateScales({
-                newScales: settings.scales,
-                oldScales: this.getScalesWithCurrentLanguage({scales: this.question.scales}),
-                isDefault: activateDefaultScalesInput.checked
-            });
+            this.tabs.AnswerOptions.questionScales = settings
+                ? CommonFunctionsUtil.updateScales({
+                    newScales: settings.scales,
+                    oldScales: this.getScalesWithCurrentLanguage({scales: this.question.scales}),
+                    isDefault: activateDefaultScalesInput.checked
+                })
+                : this.getScalesWithCurrentLanguage({scales: this.question.scales});
         }
 
         if (settings) {
@@ -88,8 +92,8 @@ export default class HeatmapDesignerWindow {
 
             if (!this.state.hasBeenCheckedForErrorsOnInit) {
                 this.saveChanges(settings.areas);
-                this.state.hasBeenCheckedForErrorsOnInit = true;
             }
+            this.state.hasBeenCheckedForErrorsOnInit = true;
         }
     };
 

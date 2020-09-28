@@ -23,7 +23,7 @@ export default class StylingTab extends AbstractTab {
         if (styles) {
             this.shouldBeOpened({styles});
             this.setValuesFromSettingsForAreaHighlight({styles});
-            areaChosenColorInput.value = styles.areaChoose && styles.areaChoose.color ? styles.areaChoose.color : undefined;
+            areaChosenColorInput.value = styles.areaChoose && styles.areaChoose.color ? styles.areaChoose.color : DEFAULT_COLORS.AREA_CHOSEN;
         }
 
         const elementsToChangeVisibility = [
@@ -46,7 +46,7 @@ export default class StylingTab extends AbstractTab {
         const isPreHighlightOnMobilesUnchecked = !areaHighlight.preHighlightOnMobiles;
         const isAreaColorHighlightChanged = areaHighlight && areaHighlight.type === COLOR_HIGHLIGHT_TYPE && areaHighlight.color !== DEFAULT_COLORS.AREA_HOVER;
         const isAreaBorderHighlightChanged = areaHighlight && areaHighlight.type === BORDER_HIGHLIGHT_TYPE &&
-            (areaHighlight.border.color !== DEFAULT_COLORS.AREA_BORDER || areaHighlight.border.width > 0);
+            areaHighlight.border && (areaHighlight.border.color !== DEFAULT_COLORS.AREA_BORDER || areaHighlight.border.width > 0);
         const isChosenAreaColorChanged = areaChoose && areaChoose.color !== DEFAULT_COLORS.AREA_CHOSEN;
 
         if (isPreHighlightOnMobilesUnchecked || isAreaColorHighlightChanged || isAreaBorderHighlightChanged || isChosenAreaColorChanged) {
@@ -68,18 +68,18 @@ export default class StylingTab extends AbstractTab {
         areaHighlighterSelector[0].selected = type !== BORDER_HIGHLIGHT_TYPE;
         areaHighlighterSelector[1].selected = type === BORDER_HIGHLIGHT_TYPE;
 
-        areaHoverColorInput.value = color ? color : undefined;
+        areaHoverColorInput.value = color ? color : DEFAULT_COLORS.AREA_HOVER;
 
-        areaBorderWidthInput.value = border && border.width ? border.width : undefined;
-        areaBorderColorInput.value = border && border.color ? border.color : undefined;
+        areaBorderWidthInput.value = border && border.width ? border.width : "";
+        areaBorderColorInput.value = border && border.color ? border.color : DEFAULT_COLORS.AREA_BORDER;
     };
 
     get values() {
         const {areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput, areaChosenColorInput, preHighlightAreasOnMobileInput} = this.elements;
         const areaHighlighterType = areaHighlighterSelector[1].selected ? BORDER_HIGHLIGHT_TYPE : COLOR_HIGHLIGHT_TYPE;
 
-        const areaHighlighterColor = areaHighlighterType === COLOR_HIGHLIGHT_TYPE && areaHoverColorInput.value ? areaHoverColorInput.value : undefined;
-        const areaHighlighterBorderEnabled = areaHighlighterType === BORDER_HIGHLIGHT_TYPE && (areaBorderWidthInput.value || areaBorderColorInput.value);
+        const areaHighlighterColor = areaHighlighterType === COLOR_HIGHLIGHT_TYPE && !!areaHoverColorInput.value ? areaHoverColorInput.value : "";
+        const areaHighlighterBorderEnabled = areaHighlighterType === BORDER_HIGHLIGHT_TYPE && (!!areaBorderWidthInput.value || !!areaBorderColorInput.value);
 
         return {
             areaHighlight: {
@@ -88,13 +88,13 @@ export default class StylingTab extends AbstractTab {
                 color: areaHighlighterColor,
                 border: areaHighlighterBorderEnabled
                     ? {
-                        width: areaBorderWidthInput.value ? areaBorderWidthInput.value : undefined,
-                        color: areaBorderColorInput.value ? areaBorderColorInput.value : undefined
+                        width: !!areaBorderWidthInput.value ? areaBorderWidthInput.value : "",
+                        color: !!areaBorderColorInput.value ? areaBorderColorInput.value : ""
                     }
                     : undefined,
             },
             areaChoose: {
-                color: areaChosenColorInput.value ? areaChosenColorInput.value : undefined
+                color: areaChosenColorInput.value ? areaChosenColorInput.value : ""
             }
         };
     };

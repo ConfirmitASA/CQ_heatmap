@@ -42,7 +42,7 @@ export default class AnswerOptionsTab extends AbstractTab {
 
         this.setValuesFromSettingsForDefaultScales({scaleType});
         this.setValuesFromSettingsForCustomScales({haveScales, scaleType, scales});
-        this.setValuesFromSettingsForAnswerCount({answersCount});
+        this.setValuesFromSettingsForNumberOfAnswers({answersCount});
     };
 
     setValuesFromSettingsForDefaultScales = ({scaleType}) => {
@@ -70,7 +70,7 @@ export default class AnswerOptionsTab extends AbstractTab {
             });
 
             // check for translation's change
-            const customScaleItems = customScaleListWrapper.querySelectorAll(".custom-scale-item");
+            const customScaleItems = Array.prototype.slice.call(customScaleListWrapper.querySelectorAll(".custom-scale-item"));
             customScaleItems.forEach((item) => {
                 const code = item.querySelector(".custom-scale-item__code").innerText;
                 const textItem = item.querySelector(".custom-scale-item__label");
@@ -92,7 +92,7 @@ export default class AnswerOptionsTab extends AbstractTab {
         elementsToChangeVisibility.forEach((elementsOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementsOptions));
     };
 
-    setValuesFromSettingsForAnswerCount = ({answersCount}) => {
+    setValuesFromSettingsForNumberOfAnswers = ({answersCount}) => {
         const {typeForNumberOfAnswersSelector, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput} = this.elements;
         const equalNumberOfAnswersOption = typeForNumberOfAnswersSelector[0];
         const minMaxNumberOfAnswersOption = typeForNumberOfAnswersSelector[1];
@@ -112,7 +112,7 @@ export default class AnswerOptionsTab extends AbstractTab {
         ];
         elementsToChangeVisibility.forEach((elementsOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementsOptions));
 
-        equalToNumberOfAnswersInput.value = answersCount.equal ? answersCount.equal : undefined;
+        equalToNumberOfAnswersInput.value = answersCount.equal ? answersCount.equal : "";
 
         maxNumberOfAnswersInput.value = CommonFunctionsUtil.correctValueToMinMaxInInput({
             input: maxNumberOfAnswersInput,
@@ -137,7 +137,7 @@ export default class AnswerOptionsTab extends AbstractTab {
             scaleType = this.getScaleType();
             if (scaleType === CUSTOM_SCALE_TYPE) {
                 scales = [];
-                const customScaleItems = document.querySelectorAll(".custom-scale-item");
+                const customScaleItems = Array.prototype.slice.call(document.querySelectorAll(".custom-scale-item"));
                 customScaleItems.forEach((item, index) => {
                     const color = item.querySelector(".custom-scale-item__color").value;
                     const codeInput = item.querySelector(".custom-scale-item__code");
@@ -157,9 +157,9 @@ export default class AnswerOptionsTab extends AbstractTab {
         return {
             answersCount: {
                 type: typeForNumberOfAnswers,
-                equal: typeForNumberOfAnswers === EQUAL_TYPE && equalToNumberOfAnswersInput.value ? equalToNumberOfAnswersInput.value : undefined,
-                max: typeForNumberOfAnswers === MIN_MAX_TYPE && maxNumberOfAnswersInput.value ? maxNumberOfAnswersInput.value : undefined,
-                min: typeForNumberOfAnswers === MIN_MAX_TYPE && minNumberOfAnswersInput.value ? minNumberOfAnswersInput.value : undefined
+                equal: typeForNumberOfAnswers === EQUAL_TYPE && !!equalToNumberOfAnswersInput.value ? equalToNumberOfAnswersInput.value : "",
+                max: typeForNumberOfAnswers === MIN_MAX_TYPE && !!maxNumberOfAnswersInput.value ? maxNumberOfAnswersInput.value : "",
+                min: typeForNumberOfAnswers === MIN_MAX_TYPE && !!minNumberOfAnswersInput.value ? minNumberOfAnswersInput.value : ""
             },
             scaleOptions: haveScalesInput.checked
                 ? {
@@ -181,51 +181,49 @@ export default class AnswerOptionsTab extends AbstractTab {
     };
 
     raiseErrors = ({areas}) => {
-        const {equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput} = this.elements;
-        const typeForNumberOfAnswers = this.getTypeForNumberOfAnswers();
-
-        this.raiseErrorsForScales({scaleType: DEFAULT_SCALE_TYPE});
-
-        const hasInputErrors = DesignerErrorManager.handleSeveralErrors({
-            errors: [
-                {
-                    type: ERROR_TYPES.INPUT,
-                    element: equalToNumberOfAnswersInput,
-                    errorCondition: typeForNumberOfAnswers === EQUAL_TYPE && equalToNumberOfAnswersInput.value && equalToNumberOfAnswersInput.value > areas.length
-                },
-                {
-                    type: ERROR_TYPES.INPUT,
-                    element: minNumberOfAnswersInput,
-                    errorCondition: typeForNumberOfAnswers === MIN_MAX_TYPE && minNumberOfAnswersInput.value && minNumberOfAnswersInput.value > areas.length
-                },
-                {
-                    type: ERROR_TYPES.INPUT,
-                    element: maxNumberOfAnswersInput,
-                    errorCondition: typeForNumberOfAnswers === MIN_MAX_TYPE && maxNumberOfAnswersInput.value && maxNumberOfAnswersInput.value > areas.length
-                }
-            ]
-        });
-        this.state.hasErrors = this.state.hasErrors || hasInputErrors;
+        this.state.hasErrors = this.state.hasErrors || this.raiseErrorsForScales({scaleType: DEFAULT_SCALE_TYPE});
+        this.state.hasErrors = this.state.hasErrors || this.raiseErrorsForNumberOfAnswers({areas});
 
         return this.state.hasErrors;
     };
 
     raiseErrorsForScales = ({scaleType}) => {
         const {activateDefaultScalesInput, activateCustomScalesInput} = this.elements;
-        const customScaleItems = document.querySelectorAll(".custom-scale-item");
+        const customScaleItems = Array.prototype.slice.call(document.querySelectorAll(".custom-scale-item"));
 
         const input = scaleType === DEFAULT_SCALE_TYPE ? activateDefaultScalesInput : activateCustomScalesInput;
         const expectedScalesCount = scaleType === DEFAULT_SCALE_TYPE ? DEFAULT_SCALES.length : customScaleItems.length;
 
-        const hasInputErrors = DesignerErrorManager.handleInputError({
+        return DesignerErrorManager.handleInputError({
             element: input,
             errorCondition: input.checked && (!this.questionScales || this.questionScales.length !== expectedScalesCount)
         });
+    };
 
-        this.state.hasErrors = this.state.hasErrors || hasInputErrors;
+    raiseErrorsForNumberOfAnswers = ({areas}) => {
+        const {equalToNumberOfAnswersInput, maxNumberOfAnswersInput, minNumberOfAnswersInput} = this.elements;
+        const typeForNumberOfAnswers = this.getTypeForNumberOfAnswers();
 
-        return this.state.hasErrors;
-    }
+        return DesignerErrorManager.handleSeveralErrors({
+            errors: [
+                {
+                    type: ERROR_TYPES.INPUT,
+                    element: equalToNumberOfAnswersInput,
+                    errorCondition: typeForNumberOfAnswers === EQUAL_TYPE && !!equalToNumberOfAnswersInput.value && areas && areas.length > 0 && equalToNumberOfAnswersInput.value > areas.length
+                },
+                {
+                    type: ERROR_TYPES.INPUT,
+                    element: minNumberOfAnswersInput,
+                    errorCondition: typeForNumberOfAnswers === MIN_MAX_TYPE && !!minNumberOfAnswersInput.value && areas && areas.length > 0 && minNumberOfAnswersInput.value > areas.length
+                },
+                {
+                    type: ERROR_TYPES.INPUT,
+                    element: maxNumberOfAnswersInput,
+                    errorCondition: typeForNumberOfAnswers === MIN_MAX_TYPE && !!maxNumberOfAnswersInput.value && areas && areas.length > 0 && maxNumberOfAnswersInput.value > areas.length
+                }
+            ]
+        });
+    };
 
     render = () => {
         const {
@@ -252,8 +250,8 @@ export default class AnswerOptionsTab extends AbstractTab {
         const {haveScalesInput, activateDefaultScalesInput, activateCustomScalesInput} = this.elements;
 
         haveScalesInput.addEventListener("input", this.handleHaveScalesInputCallback);
-        activateDefaultScalesInput.addEventListener("input", this.handleActivateDefaultScalesInputCallback);
-        activateCustomScalesInput.addEventListener("input", this.handleActivateCustomScalesInputCallback);
+        activateDefaultScalesInput.addEventListener("change", this.handleActivateDefaultScalesInputCallback);
+        activateCustomScalesInput.addEventListener("change", this.handleActivateCustomScalesInputCallback);
     };
 
     handleHaveScalesInputCallback = () => {
@@ -279,6 +277,8 @@ export default class AnswerOptionsTab extends AbstractTab {
 
         activateDefaultScalesInput.checked = true;
         activateCustomScalesInput.checked = false;
+
+        this.saveChanges();
     };
 
     handleActivateCustomScalesInputCallback = () => {
@@ -299,6 +299,8 @@ export default class AnswerOptionsTab extends AbstractTab {
             itemClassName: "custom-scale-item",
             itemClass: ELEMENTS.CUSTOM.CUSTOM_SCALE_ITEM
         });
+
+        this.saveChanges();
     };
 
     setupMinMaxEqualInputs = () => {
@@ -322,12 +324,14 @@ export default class AnswerOptionsTab extends AbstractTab {
 
         minNumberOfAnswersInput.addEventListener("input", (e) => {
             const minValue = CommonFunctionsUtil.removeMathSignsFromPositiveIntCallback(e);
+            e.target.value = minValue;
             maxNumberOfAnswersInput.setAttribute("min", minValue);
         });
         maxNumberOfAnswersInput.addEventListener("input", (e) => {
             const maxValue = CommonFunctionsUtil.removeMathSignsFromPositiveIntCallback(e);
+            e.target.value = maxValue;
             minNumberOfAnswersInput.setAttribute("max", maxValue);
         });
-        equalToNumberOfAnswersInput.addEventListener("input", CommonFunctionsUtil.removeMathSignsFromPositiveIntCallback);
+        equalToNumberOfAnswersInput.addEventListener("input", (e) => e.target.value = CommonFunctionsUtil.removeMathSignsFromPositiveIntCallback(e));
     };
 }

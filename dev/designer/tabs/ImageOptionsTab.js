@@ -12,7 +12,6 @@ export default class ImageOptionsTab extends AbstractTab {
         this.saveChanges = saveChanges;
 
         this.state = {
-            showImage: false,
             hasErrors: false
         };
 
@@ -25,8 +24,6 @@ export default class ImageOptionsTab extends AbstractTab {
 
         if (imageOptions) {
             imageSrcInput.value = imageOptions.src;
-
-            this.state.showImage = true;
             this.drawImage({areas});
         } else {
             CommonFunctionsUtil.toggleElementsVisibility({elements: [areasWrapper]});
@@ -40,7 +37,7 @@ export default class ImageOptionsTab extends AbstractTab {
         const width = this.getHeatmapImageWidth();
         const areas = this.getAreas();
 
-        const areaTextItems = areaTextListWrapper.querySelectorAll(".area-text-item__text");
+        const areaTextItems = Array.prototype.slice.call(areaTextListWrapper.querySelectorAll(".area-text-item__text"));
         areas.forEach((area, index) => {
             const textIndex = areaTextItems.length - index - 1;
             if (areaTextItems[textIndex]) {
@@ -72,7 +69,7 @@ export default class ImageOptionsTab extends AbstractTab {
         const {heatmapWrapperId} = Config;
 
         let areas = [];
-        if (heatmapWrapper.querySelectorAll(".select-areas-overlay").length > 0) {
+        if (Array.prototype.slice.call(heatmapWrapper.querySelectorAll(".select-areas-overlay")).length > 0) {
             areas = $(`#${heatmapWrapperId} img`).selectAreas("areas");
         }
         return areas;
@@ -103,7 +100,6 @@ export default class ImageOptionsTab extends AbstractTab {
 
     handleImageInputsChange = () => {
         const {heatmapWrapper, areaTextsTitle, areaTextListWrapper} = this.elements;
-        this.state.showImage = true;
         heatmapWrapper.innerHTML = "";
         areaTextListWrapper.innerHTML = "";
         CommonFunctionsUtil.toggleElementsVisibility({elements: [areaTextsTitle]});
@@ -115,7 +111,7 @@ export default class ImageOptionsTab extends AbstractTab {
 
         if (src) {
             const {heatmapWrapper, areasWrapper} = this.elements;
-            if (!heatmapWrapper.querySelector("img") && this.state.showImage) {
+            if (!heatmapWrapper.querySelector("img")) {
                 new HeatmapDesigner(this.getHeatmapDesignerOptions({src, areas}));
             }
 
@@ -123,8 +119,6 @@ export default class ImageOptionsTab extends AbstractTab {
                 {elements: [areasWrapper], shouldBeShown: true}
             ];
             elementsToChangeVisibility.forEach((elementOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementOptions));
-
-            this.state.showImage = false;
         }
     };
 
@@ -179,7 +173,7 @@ export default class ImageOptionsTab extends AbstractTab {
         CommonFunctionsUtil.createListOfItems(textItemsOptions);
         this.setAreaIndexesAndClickForTexts();
 
-        const areaTextItems = areaTextListWrapper.querySelectorAll(".area-text-item");
+        const areaTextItems = Array.prototype.slice.call(areaTextListWrapper.querySelectorAll(".area-text-item"));
         CommonFunctionsUtil.toggleElementsVisibility({
             elements: [areaTextsTitle],
             shouldBeShown: areaTextItems.length > 0

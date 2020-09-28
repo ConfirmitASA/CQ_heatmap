@@ -4,6 +4,7 @@ import ValidationLibrary from "./ValidationLbrary";
 import QuestionTypesHandlerMakerForQuestion from "./QuestionTypesHandlerMakerForQuestion";
 
 import {MIN_MAX_TYPE, EQUAL_TYPE, ELEMENTS} from "../Constants";
+import CommonFunctionsUtil from "../CommonFunctionsUtil";
 
 export default class Heatmap {
     constructor({question, areas, imageOptions, styles, answersCount, haveScales, scales, mobileThreshold}) {
@@ -18,9 +19,9 @@ export default class Heatmap {
 
         this.answersCount = answersCount
             ? {
-                equal: answersCount.type === EQUAL_TYPE && answersCount.equal && answersCount.equal !== "0" ? answersCount.equal : undefined,
-                max: answersCount.type === MIN_MAX_TYPE && answersCount.max && answersCount.max !== "0" ? answersCount.max : undefined,
-                min: answersCount.type === MIN_MAX_TYPE && answersCount.min && answersCount.min !== "0" ? answersCount.min : undefined
+                equal: answersCount.type === EQUAL_TYPE && answersCount.equal && answersCount.equal !== "0" ? answersCount.equal : "",
+                max: answersCount.type === MIN_MAX_TYPE && answersCount.max && answersCount.max !== "0" ? answersCount.max : "",
+                min: answersCount.type === MIN_MAX_TYPE && answersCount.min && answersCount.min !== "0" ? answersCount.min : ""
             }
             : {};
 
@@ -113,7 +114,7 @@ export default class Heatmap {
 
     onAreasLoaded = () => {
         const {id} = this;
-        const areaSquares = document.querySelectorAll(`#${id}-image-wrapper .select-areas-background-area`);
+        const areaSquares = Array.prototype.slice.call(document.querySelectorAll(`#${id}-image-wrapper .select-areas-background-area`));
         areaSquares.forEach(this.createIndicatorAreaForAnswerCallback);
     };
 
@@ -131,7 +132,7 @@ export default class Heatmap {
         this.setExistingValues({to: "area", areaIndex});
 
         this.createAreaTooltip({
-            title: (haveScales ? areaTitle : undefined),
+            title: (haveScales ? areaTitle : ""),
             content: (haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : areaTitle),
             indicator,
             areaIndex
@@ -321,18 +322,20 @@ export default class Heatmap {
         const max = parseInt(answersCount.max);
 
         return ValidationLibrary.getQuestionValidationCallback({
-            currentQuestion: this.question, validators: [
-                ValidationLibrary.validationMethods.getEqualValidator({
-                    equal,
-                    message: `Please select ${equal} answer${parseInt(equal) > 1 ? "s" : ""}.`
-                }),
-                ValidationLibrary.validationMethods.getMinMaxValidator({
-                    min, max,
-                    generalErrorMessage: `Please select between ${min} and ${max} answers.`,
-                    minErrorMessage: `Please select at least ${min} answer${parseInt(min) > 1 ? "s" : ""}.`,
-                    maxErrorMessage: `Please do not select more than ${max} answer${parseInt(max) > 1 ? "s" : ""}.`
-                })
-            ]
+            currentQuestion: this.question, validators: {
+                allValues: [
+                    ValidationLibrary.validationMethods.allValues.getEqualValidator({
+                        equal,
+                        message: `Please select ${equal} answer${parseInt(equal) > 1 ? "s" : ""}.`
+                    }),
+                    ValidationLibrary.validationMethods.allValues.getMinMaxValidator({
+                        min, max,
+                        generalErrorMessage: `Please select between ${min} and ${max} answers.`,
+                        minErrorMessage: `Please select at least ${min} answer${parseInt(min) > 1 ? "s" : ""}.`,
+                        maxErrorMessage: `Please do not select more than ${max} answer${parseInt(max) > 1 ? "s" : ""}.`
+                    })
+                ]
+            }
         });
     };
 
@@ -346,8 +349,8 @@ export default class Heatmap {
 
         validationResult.errors.forEach(this.addErrorItem);
 
-        questionNode.classList.toggle("cf-question--error", validationResult.errors.length > 0);
-        errorBlock.classList.toggle("cf-error-block--bottom", validationResult.errors.length > 0);
+        CommonFunctionsUtil.toggleClassForHTMLElement({element: questionNode, className: "cf-question--error", condition: validationResult.errors.length > 0});
+        CommonFunctionsUtil.toggleClassForHTMLElement({element: errorBlock, className: "cf-error-block--bottom", condition: validationResult.errors.length > 0});
     }
 
     addErrorItem = ({message}) => {
@@ -375,7 +378,7 @@ export default class Heatmap {
                         `{ background-color: ${(color ? color : "#fff")}; opacity: 0.5; }`;
                 }
                 if (border) {
-                    stylesElement.innerText += `#${id} .select-areas-background-area { border: ${(border.width ? border.width : "0")}px solid ${(border.color ? border.color : "#000")}; }`;
+                    stylesElement.innerText += `#${id} .select-areas-background-area { border: ${(border.width ? border.width : "0")}px solid ${(!!border.color ? border.color : "#000")}; }`;
                 }
             }
         } else {

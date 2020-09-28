@@ -17,7 +17,8 @@ const ValidationLibrary = {
             }
 
             let errors = [];
-            validators.forEach((validator) => values.forEach((value) => errors = errors.concat(validator.validate(value))));
+            validators.oneValue && validators.oneValue.forEach((validator) => values.forEach((value) => errors = errors.concat(validator.validate(value))));
+            validators.allValues && validators.allValues.forEach((validator) => errors = errors.concat(validator.validate(values)));
             errors.forEach((error) => validationResult.errors.push(error));
         }
     },
@@ -28,95 +29,98 @@ const ValidationLibrary = {
     },
 
     validationMethods: {
-        getMinLengthValidator: ({minLength, errorMessage}) => {
-            return {
-                validate: (questionValue) => {
-                    const errors = [];
-                    if (minLength && questionValue.length < minLength){
-                        errors.push({message: errorMessage});
-                    }
-                    return errors;
-                }
-            };
-        },
-
-        getMaxLengthValidator: ({maxLength, errorMessage}) => {
-            return {
-                validate: (questionValue) => {
-                    const errors = [];
-                    if (maxLength && questionValue.length > maxLength){
-                        errors.push({message: errorMessage});
-                    }
-                    return errors;
-                }
-            };
-        },
-
-        getMinMaxValidator: ({min, max, generalErrorMessage, minErrorMessage, maxErrorMessage}) => {
-            return (min && max)
-                ? {
+        oneValue: {
+            getMinLengthValidator: ({minLength, errorMessage}) => {
+                return {
                     validate: (questionValue) => {
                         const errors = [];
-                        if (questionValue < min || questionValue > max){
-                            errors.push({message: generalErrorMessage});
+                        if (minLength && questionValue.length < minLength){
+                            errors.push({message: errorMessage});
                         }
                         return errors;
                     }
-                }
-                : min ? ValidationLibrary.validationMethods.getMinValidator(min, minErrorMessage) : ValidationLibrary.validationMethods.getMaxValidator(max, maxErrorMessage);
-        },
+                };
+            },
 
-        getMinValidator: ({min, errorMessage}) => {
-            return {
-                validate: (questionValue) => {
-                    const errors = [];
-                    if (min && questionValue < min){
-                        errors.push({message: errorMessage});
+            getMaxLengthValidator: ({maxLength, errorMessage}) => {
+                return {
+                    validate: (questionValue) => {
+                        const errors = [];
+                        if (maxLength && questionValue.length > maxLength){
+                            errors.push({message: errorMessage});
+                        }
+                        return errors;
                     }
-                    return errors;
-                }
-            };
-        },
+                };
+            },
 
-        getMaxValidator: ({max, errorMessage}) => {
-            return {
-                validate: (questionValue) => {
-                    const errors = [];
-                    if (max && questionValue > max){
-                        errors.push({message: errorMessage});
+            getRegExpValidator: ({regExpText, errorMessage}) => {
+                return {
+                    validate: (questionValue) => {
+                        const errors = [];
+                        if (regExpText && !(new RegExp(regExpText)).test(questionValue)) {
+                            errors.push({message: errorMessage});
+                        }
+                        return errors;
                     }
-                    return errors;
-                }
-            };
-        },
+                };
+            },
 
-        getEqualValidator: ({equal, errorMessage}) => {
-            return {
-                validate: (questionValue) => {
-                    const errors = [];
-                    if (equal && questionValue === equal){
-                        errors.push({message: errorMessage});
+            getEmailValidator: ({errorMessage}) => {
+                const emailRegExp = "[a-z0-9!#$%&'*+/=?_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$";
+                return ValidationLibrary.validationMethods.getRegExpValidator({emailRegExp, errorMessage});
+            }
+        },
+        allValues: {
+            getMinMaxValidator: ({min, max, generalErrorMessage, minErrorMessage, maxErrorMessage}) => {
+                return (min && max)
+                    ? {
+                        validate: (questionValues) => {
+                            const errors = [];
+                            if (questionValues.length < min || questionValues.length > max){
+                                errors.push({message: generalErrorMessage});
+                            }
+                            return errors;
+                        }
                     }
-                    return errors;
-                }
-            };
-        },
+                    : min ? ValidationLibrary.validationMethods.allValues.getMinValidator({min, errorMessage: minErrorMessage}) : ValidationLibrary.validationMethods.allValues.getMaxValidator({max, errorMessage:maxErrorMessage});
+            },
 
-        getRegExpValidator: ({regExpText, errorMessage}) => {
-            return {
-                validate: (questionValue) => {
-                    const errors = [];
-                    if (regExpText && !(new RegExp(regExpText)).test(questionValue)) {
-                        errors.push({message: errorMessage});
+            getMinValidator: ({min, errorMessage}) => {
+                return {
+                    validate: (questionValues) => {
+                        const errors = [];
+                        if (min && questionValues.length < min){
+                            errors.push({message: errorMessage});
+                        }
+                        return errors;
                     }
-                    return errors;
-                }
-            };
-        },
+                };
+            },
 
-        getEmailValidator: ({errorMessage}) => {
-            const emailRegExp = "[a-z0-9!#$%&'*+/=?_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$";
-            return ValidationLibrary.validationMethods.getRegExpValidator({emailRegExp, errorMessage});
+            getMaxValidator: ({max, errorMessage}) => {
+                return {
+                    validate: (questionValues) => {
+                        const errors = [];
+                        if (max && questionValues.length > max){
+                            errors.push({message: errorMessage});
+                        }
+                        return errors;
+                    }
+                };
+            },
+
+            getEqualValidator: ({equal, errorMessage}) => {
+                return {
+                    validate: (questionValue) => {
+                        const errors = [];
+                        if (equal && questionValue === equal){
+                            errors.push({message: errorMessage});
+                        }
+                        return errors;
+                    }
+                };
+            }
         }
     }
 };

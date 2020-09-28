@@ -1,10 +1,16 @@
 import ElementsMaker from "./components/ElementsMaker";
 
 const CommonFunctionsUtil = {
+    toggleClassForHTMLElement: ({element, className, condition}) => {
+        if (condition) {
+            element.classList.add(className);
+        } else {
+            element.classList.remove(className);
+        }
+    },
+
     toggleElementsVisibility: ({elements, shouldBeShown}) => {
-        elements.forEach((element) => {
-            element.classList.toggle("hidden", !shouldBeShown);
-        });
+        elements.forEach((element) => CommonFunctionsUtil.toggleClassForHTMLElement({element, className: "hidden", condition: !shouldBeShown}));
     },
 
     toggleElementsDisabling: ({elements, shouldBeDisabled}) => {
@@ -15,7 +21,7 @@ const CommonFunctionsUtil = {
 
     createListOfItems: ({defaultValues, itemsExpectedCount, listWrapper, itemClassName, itemClass, onInputChange, onClick, shouldNumberAsLabelBeAdded}) => {
         const count = defaultValues ? defaultValues.length : itemsExpectedCount;
-        const existingItems = listWrapper.querySelectorAll(`.${itemClassName}`);
+        const existingItems = Array.prototype.slice.call(listWrapper.querySelectorAll(`.${itemClassName}`));
 
         if (existingItems.length === count) {
             return;
@@ -31,8 +37,8 @@ const CommonFunctionsUtil = {
                             {type: "input", callback: onInputChange},
                             {type: "click", callback: onClick},
                         ],
-                        value: defaultValues ? defaultValues[i - 1] : undefined,
-                        text: shouldNumberAsLabelBeAdded ? (existingItems.length + i) : undefined
+                        value: defaultValues ? defaultValues[i - 1] : "",
+                        text: shouldNumberAsLabelBeAdded ? (existingItems.length + i) : ""
                     }
                 }));
             }
@@ -59,9 +65,12 @@ const CommonFunctionsUtil = {
 
     correctValueToMinMaxInInput: ({input, value}) => {
         let currentValue = value ? value : input.value;
+        const intValue = parseInt(currentValue);
+        const intMin = parseInt(input.min);
+        const intMax = parseInt(input.max);
 
-        currentValue = !input.min || !currentValue || parseInt(currentValue) > parseInt(input.min) ? currentValue : input.min;
-        currentValue = !input.max || !currentValue || parseInt(currentValue) < parseInt(input.max) ? currentValue : input.max;
+        currentValue = !input.min || !currentValue || isNaN(intMin)  || intValue > intMin ? currentValue : input.min;
+        currentValue = !input.max || !currentValue || isNaN(intMax) || intValue < intMax ? currentValue : input.max;
 
         return currentValue;
     },
@@ -71,7 +80,7 @@ const CommonFunctionsUtil = {
     },
 
     removeMathSignsFromPositiveIntCallback: (e) => {
-        e.target.value = e.target.value.replace(/\D+/g, '');
+        //e.target.value = e.target.value.replace(/\D+/g, '');
         return e.target.value;
     },
 

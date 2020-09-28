@@ -83,20 +83,20 @@ const ElementsMaker = {
                                 tag: ELEMENTS.HTML.LABEL,
                                 classes: ["custom-scale-item__code"],
                                 events: [events.find((event) => event.type === ELEMENTS.HTML.INPUT)],
-                                innerText: value ? value.code : undefined
+                                innerText: value ? value.code : ""
                             }),
                             ElementsMaker.createHTMLElement({
                                 tag: ELEMENTS.HTML.LABEL,
                                 classes: ["custom-scale-item__label"],
                                 events: [events.find((event) => event.type === ELEMENTS.HTML.INPUT)],
-                                innerText: value ? value.text : undefined
+                                innerText: value ? value.text : ""
                             }),
                             ElementsMaker.createHTMLElement({
                                 tag: ELEMENTS.HTML.INPUT,
                                 classes: ["custom-scale-item__color", "form-input", "form-input--2ch"],
                                 type: "color",
                                 events: [events.find((event) => event.type === ELEMENTS.HTML.INPUT)],
-                                value: value ? value.color : undefined
+                                value: value ? value.color : "#000000"
                             })
                         ]
                     }
@@ -188,7 +188,7 @@ const ElementsMaker = {
             element.id = id;
         }
         if (type) {
-            element.type = type;
+            element.setAttribute("type", type);
         }
         if (value) {
             element.value = value;
@@ -200,18 +200,20 @@ const ElementsMaker = {
             element.src = src;
         }
         if (style) {
-            element.style = style;
+            Object.keys(style).forEach((key) => element.style[key] = style[key]);
         }
 
         children && children.forEach((child) => {
-            element.appendChild(child);
+            child && element.appendChild(child);
         });
         events && events.forEach(({type, callback}) => {
-            callback && element.addEventListener(type, callback);
+            type && callback && element.addEventListener(type, callback);
         });
-        classes && element.classList.add(...classes);
+        classes && classes.forEach((className) => {
+            className && element.classList.add(className);
+        });
         attributes && attributes.forEach(({name, value}) => {
-            element.setAttribute(name, value);
+            name && element.setAttribute(name, value);
         });
 
         return element;
