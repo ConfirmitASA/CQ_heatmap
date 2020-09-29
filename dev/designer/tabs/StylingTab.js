@@ -122,7 +122,9 @@ export default class StylingTab extends AbstractTab {
     };
 
     setupAdditionalStyles = () => {
-        const {areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput} = this.elements;
+        const {preHighlightAreasOnMobileInput, areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput} = this.elements;
+
+        preHighlightAreasOnMobileInput.addEventListener("change", () => this.saveChanges());
 
         areaHighlighterSelector.addEventListener("change", (e) => {
             const selector = e.target;
