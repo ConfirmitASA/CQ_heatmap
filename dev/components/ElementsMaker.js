@@ -195,7 +195,7 @@ const ElementsMaker = {
             element.value = value;
         }
         if (innerText) {
-            element.innerText = innerText;
+            element.innerHTML = innerText;
         }
         if (src) {
             element.src = src;
