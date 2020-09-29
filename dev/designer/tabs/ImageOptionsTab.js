@@ -4,7 +4,7 @@ import Config from "../../Config";
 import AbstractTab from "./AbstractTab";
 import DesignerErrorManager from "../DesignerErrorManager";
 
-import {ELEMENTS, ERROR_TYPES} from "../../Constants";
+import {AREAS_COUNT_ERROR_TEXT, ELEMENTS, ERROR_TYPES} from "../../Constants";
 
 export default class ImageOptionsTab extends AbstractTab {
     constructor({elements, saveChanges}) {
@@ -49,7 +49,7 @@ export default class ImageOptionsTab extends AbstractTab {
     };
 
     raiseErrors = ({answers, areasFromSettings}) => {
-        const {imageSrcInput, heatmapWrapper} = this.elements;
+        const {imageSrcInput, heatmapWrapper, areasCountInfo} = this.elements;
 
         const src = imageSrcInput.value;
         const areas = areasFromSettings ? areasFromSettings : this.getAreas();
@@ -60,6 +60,16 @@ export default class ImageOptionsTab extends AbstractTab {
                 {type: ERROR_TYPES.WRAPPER, element: heatmapWrapper, errorCondition: areas.length <= 0 || areas.length !== answers.length}
             ]
         });
+
+        const elementsToChangeVisibility = [
+            {elements: [areasCountInfo], shouldBeShown: areas.length <= 0 || areas.length !== answers.length}
+        ];
+        elementsToChangeVisibility.forEach((elementOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementOptions));
+        if (areas.length <= 0 || areas.length !== answers.length) {
+            const alertText = areasCountInfo.querySelector(".comd-alert__text");
+            const partsOfErrorMessage = alertText.innerText.split(":");
+            alertText.innerText = `${AREAS_COUNT_ERROR_TEXT}${partsOfErrorMessage[1] ? `: ${partsOfErrorMessage[1]} area${parseInt(partsOfErrorMessage[1]) > 1 ? "s" : ""}` : "" }`;
+        }
 
         return this.state.hasErrors;
     };
@@ -121,7 +131,7 @@ export default class ImageOptionsTab extends AbstractTab {
                     const index = areaTextItems.length - parseInt(item.querySelector(".area-text-item__index").innerText);
                     const textItem = item.querySelector(".area-text-item__text");
                     const area = areas.find((area) => parseInt(area.id) === index);
-                    textItem.value = area.title;
+                    textItem.value = area ? area.title : "";
                 });
             }
 

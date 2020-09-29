@@ -89,6 +89,7 @@ export default class Config {
             ...elements,
 
             requiredInfo: settingsWrapper.querySelector(".info.info--required"),
+            areasCountInfo: settingsWrapper.querySelector(".info.info--areas-count"),
             minMaxInfo: settingsWrapper.querySelector(".info.info--min-max"),
             defaultScalesInfo: settingsWrapper.querySelector(".info.info--default-scales")
         }

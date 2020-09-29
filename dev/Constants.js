@@ -76,6 +76,8 @@ const ELEMENTS = {
     }
 }
 
+const AREAS_COUNT_ERROR_TEXT = "Please select as many areas as answers";
+
 export {
     DEFAULT_SCALE_TYPE,
     CUSTOM_SCALE_TYPE,
@@ -92,5 +94,6 @@ export {
     MAX_SIZES_FOR_AREA,
     DEFAULT_SCALES,
     ERROR_TYPES,
-    ELEMENTS
+    ELEMENTS,
+    AREAS_COUNT_ERROR_TEXT
 };
