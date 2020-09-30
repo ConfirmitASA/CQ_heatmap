@@ -327,7 +327,7 @@ export default class Heatmap {
                 allValues: [
                     ValidationLibrary.validationMethods.allValues.getEqualValidator({
                         equal,
-                        message: `Please select ${equal} answer${parseInt(equal) > 1 ? "s" : ""}.`
+                        errorMessage: `Please select ${equal} answer${parseInt(equal) > 1 ? "s" : ""}.`
                     }),
                     ValidationLibrary.validationMethods.allValues.getMinMaxValidator({
                         min, max,

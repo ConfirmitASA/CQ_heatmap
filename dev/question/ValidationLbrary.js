@@ -114,7 +114,7 @@ const ValidationLibrary = {
                 return {
                     validate: (questionValue) => {
                         const errors = [];
-                        if (equal && questionValue === equal){
+                        if (equal && questionValue.length !== equal){
                             errors.push({message: errorMessage});
                         }
                         return errors;
