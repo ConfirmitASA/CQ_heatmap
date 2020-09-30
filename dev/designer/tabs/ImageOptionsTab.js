@@ -67,8 +67,7 @@ export default class ImageOptionsTab extends AbstractTab {
         elementsToChangeVisibility.forEach((elementOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementOptions));
         if (areas.length <= 0 || areas.length !== answers.length) {
             const alertText = areasCountInfo.querySelector(".comd-alert__text");
-            const partsOfErrorMessage = alertText.innerText.split(":");
-            alertText.innerText = `${AREAS_COUNT_ERROR_TEXT}${partsOfErrorMessage[1] ? `: ${partsOfErrorMessage[1]} area${parseInt(partsOfErrorMessage[1]) > 1 ? "s" : ""}` : "" }`;
+            alertText.innerText = `${AREAS_COUNT_ERROR_TEXT}${answers.length > 0 ? `: ${answers.length} area${answers.length > 1 ? "s" : ""}` : ": there are no answers" }`;
         }
 
         return this.state.hasErrors;

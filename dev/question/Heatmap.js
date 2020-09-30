@@ -375,7 +375,8 @@ export default class Heatmap {
             if (styles.areaHighlight) {
                 const {preHighlightOnMobiles, color, border} = styles.areaHighlight;
                 if (color) {
-                    stylesElement.innerText += `#${id} .select-areas-background-area${preHighlightOnMobiles && window.innerWidth <= mobileThreshold ? "" : ":hover"}` +
+                    const isTouchScreen = "ontouchstart" in document.documentElement;
+                    stylesElement.innerText += `#${id} .select-areas-background-area${preHighlightOnMobiles && (window.innerWidth <= mobileThreshold || isTouchScreen) ? "" : ":hover"}` +
                         `{ background-color: ${(color ? color : "#fff")}; opacity: 0.5; }`;
                 }
                 if (border) {
