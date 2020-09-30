@@ -235,8 +235,8 @@ export default class AnswerOptionsTab extends AbstractTab {
                 elements: [scaleSettingsWrapper, customScalesWrapper, CommonFunctionsUtil.getInputWrapper({input: equalToNumberOfAnswersInput})]
             }],
             elementsToSetAttribute: [
-                {element: minNumberOfAnswersInput, attribute: {name: "min", MIN_VALUE_FOR_MINMAX}},
-                {element: maxNumberOfAnswersInput, attribute: {name: "min", MIN_VALUE_FOR_MINMAX}}
+                {element: minNumberOfAnswersInput, attribute: {name: "min", value: MIN_VALUE_FOR_MINMAX}},
+                {element: maxNumberOfAnswersInput, attribute: {name: "min", value: MIN_VALUE_FOR_MINMAX}}
             ]
         });
 
