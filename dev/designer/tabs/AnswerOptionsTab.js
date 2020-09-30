@@ -154,12 +154,15 @@ export default class AnswerOptionsTab extends AbstractTab {
             }
         }
 
+        const max = !!maxNumberOfAnswersInput.value ? maxNumberOfAnswersInput.value : "";
+        const min = !!minNumberOfAnswersInput.value ? minNumberOfAnswersInput.value : "";
+
         return {
             answersCount: {
                 type: typeForNumberOfAnswers,
                 equal: typeForNumberOfAnswers === EQUAL_TYPE && !!equalToNumberOfAnswersInput.value ? equalToNumberOfAnswersInput.value : "",
-                max: typeForNumberOfAnswers === MIN_MAX_TYPE && !!maxNumberOfAnswersInput.value ? maxNumberOfAnswersInput.value : "",
-                min: typeForNumberOfAnswers === MIN_MAX_TYPE && !!minNumberOfAnswersInput.value ? minNumberOfAnswersInput.value : ""
+                max: typeForNumberOfAnswers === MIN_MAX_TYPE && !!max ? !!min && max < min ? min : max : "",
+                min: typeForNumberOfAnswers === MIN_MAX_TYPE && !!min ? !!max && max < min ? max : min : ""
             },
             scaleOptions: haveScalesInput.checked
                 ? {

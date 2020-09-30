@@ -380,7 +380,8 @@ export default class Heatmap {
             if (styles.areaHighlight) {
                 const {preHighlightOnMobiles, color, border} = styles.areaHighlight;
                 if (color) {
-                    const isTouchScreen = "ontouchstart" in document.documentElement;
+                    const isTouchScreen = 'ontouchstart' in window // works on most browsers
+                        || 'onmsgesturechange' in window; // works on IE10 with some false positives
                     stylesElement.innerText += `#${id} .select-areas-background-area${preHighlightOnMobiles && (window.innerWidth <= mobileThreshold || isTouchScreen) ? "" : ":hover"}` +
                         `{ background-color: ${(color ? color : "#fff")}; opacity: 0.5; }`;
                 }

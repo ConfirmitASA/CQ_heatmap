@@ -136,7 +136,7 @@ const ElementsMaker = {
                 return ElementsMaker.createHTMLElement({
                     tag: ELEMENTS.HTML.DIV,
                     id: `${questionId}_instruction`,
-                    classList: ["cf-question__instruction"],
+                    classes: ["cf-question__instruction"],
                     innerText: text,
                     children
                 })
@@ -145,7 +145,7 @@ const ElementsMaker = {
                 return ElementsMaker.createHTMLElement({
                     tag: ELEMENTS.HTML.DIV,
                     id: `${questionId}_text`,
-                    classList: ["cf-question__text"],
+                    classes: ["cf-question__text"],
                     innerText: text,
                     children
                 })
