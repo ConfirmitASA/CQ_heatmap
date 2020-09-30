@@ -2,9 +2,9 @@ import {Tooltip} from "../components/Tooltip";
 import ElementsMaker from "../components/ElementsMaker";
 import ValidationLibrary from "./ValidationLbrary";
 import QuestionTypesHandlerMakerForQuestion from "./QuestionTypesHandlerMakerForQuestion";
+import CommonFunctionsUtil from "../CommonFunctionsUtil";
 
 import {MIN_MAX_TYPE, EQUAL_TYPE, ELEMENTS} from "../Constants";
-import CommonFunctionsUtil from "../CommonFunctionsUtil";
 
 export default class Heatmap {
     constructor({question, areas, imageOptions, styles, answersCount, haveScales, scales, mobileThreshold}) {
@@ -143,13 +143,15 @@ export default class Heatmap {
     setAreaOnClick = ({indicator, areaIndex}) => {
         indicator.addEventListener("click", () => {
             const {question} = this;
-            const {values, scales} = question;
+            const {values, answers, scales} = question;
+            const answerCodes = answers.map(({code}) => code);
+            const answerCode = answerCodes[parseInt(areaIndex) - 1];
             this.setValues({
                 values: this.questionTypeHandler.handleAreaClick({
                     indicator,
                     values,
                     scales,
-                    index: areaIndex
+                    index: answerCode
                 })
             });
             indicator.classList.toggle("area_chosen");
@@ -169,25 +171,26 @@ export default class Heatmap {
 
     setExistingValues = ({to, areaIndex}) => {
         const {id, question, haveScales} = this;
-        const {values} = question;
+        const {values, answers} = question;
+        const code = answers[parseInt(areaIndex) - 1].code;
 
-        if (question.values) {
+        if (!question.values) {
             return;
         }
 
         switch (to) {
             case "tooltip":
-                const button = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch--${values[areaIndex]}[area-index="${areaIndex}"]`);
+                const button = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch--${values[code]}[area-index="${areaIndex}"]`);
                 if (button) {
                     button.click();
                 }
                 break;
             case "area":
                 const area = document.querySelector(`#${id} .select-areas-background-area.area-indicator[area-index="${areaIndex}"]`);
-                const className = haveScales ? `area_${values[areaIndex]}` : "area_chosen";
+                const className = haveScales ? `area_${values[code]}` : "area_chosen";
                 if (area && !area.classList.contains(className) && this.questionTypeHandler.checkIfValueExists({
                     values,
-                    index: areaIndex
+                    index: code
                 })) {
                     area.classList.add(className);
                 }
@@ -262,14 +265,16 @@ export default class Heatmap {
         scales.forEach((option) => {
             const {code: currentCode} = option;
             const input = document.querySelector(`*[id^=${id}-area-indicator-tooltip-] .switch--${currentCode}[area-index="${areaIndex}"] input`);
+            const answerCodes = this.question.answers.map(({code}) => code);
+            const answerCode = answerCodes[parseInt(areaIndex) - 1];
 
             if (currentCode === code) {
                 if (input.checked) {
-                    delete values[areaIndex];
+                    delete values[answerCode];
                     input.checked = false;
                     indicator.classList.remove(`area_${currentCode}`);
                 } else {
-                    values[areaIndex] = currentCode;
+                    values[answerCode] = currentCode;
                     input.checked = true;
                     indicator.classList.add(`area_${currentCode}`);
                 }
@@ -327,13 +332,13 @@ export default class Heatmap {
                 allValues: [
                     ValidationLibrary.validationMethods.allValues.getEqualValidator({
                         equal,
-                        errorMessage: `Please select ${equal} answer${parseInt(equal) > 1 ? "s" : ""}.`
+                        errorMessage: `Please select ${equal} answer${equal > 1 ? "s" : ""}.`
                     }),
                     ValidationLibrary.validationMethods.allValues.getMinMaxValidator({
                         min, max,
                         generalErrorMessage: `Please select between ${min} and ${max} answers.`,
-                        minErrorMessage: `Please select at least ${min} answer${parseInt(min) > 1 ? "s" : ""}.`,
-                        maxErrorMessage: `Please do not select more than ${max} answer${parseInt(max) > 1 ? "s" : ""}.`
+                        minErrorMessage: `Please select at least ${min} answer${min > 1 ? "s" : ""}.`,
+                        maxErrorMessage: `Please do not select more than ${max} answer${max > 1 ? "s" : ""}.`
                     })
                 ]
             }

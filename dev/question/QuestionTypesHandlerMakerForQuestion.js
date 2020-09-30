@@ -30,18 +30,8 @@ class QuestionTypesHandlerForQuestion {
 }
 
 class GridHandler extends QuestionTypesHandlerForQuestion {
-    handleAreaClick = ({indicator, values, scales, index}) => {
-        if (indicator.classList.contains("area_chosen") && values[index]) {
-            values[index] = undefined;
-        }
-        if (!indicator.classList.contains("area_chosen") && !values[index]) {
-            values[index] = scales[0].code;
-        }
-        return values;
-    };
-
     checkIfValueExists = ({values, index}) => {
-        return values[index];
+        return !!values[index];
     };
 
     setValues = ({question, values}) => {
@@ -71,7 +61,7 @@ class MultiHandler extends QuestionTypesHandlerForQuestion {
     };
 
     checkIfValueExists = ({values, index}) => {
-        return values.indexOf(index.toString());
+        return values.indexOf(index.toString()) >= 0;
     };
 
     setValues = ({question, values}) => {
