@@ -28,10 +28,13 @@ export default class AnswerOptionsTab extends AbstractTab {
 
     setValues = ({values}) => {
         const {elements, questionTypeHandler, questionScales} = this;
-        const {answerOptionsTabWrapper, haveScalesInput} = elements;
+        const {predefinedListsInfo, answerOptionsTabWrapper, haveScalesInput} = elements;
         const {haveScales, scaleType, scales, answersCount} = values;
 
-        this.state.hasErrors = false;
+        CommonFunctionsUtil.toggleElementsVisibility({
+            elements: [predefinedListsInfo],
+            shouldBeShown: this.checkIfPredefinedListUsed()
+        });
 
         if (questionTypeHandler.shouldAnswerOptionsTabBeOpened({values, questionScales})) {
             CommonFunctionsUtil.toggleTab({elements: [answerOptionsTabWrapper]});
@@ -43,6 +46,11 @@ export default class AnswerOptionsTab extends AbstractTab {
         this.setValuesFromSettingsForDefaultScales({scaleType});
         this.setValuesFromSettingsForCustomScales({haveScales, scaleType, scales});
         this.setValuesFromSettingsForNumberOfAnswers({answersCount});
+    };
+
+    checkIfPredefinedListUsed = () => {
+        const {questionScales} = this;
+        return questionScales.reduce((isPredefinedListUsed, scale) => !scale.code || isPredefinedListUsed, false);
     };
 
     setValuesFromSettingsForDefaultScales = ({scaleType}) => {
@@ -184,6 +192,7 @@ export default class AnswerOptionsTab extends AbstractTab {
     };
 
     raiseErrors = ({areas}) => {
+        this.state.hasErrors = this.state.hasErrors || this.checkIfPredefinedListUsed();
         this.state.hasErrors = this.state.hasErrors || this.raiseErrorsForScales({scaleType: DEFAULT_SCALE_TYPE});
         this.state.hasErrors = this.state.hasErrors || this.raiseErrorsForNumberOfAnswers({areas});
 
@@ -230,12 +239,12 @@ export default class AnswerOptionsTab extends AbstractTab {
 
     render = () => {
         const {
-            scaleSettingsWrapper, customScalesWrapper, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput
+            predefinedListsInfo, scaleSettingsWrapper, customScalesWrapper, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput
         } = this.elements;
 
         this.setDefaultAttributes({
             elementsToChangeVisibility: [{
-                elements: [scaleSettingsWrapper, customScalesWrapper, CommonFunctionsUtil.getInputWrapper({input: equalToNumberOfAnswersInput})]
+                elements: [predefinedListsInfo, scaleSettingsWrapper, customScalesWrapper, CommonFunctionsUtil.getInputWrapper({input: equalToNumberOfAnswersInput})]
             }],
             elementsToSetAttribute: [
                 {element: minNumberOfAnswersInput, attribute: {name: "min", value: MIN_VALUE_FOR_MINMAX}},

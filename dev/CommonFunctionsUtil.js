@@ -86,7 +86,7 @@ const CommonFunctionsUtil = {
 
     updateScales: ({newScales, oldScales, isDefault}) => {
         return oldScales.map((scale) => {
-            const newScale = newScales.find((s) => s.code.toString() === scale.code.toString());
+            const newScale = newScales.find((s) => s.code && scale.code && s.code.toString() === scale.code.toString());
             return !isDefault ? {...scale, color: newScale ? newScale.color : (scale.color ? scale.color : "#000000")} : (newScale ? newScale : scale);
         });
     }
