@@ -57,7 +57,11 @@ export default class AnswerOptionsTab extends AbstractTab {
         activateCustomScalesInput.checked = scaleType === CUSTOM_SCALE_TYPE;
 
         if (haveScales && scaleType === CUSTOM_SCALE_TYPE) {
-            const newScales = CommonFunctionsUtil.updateScales({newScales: this.questionScales, oldScales: scales, isDefault: activateDefaultScalesInput.checked})
+            const newScales = CommonFunctionsUtil.updateScales({
+                newScales: this.questionScales,
+                oldScales: scales,
+                isDefault: activateDefaultScalesInput.checked
+            })
             this.questionScales = newScales;
 
             CommonFunctionsUtil.createListOfItems({
@@ -148,7 +152,10 @@ export default class AnswerOptionsTab extends AbstractTab {
                     });
                 });
             } else {
-                scales = DEFAULT_SCALES.map((scale, index) => ({...scale, code: this.questionScales[index] ? this.questionScales[index].code : scale.code}));
+                scales = DEFAULT_SCALES.map((scale, index) => ({
+                    ...scale,
+                    code: this.questionScales[index] ? this.questionScales[index].code : scale.code
+                }));
             }
         }
 
@@ -182,6 +189,8 @@ export default class AnswerOptionsTab extends AbstractTab {
     };
 
     raiseErrors = ({areas}) => {
+        this.state.hasErrors = false;
+
         this.state.hasErrors = this.state.hasErrors || this.raiseErrorsForScales({scaleType: DEFAULT_SCALE_TYPE});
         this.state.hasErrors = this.state.hasErrors || this.raiseErrorsForNumberOfAnswers({areas});
 
@@ -228,7 +237,7 @@ export default class AnswerOptionsTab extends AbstractTab {
 
     render = () => {
         const {
-            scaleSettingsWrapper, customScalesWrapper, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput
+            scaleSettingsWrapper, customScalesWrapper, equalToNumberOfAnswersInput, minNumberOfAnswersInput, maxNumberOfAnswersInput, haveScalesInput
         } = this.elements;
 
         this.setDefaultAttributes({

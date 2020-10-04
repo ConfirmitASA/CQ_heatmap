@@ -146,7 +146,6 @@ const DEFAULT_LANGUAGE = 9;
 const DEFAULT_TRANSLATION_TEXT_SEPARATOR = "@";
 
 const DEFAULT_SETTINGS = {
-    haveScales: true,
     imageOptions: {
         src: "",
         width: 0

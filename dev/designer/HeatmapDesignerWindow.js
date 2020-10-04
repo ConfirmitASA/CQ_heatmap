@@ -76,7 +76,7 @@ export default class HeatmapDesignerWindow {
     };
 
     setValuesFromSettingsCallback = (settings, uiSettings, questionSettings) => {
-        const {tabs, elements} = this;
+        const {tabs, elements, questionTypeHandler} = this;
         const {ImageOptions, AnswerOptions, Styling, MoreOptions} = tabs;
         const {predefinedListsInfo, activateDefaultScalesInput} = elements;
         settings = settings ? settings : DEFAULT_SETTINGS;
@@ -85,7 +85,9 @@ export default class HeatmapDesignerWindow {
             this.question.answers = questionSettings.answers ? questionSettings.answers : this.question.answers;
             this.question.scales = questionSettings.scales ? questionSettings.scales : this.question.scales;
 
-            const isPredefinedListUsed = this.checkIfPredefinedListUsed();
+            const isPredefinedListUsed = this.checkIfPredefinedListUsed({
+                itemsList: questionTypeHandler.getSettingsFromEditTab({question: this.question})
+            });
             CommonFunctionsUtil.toggleElementsVisibility({
                 elements: [predefinedListsInfo],
                 shouldBeShown: isPredefinedListUsed
@@ -104,10 +106,25 @@ export default class HeatmapDesignerWindow {
                 : this.getScalesWithCurrentLanguage({scales: this.question.scales});
         }
 
-        ImageOptions.setValues({values: {...settings, areas: this.getAreaTitlesWithCurrentLanguage({areas: settings.areas})}});
-        AnswerOptions.setValues({values: {...settings, scales: this.getScalesWithCurrentLanguage({scales: this.question.scales})}});
+        ImageOptions.setValues({
+            values: {
+                ...settings,
+                areas: this.getAreaTitlesWithCurrentLanguage({areas: settings.areas})
+            }
+        });
+        AnswerOptions.setValues({
+            values: {
+                ...settings,
+                scales: this.getScalesWithCurrentLanguage({scales: this.question.scales})
+            }
+        });
         Styling.setValues({values: settings});
-        MoreOptions.setValues({values: {...settings, translations: this.getTranslationsWithCurrentLanguage({translations: settings.translations})}});
+        MoreOptions.setValues({
+            values: {
+                ...settings,
+                translations: this.getTranslationsWithCurrentLanguage({translations: settings.translations})
+            }
+        });
 
         if (!this.state.hasBeenCheckedForErrorsOnInit) {
             this.raiseErrors(settings.areas);
@@ -150,7 +167,11 @@ export default class HeatmapDesignerWindow {
         settings.answersCount = answersCount;
         if (scaleOptions) {
             settings.scaleType = scaleOptions.scaleType;
-            settings.scales = CommonFunctionsUtil.updateScales({newScales: scaleOptions.scales, oldScales: scales, isDefault: activateDefaultScalesInput.checked});
+            settings.scales = CommonFunctionsUtil.updateScales({
+                newScales: scaleOptions.scales,
+                oldScales: scales,
+                isDefault: activateDefaultScalesInput.checked
+            });
         }
 
         settings.styles = Styling.values;
@@ -164,7 +185,7 @@ export default class HeatmapDesignerWindow {
 
     raiseErrors = (areas) => {
         const {question, tabs} = this;
-        const {answers} = question;
+        const {answers, scales} = question;
         const {ImageOptions, AnswerOptions, Styling, MoreOptions} = tabs;
 
         this.state.hasErrors = false;
@@ -173,7 +194,9 @@ export default class HeatmapDesignerWindow {
             answers,
             areasFromSettings: areas
         }) || this.state.hasErrors;
-        this.state.hasErrors = AnswerOptions.raiseErrors({areas: ImageOptions.getAreas()}) || this.state.hasErrors;
+        if (scales && scales.length > 0) {
+            this.state.hasErrors = AnswerOptions.raiseErrors({areas: ImageOptions.getAreas()}) || this.state.hasErrors;
+        }
         this.state.hasErrors = Styling.raiseErrors() || this.state.hasErrors;
         this.state.hasErrors = MoreOptions.raiseErrors() || this.state.hasErrors;
     };

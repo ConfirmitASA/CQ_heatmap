@@ -70,6 +70,10 @@ class QuestionTypesHandlerForDesigner {
             return translation.texts.reduce((shouldBeOpened, textOptions) => textOptions.language === DEFAULT_LANGUAGE ? (textOptions.text !== defaultTranslation.text) : (textOptions.text && textOptions.text.length > 0) || shouldBeOpened, false);
         });
     };
+
+    getSettingsFromEditTab = ({question}) => {
+        return [question.answers, question.scales];
+    };
 }
 
 class GridHandler extends QuestionTypesHandlerForDesigner {
@@ -118,8 +122,9 @@ class MultiHandler extends QuestionTypesHandlerForDesigner {
     };
 
     customizeAnswerOptionsTabToType = () => {
-        const {answerOptionsTabWrapper} = this.elements;
+        const {answerOptionsTabWrapper, haveScalesInput} = this.elements;
         CommonFunctionsUtil.toggleElementsVisibility({elements: [answerOptionsTabWrapper]});
+        haveScalesInput.checked = false;
     };
 
     customizeAnswerOptionsTabToTypeOnSettingsReceived = ({}) => {
@@ -143,5 +148,9 @@ class MultiHandler extends QuestionTypesHandlerForDesigner {
     customizeMoreOptionsTabToType = () => {
         const {moreOptionsTabWrapper} = this.elements;
         CommonFunctionsUtil.toggleElementsVisibility({elements: [moreOptionsTabWrapper]});
+    };
+
+    getSettingsFromEditTab = ({question}) => {
+        return [question.answers];
     };
 }

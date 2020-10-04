@@ -51,6 +51,8 @@ export default class ImageOptionsTab extends AbstractTab {
     raiseErrors = ({answers, areasFromSettings}) => {
         const {imageSrcInput, heatmapWrapper, areasCountInfo} = this.elements;
 
+        this.state.hasErrors = false;
+
         const src = imageSrcInput.value;
         const areas = areasFromSettings ? areasFromSettings : this.getAreas();
 
