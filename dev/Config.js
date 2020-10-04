@@ -19,6 +19,7 @@ export default class Config {
         this.setupImageOptions();
         this.setupAnswerOptions();
         this.setupStyling();
+        this.setupMoreOptions();
     };
 
     setupImageOptions = () => {
@@ -45,7 +46,7 @@ export default class Config {
             ...elements,
             answerOptionsTabWrapper: settingsWrapper.querySelector(".tab.tab--answer-options"),
             scaleSettingsWrapper: settingsWrapper.querySelector(".settings-wrapper.settings-wrapper--scales"),
-            customScalesWrapper: settingsWrapper.querySelector(".custom-scales-wrapper"),
+            customScalesWrapper: settingsWrapper.querySelector(".custom-scales-wrapper.inputlist-container"),
             haveScalesInput: settingsWrapper.querySelector("#haveScales"),
             activateDefaultScalesInput: settingsWrapper.querySelector("#activateDefaultScales"),
             activateCustomScalesInput: settingsWrapper.querySelector("#activateCustomScales"),
@@ -56,8 +57,7 @@ export default class Config {
             equalToNumberOfAnswersInput: settingsWrapper.querySelector("#equalAnswers")
         }
 
-        this.elements.customScaleListWrapper = this.elements.customScalesWrapper.querySelector(".inputlist-container");
-        this.elements.customScaleList = this.elements.customScaleListWrapper.querySelector(".inputlist tbody");
+        this.elements.customScaleList = this.elements.customScalesWrapper.querySelector(".inputlist tbody");
 
         this.elements.haveScalesWrapper = CommonFunctionsUtil.getInputWrapper({
             input: this.elements.haveScalesInput,
@@ -71,13 +71,24 @@ export default class Config {
 
         this.elements = {
             ...elements,
-            preHighlightAreasOnMobileInput: settingsWrapper.querySelector("#preHighlightAreasOnMobile"),
             stylingTabWrapper: settingsWrapper.querySelector(".tab.tab--styling"),
+            preHighlightAreasOnMobileInput: settingsWrapper.querySelector("#preHighlightAreasOnMobile"),
             areaHighlighterSelector: settingsWrapper.querySelector("#areaHighlighterSelector"),
             areaHoverColorInput: settingsWrapper.querySelector("#areaHoverColor"),
             areaBorderWidthInput: settingsWrapper.querySelector("#areaBorderWidth"),
             areaBorderColorInput: settingsWrapper.querySelector("#areaBorderColor"),
             areaChosenColorInput: settingsWrapper.querySelector("#areaChosenColor")
+        }
+    };
+
+    setupMoreOptions = () => {
+        const {elements} = this;
+        const {settingsWrapper} = elements;
+
+        this.elements = {
+            ...elements,
+            moreOptionsTabWrapper: settingsWrapper.querySelector(".tab.tab--more-options"),
+            translationsWrapper: settingsWrapper.querySelector(".translations-wrapper"),
         }
     };
 
@@ -89,9 +100,9 @@ export default class Config {
             ...elements,
 
             requiredInfo: settingsWrapper.querySelector(".info.info--required"),
+            predefinedListsInfo: settingsWrapper.querySelector(".info.info--predefined-lists"),
             areasCountInfo: settingsWrapper.querySelector(".info.info--areas-count"),
             minMaxInfo: settingsWrapper.querySelector(".info.info--min-max"),
-            predefinedListsInfo: settingsWrapper.querySelector(".info.info--predefined-lists"),
             defaultScalesInfo: settingsWrapper.querySelector(".info.info--default-scales")
         }
     };

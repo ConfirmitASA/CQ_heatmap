@@ -4,10 +4,17 @@ import ValidationLibrary from "./ValidationLbrary";
 import QuestionTypesHandlerMakerForQuestion from "./QuestionTypesHandlerMakerForQuestion";
 import CommonFunctionsUtil from "../CommonFunctionsUtil";
 
-import {MIN_MAX_TYPE, EQUAL_TYPE, ELEMENTS} from "../Constants";
+import {
+    MIN_MAX_TYPE,
+    EQUAL_TYPE,
+    ELEMENTS,
+    DEFAULT_LANGUAGE,
+    DEFAULT_TRANSLATION_TEXT_SEPARATOR,
+    TRANSLATION_TYPES
+} from "../Constants";
 
 export default class Heatmap {
-    constructor({question, areas, imageOptions, styles, answersCount, haveScales, scales, mobileThreshold}) {
+    constructor({question, areas, imageOptions, styles, answersCount, haveScales, scales, translations, mobileThreshold}) {
         this.question = question;
         this.id = question.id;
         this.areas = areas;
@@ -15,6 +22,7 @@ export default class Heatmap {
         this.styles = styles;
         this.haveScales = haveScales;
         this.scales = scales;
+        this.translations = translations;
         this.mobileThreshold = mobileThreshold;
 
         this.answersCount = answersCount
@@ -121,8 +129,8 @@ export default class Heatmap {
     createIndicatorAreaForAnswerCallback = (area, index, areaSquares) => {
         const {haveScales} = this;
         const areaIndex = areaSquares.length - index;
-        let areaTitle = this.areas[index].titles.find((titleOptions) => titleOptions.language === this.currentLanguage);
-        areaTitle = areaTitle ? areaTitle.title : "";
+        let areaText = this.areas[index].texts.find((textOptions) => textOptions.language === this.currentLanguage);
+        areaText = areaText ? areaText.text : "";
         const indicator = this.createIndicatorNode({area, areaIndex});
         area.parentNode.insertBefore(indicator, area.nextSibling);
 
@@ -133,8 +141,8 @@ export default class Heatmap {
         this.setExistingValues({to: "area", areaIndex});
 
         this.createAreaTooltip({
-            title: (haveScales ? areaTitle : ""),
-            content: (haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : areaTitle),
+            title: (haveScales ? areaText : ""),
+            content: (haveScales ? this.createButtonsWrapperWithAreaAttributes({areaIndex}).innerHTML : areaText),
             indicator,
             areaIndex
         });
@@ -311,7 +319,7 @@ export default class Heatmap {
 
                 // multi question (when !haveScales) has standard Confirmit error on "required"
                 if (this.question.required && (haveScales && Object.keys(this.question.values).length !== this.question.answers.length)) {
-                    const error = {message: "This question is required. Please select a scale for each answer."};
+                    const error = {message: this.getTranslations({type: TRANSLATION_TYPES.REQUIRED, values: []})};
                     validationResult.errors.push(error);
                 }
             }
@@ -332,17 +340,34 @@ export default class Heatmap {
                 allValues: [
                     ValidationLibrary.validationMethods.allValues.getEqualValidator({
                         equal,
-                        errorMessage: `Please select ${equal} answer${equal > 1 ? "s" : ""}.`
+                        errorMessage: this.getTranslations({type: TRANSLATION_TYPES.EQUAL, values: [equal]})
                     }),
                     ValidationLibrary.validationMethods.allValues.getMinMaxValidator({
                         min, max,
-                        generalErrorMessage: `Please select between ${min} and ${max} answers.`,
-                        minErrorMessage: `Please select at least ${min} answer${min > 1 ? "s" : ""}.`,
-                        maxErrorMessage: `Please do not select more than ${max} answer${max > 1 ? "s" : ""}.`
+                        generalErrorMessage: this.getTranslations({type: TRANSLATION_TYPES.MINMAX, values: [min, max]}),
+                        minErrorMessage: this.getTranslations({type: TRANSLATION_TYPES.MIN, values: [min]}),
+                        maxErrorMessage: this.getTranslations({type: TRANSLATION_TYPES.MAX, values: [max]})
                     })
                 ]
             }
         });
+    };
+
+    getTranslations = ({type, values}) => {
+        const {translations, currentLanguage} = this;
+        const translation = translations.find((translation) => translation.type === type);
+
+        if (!translation || !translation.texts) return "";
+
+        const currentLanguageText = translation.texts.find((text) => text.language === currentLanguage);
+        const defaultLanguageText = translation.texts.find((text) => text.language === DEFAULT_LANGUAGE);
+        let text = currentLanguageText && currentLanguageText.text ? currentLanguageText.text : (defaultLanguageText && defaultLanguageText.text ? defaultLanguageText.text : "");
+
+        values.forEach((value) => {
+            text = text.replace(DEFAULT_TRANSLATION_TEXT_SEPARATOR, value);
+        });
+
+        return text;
     };
 
     setupErrorItems = ({validationResult}) => {

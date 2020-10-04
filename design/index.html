@@ -19,6 +19,11 @@
             on the Edit tab
         </div>
     </div>
+    <div class="comd-alert comd-alert--danger info info--predefined-lists">
+        <div class="comd-alert__text">
+            Please do not use reusable (predefined) lists for custom questions
+        </div>
+    </div>
 
     <div class="node-properties-key-fields comd-panel tab tab--image-options">
         <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
@@ -74,11 +79,6 @@
     <div class="comd-alert comd-alert--info info info--min-max">
         <div class="comd-alert__text">
             If you want to set min/max/equal parameters, use the same inputs on the Edit tab
-        </div>
-    </div>
-    <div class="comd-alert comd-alert--danger info info--predefined-lists">
-        <div class="comd-alert__text">
-            Please do not use reusable (predefined) lists for custom questions
         </div>
     </div>
 
@@ -140,20 +140,18 @@
                                         <span>Custom scales</span>
                                     </label>
                                 </div>
-                                <div class="custom-scales-wrapper">
-                                    <div class="inputlist-container">
-                                        <table class="inputlist">
-                                            <thead>
-                                            <tr>
-                                                <th class="inputlist__header">Code</th>
-                                                <th class="inputlist__header">Text</th>
-                                                <th class="inputlist__header">Color</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                <div class="custom-scales-wrapper inputlist-container">
+                                    <table class="inputlist">
+                                        <thead>
+                                        <tr>
+                                            <th class="inputlist__header">Code</th>
+                                            <th class="inputlist__header">Text</th>
+                                            <th class="inputlist__header">Color</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </li>
                         </ul>
@@ -259,6 +257,34 @@
                                  data-tooltip-text="The background color for the selected area"></div>
                         </label>
                         <input type="color" class="form-input" id="areaChosenColor"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="node-properties-key-fields comd-panel comd-panel--collapsed tab tab--more-options">
+        <header class="node-properties__header co-flex co-flex--justify-between co-flex--center">
+            <div class="node-properties__toggle co-flex co-flex--center">
+                <h4 class="co-text-size-normal">More options</h4>
+            </div>
+            <div class="co-flex co-flex--center">
+                <button class="collapse-button comd-icon-button comd-panel__toggle--icon-button"></button>
+            </div>
+        </header>
+        <div class="comd-panel__collapse-area">
+            <div class="node-properties">
+                <div class="node-property">
+                    <h4>
+                        Translations
+                        <div class="sd-tooltip-help"
+                             data-tooltip-text="Create tooltip texts for the areas.<br/>Click on an area in the image; the tooltip field is highlighted for editing."></div>
+                    </h4>
+                    <div class="translations-wrapper inputlist-container">
+                        <table class="inputlist">
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

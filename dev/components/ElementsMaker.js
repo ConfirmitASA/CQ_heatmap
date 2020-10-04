@@ -43,6 +43,7 @@ const ElementsMaker = {
                     tag: ELEMENTS.HTML.TR,
                     classes: [wrapperClass, "inputlist__item"],
                     id,
+                    attributes,
                     children: children.map((child) =>
                         ElementsMaker.createHTMLElement({
                             tag: ELEMENTS.HTML.TD,
@@ -83,13 +84,11 @@ const ElementsMaker = {
                             ElementsMaker.createHTMLElement({
                                 tag: ELEMENTS.HTML.LABEL,
                                 classes: ["custom-scale-item__code"],
-                                events: [events.find((event) => event.type === ELEMENTS.HTML.INPUT)],
                                 innerText: value ? value.code : ""
                             }),
                             ElementsMaker.createHTMLElement({
                                 tag: ELEMENTS.HTML.LABEL,
                                 classes: ["custom-scale-item__label"],
-                                events: [events.find((event) => event.type === ELEMENTS.HTML.INPUT)],
                                 innerText: value ? value.text : ""
                             }),
                             ElementsMaker.createHTMLElement({
@@ -116,6 +115,53 @@ const ElementsMaker = {
                                 width: `${width}px`
                             }
                         })
+                    ]
+                })
+
+            case ELEMENTS.CUSTOM.TRANSLATION_ITEM:
+                return ElementsMaker.createCustomElement({
+                    type: ELEMENTS.CUSTOM.INPUT_WRAPPER,
+                    elementOptions: {
+                        id,
+                        wrapperClass: "translation-item",
+                        attributes: [
+                            {
+                                name: "translation-type",
+                                value: value ? value.type : ""
+                            }
+                        ],
+                        children: [
+                            ElementsMaker.createHTMLElement({
+                                tag: ELEMENTS.HTML.LABEL,
+                                classes: ["translation-item__label"],
+                                innerText: value ? value.label : ""
+                            }),
+                            !!value.tooltip && ElementsMaker.createCustomElement({
+                                type: ELEMENTS.CUSTOM.HELP_TOOLTIP,
+                                elementOptions: {
+                                    value: value.tooltip
+                                }
+                            }),
+                            ElementsMaker.createHTMLElement({
+                                tag: ELEMENTS.HTML.INPUT,
+                                classes: ["translation-item__text", "form-input", "form-input--40ch"],
+                                type: "text",
+                                events: [events.find((event) => event.type === ELEMENTS.HTML.INPUT)],
+                                value: value ? value.text : ""
+                            })
+                        ]
+                    }
+                })
+
+            case ELEMENTS.CUSTOM.HELP_TOOLTIP:
+                return ElementsMaker.createHTMLElement({
+                    tag: ELEMENTS.HTML.DIV,
+                    classes: ["sd-tooltip-help"],
+                    attributes: [
+                        {
+                            name: "data-tooltip-text",
+                            value
+                        }
                     ]
                 })
         }
@@ -176,7 +222,10 @@ const ElementsMaker = {
                         {name: "aria-labelledby", value: `${questionId}_error_list`}
                     ],
                     children: [
-                        ElementsMaker.createQuestionElement({type: ELEMENTS.QUESTION.ERROR_LIST, elementOptions: {questionId, children}})
+                        ElementsMaker.createQuestionElement({
+                            type: ELEMENTS.QUESTION.ERROR_LIST,
+                            elementOptions: {questionId, children}
+                        })
                     ]
                 })
         }

@@ -9,6 +9,7 @@ register(function (question, customQuestionSettings, questionViewSettings) {
         scaleType: customQuestionSettings.scaleType,
         scales: customQuestionSettings.scales,
         styles: customQuestionSettings.styles,
+        translations: customQuestionSettings.translations,
         mobileThreshold: questionViewSettings.mobileThreshold
     });
 });

@@ -56,7 +56,9 @@ const ELEMENTS = {
         INPUT_WRAPPER: "InputWrapper",
         AREA_TEXT_ITEM: "AreaTextItem",
         CUSTOM_SCALE_ITEM: "CustomScaleItem",
-        IMAGE_WRAPPER: "ImageWrapper"
+        IMAGE_WRAPPER: "ImageWrapper",
+        TRANSLATION_ITEM: "TranslationItem",
+        HELP_TOOLTIP: "HelpTooltip"
     },
     QUESTION: {
         CONTENT: "Content",
@@ -78,6 +80,99 @@ const ELEMENTS = {
 
 const AREAS_COUNT_ERROR_TEXT = "Please select as many areas as answers";
 
+const TRANSLATION_TYPES = {
+    REQUIRED: "required",
+    MINMAX: "minmax",
+    MIN: "min",
+    MAX: "max",
+    EQUAL: "equal"
+};
+
+const DEFAULT_TRANSLATIONS = [
+    {
+        type: TRANSLATION_TYPES.REQUIRED,
+        label: "Required warning",
+        text: "This question is required. Please select a scale for each answer.",
+        tooltip: "",
+        texts: [{
+            language: 9,
+            text: "This question is required. Please select a scale for each answer."
+        }]
+    },
+    {
+        type: TRANSLATION_TYPES.MINMAX,
+        label: "Min and max warning",
+        text: "Please select between @ and @ answers.",
+        tooltip: "The values can be replaced with '@' in the text. There're two values.",
+        texts: [{
+            language: 9,
+            text: "Please select between @ and @ answers."
+        }]
+    },
+    {
+        type: TRANSLATION_TYPES.MIN,
+        label: "Min warning",
+        text: "Please change your response. Number of answers should be more or equal to @.",
+        tooltip: "The values can be replaced with '@' in the text. There's one value.",
+        texts: [{
+            language: 9,
+            text: "Please change your response. Number of answers should be more or equal to @."
+        }]
+    },
+    {
+        type: TRANSLATION_TYPES.MAX,
+        label: "Max warning",
+        text: "Please change your response. Number of answers should be less or equal to @.",
+        tooltip: "The values can be replaced with '@' in the text. There's one value.",
+        texts: [{
+            language: 9,
+            text: "Please change your response. Number of answers should be less or equal to @."
+        }]
+    },
+    {
+        type: TRANSLATION_TYPES.EQUAL,
+        label: "Equal warning",
+        text: "Please change your response. Number of answers should be equal to @.",
+        tooltip: "The values can be replaced with '@' in the text. There's one value.",
+        texts: [{
+            language: 9,
+            text: "Please change your response. Number of answers should be equal to @."
+        }]
+    }
+];
+
+const DEFAULT_LANGUAGE = 9;
+
+const DEFAULT_TRANSLATION_TEXT_SEPARATOR = "@";
+
+const DEFAULT_SETTINGS = {
+    haveScales: true,
+    imageOptions: {
+        src: "",
+        width: 0
+    },
+    areas: [],
+    answersCount: {
+        type: "min-max",
+        equal: "",
+        max: "",
+        min: ""
+    },
+    scaleType: "default",
+    scales: [],
+    styles: {
+        areaHighlight: {
+            preHighlightOnMobiles: true,
+            type: "color",
+            color: "#ffffff"
+        },
+        areaChoose: {
+            color: "#008000"
+        }
+    },
+    translations: DEFAULT_TRANSLATIONS
+};
+
 export {
     DEFAULT_SCALE_TYPE,
     CUSTOM_SCALE_TYPE,
@@ -95,5 +190,10 @@ export {
     DEFAULT_SCALES,
     ERROR_TYPES,
     ELEMENTS,
-    AREAS_COUNT_ERROR_TEXT
+    AREAS_COUNT_ERROR_TEXT,
+    TRANSLATION_TYPES,
+    DEFAULT_TRANSLATIONS,
+    DEFAULT_LANGUAGE,
+    DEFAULT_TRANSLATION_TEXT_SEPARATOR,
+    DEFAULT_SETTINGS
 };

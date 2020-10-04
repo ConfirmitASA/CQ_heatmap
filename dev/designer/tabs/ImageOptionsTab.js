@@ -41,7 +41,7 @@ export default class ImageOptionsTab extends AbstractTab {
         areas.forEach((area, index) => {
             const textIndex = areaTextItems.length - index - 1;
             if (areaTextItems[textIndex]) {
-                area.title = areaTextItems[textIndex].value;
+                area.text = areaTextItems[textIndex].value;
             }
         });
 
@@ -123,15 +123,7 @@ export default class ImageOptionsTab extends AbstractTab {
             if (!heatmapWrapper.querySelector("img")) {
                 new HeatmapDesigner(this.getHeatmapDesignerOptions({src, areas}));
             } else {
-                // check for translation's change
-                const {areaTextListWrapper} = this.elements;
-                const areaTextItems = Array.prototype.slice.call(areaTextListWrapper.querySelectorAll(".area-text-item"));
-                areaTextItems.forEach((item) => {
-                    const index = areaTextItems.length - parseInt(item.querySelector(".area-text-item__index").innerText);
-                    const textItem = item.querySelector(".area-text-item__text");
-                    const area = areas.find((area) => parseInt(area.id) === index);
-                    textItem.value = area ? area.title : "";
-                });
+                this.checkForTranslationsChange({areas});
             }
 
             const elementsToChangeVisibility = [
@@ -139,6 +131,17 @@ export default class ImageOptionsTab extends AbstractTab {
             ];
             elementsToChangeVisibility.forEach((elementOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementOptions));
         }
+    };
+
+    checkForTranslationsChange = ({areas}) => {
+        const {areaTextListWrapper} = this.elements;
+        const areaTextItems = Array.prototype.slice.call(areaTextListWrapper.querySelectorAll(".area-text-item"));
+        areaTextItems.forEach((item) => {
+            const index = areaTextItems.length - parseInt(item.querySelector(".area-text-item__index").innerText);
+            const textItem = item.querySelector(".area-text-item__text");
+            const area = areas.find((area) => parseInt(area.id) === index);
+            textItem.value = area ? area.text : "";
+        });
     };
 
     getHeatmapDesignerOptions = ({src, areas}) => {
@@ -162,7 +165,7 @@ export default class ImageOptionsTab extends AbstractTab {
             onAreasInit: () => this.handleAreasChanging({
                 textItemsOptions: {
                     ...textItemsOptions,
-                    defaultValues: areas && areas.length > 0 ? areas.reverse().map(area => area.title) : []
+                    defaultValues: areas && areas.length > 0 ? areas.reverse().map(area => area.text) : []
                 }
             })
         }

@@ -2,7 +2,7 @@ import CommonFunctionsUtil from "../CommonFunctionsUtil";
 
 import {
     AREA_CHOSEN_COLOR_WRAPPER_LEVEL_FROM_INPUT,
-    CUSTOM_SCALE_TYPE, DEFAULT_SCALE_TYPE, DEFAULT_SCALES,
+    CUSTOM_SCALE_TYPE, DEFAULT_LANGUAGE, DEFAULT_SCALE_TYPE, DEFAULT_SCALES, DEFAULT_TRANSLATIONS,
     EQUAL_TYPE,
     MIN_MAX_TYPE,
     QUESTION_TYPES
@@ -59,6 +59,17 @@ class QuestionTypesHandlerForDesigner {
             shouldBeShown: true
         });
     };
+
+    customizeMoreOptionsTabToType = () => {
+    };
+
+    shouldMoreOptionsTabBeOpened = ({values}) => {
+        const {translations} = values;
+        return !!translations.find((translation) => {
+            const defaultTranslation = DEFAULT_TRANSLATIONS.find((translationOptions) => translationOptions.type === translation.type);
+            return translation.texts.reduce((shouldBeOpened, textOptions) => textOptions.language === DEFAULT_LANGUAGE ? (textOptions.text !== defaultTranslation.text) : (textOptions.text && textOptions.text.length > 0) || shouldBeOpened, false);
+        });
+    };
 }
 
 class GridHandler extends QuestionTypesHandlerForDesigner {
@@ -93,6 +104,9 @@ class GridHandler extends QuestionTypesHandlerForDesigner {
             })]
         });
     };
+
+    customizeMoreOptionsTabToType = () => {
+    };
 }
 
 class MultiHandler extends QuestionTypesHandlerForDesigner {
@@ -104,18 +118,14 @@ class MultiHandler extends QuestionTypesHandlerForDesigner {
     };
 
     customizeAnswerOptionsTabToType = () => {
-        const {haveScalesWrapper, answerOptionsTabWrapper} = this.elements;
-        CommonFunctionsUtil.toggleElementsVisibility({elements: [answerOptionsTabWrapper, haveScalesWrapper]});
+        const {answerOptionsTabWrapper} = this.elements;
+        CommonFunctionsUtil.toggleElementsVisibility({elements: [answerOptionsTabWrapper]});
     };
 
     customizeAnswerOptionsTabToTypeOnSettingsReceived = ({}) => {
     };
 
     shouldAnswerOptionsTabBeOpened = ({values}) => {
-        const {answersCount} = values;
-        const equalHasValue = answersCount && answersCount.type === EQUAL_TYPE && answersCount.equal > 0;
-        const minMaxHasValue = answersCount && answersCount.type === MIN_MAX_TYPE && (answersCount.min > 0 || answersCount.max > 0);
-        return equalHasValue || minMaxHasValue;
     };
 
     customizeStylingTabToType = () => {
@@ -128,5 +138,10 @@ class MultiHandler extends QuestionTypesHandlerForDesigner {
             })],
             shouldBeShown: true
         });
+    };
+
+    customizeMoreOptionsTabToType = () => {
+        const {moreOptionsTabWrapper} = this.elements;
+        CommonFunctionsUtil.toggleElementsVisibility({elements: [moreOptionsTabWrapper]});
     };
 }
