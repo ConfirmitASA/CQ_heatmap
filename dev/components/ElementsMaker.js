@@ -134,13 +134,15 @@ const ElementsMaker = {
                             ElementsMaker.createHTMLElement({
                                 tag: ELEMENTS.HTML.LABEL,
                                 classes: ["translation-item__label"],
-                                innerText: value ? value.label : ""
-                            }),
-                            !!value.tooltip && ElementsMaker.createCustomElement({
-                                type: ELEMENTS.CUSTOM.HELP_TOOLTIP,
-                                elementOptions: {
-                                    value: value.tooltip
-                                }
+                                innerText: value ? value.label : "",
+                                children: [
+                                    !!value.tooltip && ElementsMaker.createCustomElement({
+                                        type: ELEMENTS.CUSTOM.HELP_TOOLTIP,
+                                        elementOptions: {
+                                            value: value.tooltip
+                                        }
+                                    })
+                                ]
                             }),
                             ElementsMaker.createHTMLElement({
                                 tag: ELEMENTS.HTML.INPUT,

@@ -77,6 +77,11 @@ const setupPolyfills = function() {
             }
         };
     }
+
+    /* POLYFILL TO NODELIST.FOREACH() */
+    if (window.NodeList && !NodeList.prototype.forEach) {
+        NodeList.prototype.forEach = Array.prototype.forEach;
+    }
 }
 
 export default setupPolyfills;

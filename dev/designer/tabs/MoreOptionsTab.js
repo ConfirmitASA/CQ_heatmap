@@ -37,7 +37,7 @@ export default class MoreOptionsTab extends AbstractTab {
     };
 
     get values() {
-        const {elements, translations} = this;
+        const {translations} = this;
         const {translationsWrapper} = this.elements;
         const newTranslations = [];
 
@@ -71,7 +71,7 @@ export default class MoreOptionsTab extends AbstractTab {
 
         CommonFunctionsUtil.createListOfItems({
             defaultValues: DEFAULT_TRANSLATIONS,
-            listWrapper: translationsWrapper,
+            listWrapper: translationsWrapper.querySelector("tbody"),
             itemClassName: "translation-item",
             itemClass: ELEMENTS.CUSTOM.TRANSLATION_ITEM
         });
