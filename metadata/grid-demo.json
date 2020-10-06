@@ -1,6 +1,6 @@
 {
   "id": "b0d32789-6a9c-4abf-96aa-0f13e5c90abb",
-  "name": "Confirmit HeatMap-grid (DEMO)",
+  "name": "HeatMap Grid",
   "description": "",
   "baseQuestionType": "GridForm",
   "disableDefaultRendering": true,
