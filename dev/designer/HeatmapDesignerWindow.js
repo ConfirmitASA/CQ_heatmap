@@ -79,7 +79,7 @@ export default class HeatmapDesignerWindow {
         const {tabs, elements, questionTypeHandler} = this;
         const {ImageOptions, AnswerOptions, Styling, MoreOptions} = tabs;
         const {predefinedListsInfo, activateDefaultScalesInput} = elements;
-        settings = settings ? settings : DEFAULT_SETTINGS;
+        settings = settings ? settings : questionTypeHandler.getDefaultSettings();
 
         if (questionSettings) {
             this.question.answers = questionSettings.answers ? questionSettings.answers : this.question.answers;

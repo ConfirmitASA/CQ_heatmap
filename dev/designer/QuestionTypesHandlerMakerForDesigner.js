@@ -2,7 +2,11 @@ import CommonFunctionsUtil from "../CommonFunctionsUtil";
 
 import {
     AREA_CHOSEN_COLOR_WRAPPER_LEVEL_FROM_INPUT,
-    CUSTOM_SCALE_TYPE, DEFAULT_LANGUAGE, DEFAULT_SCALE_TYPE, DEFAULT_SCALES, DEFAULT_TRANSLATIONS,
+    CUSTOM_SCALE_TYPE,
+    DEFAULT_LANGUAGE,
+    DEFAULT_SCALES,
+    DEFAULT_SETTINGS,
+    DEFAULT_TRANSLATIONS,
     EQUAL_TYPE,
     MIN_MAX_TYPE,
     QUESTION_TYPES
@@ -74,6 +78,10 @@ class QuestionTypesHandlerForDesigner {
     getSettingsFromEditTab = ({question}) => {
         return [question.answers, question.scales];
     };
+
+    getDefaultSettings = () => {
+        return DEFAULT_SETTINGS;
+    };
 }
 
 class GridHandler extends QuestionTypesHandlerForDesigner {
@@ -110,6 +118,12 @@ class GridHandler extends QuestionTypesHandlerForDesigner {
     };
 
     customizeMoreOptionsTabToType = () => {
+    };
+
+    getDefaultSettings = () => {
+        const gridSettings = DEFAULT_SETTINGS;
+        gridSettings.haveScales = true;
+        return gridSettings;
     };
 }
 
@@ -152,5 +166,11 @@ class MultiHandler extends QuestionTypesHandlerForDesigner {
 
     getSettingsFromEditTab = ({question}) => {
         return [question.answers];
+    };
+
+    getDefaultSettings = () => {
+        const multiSettings = DEFAULT_SETTINGS;
+        multiSettings.haveScales = false;
+        return multiSettings;
     };
 }

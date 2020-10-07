@@ -3,7 +3,7 @@ import CommonFunctionsUtil from "./CommonFunctionsUtil";
 import {HAVE_SCALES_WRAPPER_LEVEL_FROM_INPUT, QUESTION_TYPES} from "./Constants";
 
 export default class Config {
-    static questionType = QUESTION_TYPES.GRID;
+    static questionType = QUESTION_TYPES.MULTI;
     static heatmapWrapperId = "heatmapWrapper";
 
     constructor() {

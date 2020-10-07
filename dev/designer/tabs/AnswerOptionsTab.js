@@ -77,7 +77,7 @@ export default class AnswerOptionsTab extends AbstractTab {
         const elementsToChangeVisibility = [
             {
                 elements: [customScalesWrapper],
-                shouldBeShown: haveScales && scaleType === CUSTOM_SCALE_TYPE && scales.length > 0
+                shouldBeShown: haveScales && scaleType === CUSTOM_SCALE_TYPE
             }
         ];
         elementsToChangeVisibility.forEach((elementsOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementsOptions));
@@ -302,13 +302,6 @@ export default class AnswerOptionsTab extends AbstractTab {
 
         activateDefaultScalesInput.checked = false;
         activateCustomScalesInput.checked = true;
-
-        CommonFunctionsUtil.createListOfItems({
-            defaultValues: this.questionScales,
-            listWrapper: customScaleList,
-            itemClassName: "custom-scale-item",
-            itemClass: ELEMENTS.CUSTOM.CUSTOM_SCALE_ITEM
-        });
 
         this.saveChanges();
     };

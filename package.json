@@ -1,10 +1,5 @@
 {
   "scripts": {
-    "start": "parcel dev/index-dev.js --hmr-hostname localhost --https",
-    "build": "rm -rf ./dist && parcel build ./src/index.js",
-    "polyfil": "webpack",
-    "zip": "tar.exe -caf heatmap.zip metadata.json runtime design",
-    "pack": "webpack & tar.exe -caf heatmap.zip metadata.json runtime design",
     "pack grid": "webpack & copy \"C:\\git\\CQ_heatmap\\metadata\\grid.json\" \"C:\\git\\CQ_heatmap\\metadata.json\" & copy \"C:\\git\\CQ_heatmap\\dev\\icons\\icon-grid.svg\" \"C:\\git\\CQ_heatmap\\design\\icon.svg\" & tar.exe -caf heatmap.zip metadata.json runtime design",
     "pack multi": "webpack & copy \"C:\\git\\CQ_heatmap\\metadata\\multi.json\" \"C:\\git\\CQ_heatmap\\metadata.json\" & copy \"C:\\git\\CQ_heatmap\\dev\\icons\\icon-multi.svg\" \"C:\\git\\CQ_heatmap\\design\\icon.svg\" & tar.exe -caf heatmap.zip metadata.json runtime design",
     "pack grid demo": "webpack & copy \"C:\\git\\CQ_heatmap\\metadata\\grid-demo.json\" \"C:\\git\\CQ_heatmap\\metadata.json\" & copy \"C:\\git\\CQ_heatmap\\dev\\icons\\icon-grid.svg\" \"C:\\git\\CQ_heatmap\\design\\icon.svg\" & tar.exe -caf heatmap.zip metadata.json runtime design",
