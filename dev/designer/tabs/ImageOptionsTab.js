@@ -4,7 +4,7 @@ import Config from "../../Config";
 import AbstractTab from "./AbstractTab";
 import DesignerErrorManager from "../DesignerErrorManager";
 
-import {AREAS_COUNT_ERROR_TEXT, ELEMENTS, ERROR_TYPES} from "../../Constants";
+import {AREA_TEXTS_HELP_TEXT, AREAS_COUNT_ERROR_TEXT, ELEMENTS, ERROR_TYPES} from "../../Constants";
 
 export default class ImageOptionsTab extends AbstractTab {
     constructor({elements, saveChanges}) {
@@ -59,7 +59,11 @@ export default class ImageOptionsTab extends AbstractTab {
         this.state.hasErrors = DesignerErrorManager.handleSeveralErrors({
             errors: [
                 {type: ERROR_TYPES.INPUT, element: imageSrcInput, errorCondition: !src},
-                {type: ERROR_TYPES.WRAPPER, element: heatmapWrapper, errorCondition: areas.length <= 0 || areas.length !== answers.length}
+                {
+                    type: ERROR_TYPES.WRAPPER,
+                    element: heatmapWrapper,
+                    errorCondition: areas.length <= 0 || areas.length !== answers.length
+                }
             ]
         });
 
@@ -69,7 +73,8 @@ export default class ImageOptionsTab extends AbstractTab {
         elementsToChangeVisibility.forEach((elementOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementOptions));
         if (areas.length <= 0 || areas.length !== answers.length) {
             const alertText = areasCountInfo.querySelector(".comd-alert__text");
-            alertText.innerText = `${AREAS_COUNT_ERROR_TEXT}${answers.length > 0 ? `: ${answers.length} area${answers.length > 1 ? "s" : ""}` : ": there are no answers" }`;
+            alertText.innerText = `${AREAS_COUNT_ERROR_TEXT}${answers.length > 0 ? `: ${answers.length} area${answers.length > 1 ? "s" : ""}` : ": there are no answers"}`;
+            alertText.innerText += "\r\n" + AREA_TEXTS_HELP_TEXT;
         }
 
         return this.state.hasErrors;

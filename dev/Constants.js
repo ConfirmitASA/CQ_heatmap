@@ -79,6 +79,7 @@ const ELEMENTS = {
 }
 
 const AREAS_COUNT_ERROR_TEXT = "Please select as many areas as answers";
+const AREA_TEXTS_HELP_TEXT = "To define, draw an area with the mouse and then click to add label (below image)";
 
 const TRANSLATION_TYPES = {
     REQUIRED: "required",
@@ -190,6 +191,7 @@ export {
     ERROR_TYPES,
     ELEMENTS,
     AREAS_COUNT_ERROR_TEXT,
+    AREA_TEXTS_HELP_TEXT,
     TRANSLATION_TYPES,
     DEFAULT_TRANSLATIONS,
     DEFAULT_LANGUAGE,
