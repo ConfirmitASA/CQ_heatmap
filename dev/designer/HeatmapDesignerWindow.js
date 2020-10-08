@@ -5,7 +5,6 @@ import MoreOptionsTab from "./tabs/MoreOptionsTab";
 import Config from "../Config";
 import QuestionTypesHandlerMakerForDesigner from "./QuestionTypesHandlerMakerForDesigner";
 import CommonFunctionsUtil from "../CommonFunctionsUtil";
-import {DEFAULT_SETTINGS} from "../Constants";
 
 export default class HeatmapDesignerWindow {
     constructor({question}) {
@@ -45,31 +44,11 @@ export default class HeatmapDesignerWindow {
         questionTypeHandler.customizeDesignerWindowToType();
     };
 
-    getScalesWithCurrentLanguage = ({scales}) => {
-        return scales.map((scale) => {
-            const currentLanguageText = scale.texts && scale.texts.find((textOptions) => textOptions.language === this.question.language);
+    getTextWithCurrentLanguage = ({items}) => {
+        return items.map((item) => {
+            const currentLanguageText = item.texts && item.texts.find((textOptions) => textOptions.language === this.question.language);
             return {
-                ...scale,
-                text: currentLanguageText ? currentLanguageText.text : ""
-            }
-        })
-    };
-
-    getAreaTitlesWithCurrentLanguage = ({areas}) => {
-        return areas.map((area) => {
-            const currentLanguageTitle = area.titles && area.titles.find((titleOptions) => titleOptions.language === this.question.language);
-            return {
-                ...area,
-                title: currentLanguageTitle ? currentLanguageTitle.title : ""
-            }
-        })
-    };
-
-    getTranslationsWithCurrentLanguage = ({translations}) => {
-        return translations.map((translation) => {
-            const currentLanguageText = translation.texts && translation.texts.find((textOptions) => textOptions.language === this.question.language);
-            return {
-                ...translation,
+                ...item,
                 text: currentLanguageText ? currentLanguageText.text : ""
             }
         })
@@ -100,29 +79,29 @@ export default class HeatmapDesignerWindow {
             this.tabs.AnswerOptions.questionScales = settings
                 ? CommonFunctionsUtil.updateScales({
                     newScales: settings.scales,
-                    oldScales: this.getScalesWithCurrentLanguage({scales: this.question.scales}),
+                    oldScales: this.getTextWithCurrentLanguage({items: this.question.scales}),
                     isDefault: activateDefaultScalesInput.checked
                 })
-                : this.getScalesWithCurrentLanguage({scales: this.question.scales});
+                : this.getTextWithCurrentLanguage({items: this.question.scales});
         }
 
         ImageOptions.setValues({
             values: {
                 ...settings,
-                areas: this.getAreaTitlesWithCurrentLanguage({areas: settings.areas})
+                areas: this.getTextWithCurrentLanguage({items: settings.areas})
             }
         });
         AnswerOptions.setValues({
             values: {
                 ...settings,
-                scales: this.getScalesWithCurrentLanguage({scales: this.question.scales})
+                scales: this.getTextWithCurrentLanguage({items: this.question.scales})
             }
         });
         Styling.setValues({values: settings});
         MoreOptions.setValues({
             values: {
                 ...settings,
-                translations: this.getTranslationsWithCurrentLanguage({translations: settings.translations})
+                translations: this.getTextWithCurrentLanguage({items: settings.translations})
             }
         });
 
