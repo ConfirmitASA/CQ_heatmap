@@ -327,14 +327,26 @@ export default class AnswerOptionsTab extends AbstractTab {
 
         minNumberOfAnswersInput.addEventListener("input", (e) => {
             const minValue = CommonFunctionsUtil.removeMathSignsFromPositiveIntCallback(e);
-            e.target.value = minValue;
+            e.target.value = CommonFunctionsUtil.correctValueToMinMaxInInput({
+                input: minNumberOfAnswersInput,
+                value: minValue
+            });
             maxNumberOfAnswersInput.setAttribute("min", minValue);
         });
         maxNumberOfAnswersInput.addEventListener("input", (e) => {
             const maxValue = CommonFunctionsUtil.removeMathSignsFromPositiveIntCallback(e);
-            e.target.value = maxValue;
+            e.target.value = CommonFunctionsUtil.correctValueToMinMaxInInput({
+                input: maxNumberOfAnswersInput,
+                value: maxValue
+            });
             minNumberOfAnswersInput.setAttribute("max", maxValue);
         });
-        equalToNumberOfAnswersInput.addEventListener("input", (e) => e.target.value = CommonFunctionsUtil.removeMathSignsFromPositiveIntCallback(e));
+        equalToNumberOfAnswersInput.addEventListener("input", (e) => {
+            e.target.value = CommonFunctionsUtil.removeMathSignsFromPositiveIntCallback(e);
+            e.target.value = CommonFunctionsUtil.correctValueToMinMaxInInput({
+                input: equalToNumberOfAnswersInput,
+                value: e.target.value
+            });
+        });
     };
 }

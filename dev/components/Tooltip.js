@@ -10,7 +10,8 @@ export const Tooltip = ({id, targetId, title, content, onCreated}) => {
             title,
             content,
             closeOnMouseleave: true,
-            onCreated
+            onCreated,
+            delayClose: 1000
         })
         : undefined;
 };
