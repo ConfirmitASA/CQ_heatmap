@@ -8,7 +8,7 @@ export default class DesignerErrorManager {
     }
 
     static handleWrapperError({element, errorCondition}) {
-        CommonFunctionsUtil.toggleClassForHTMLElement({element, className: "wrapper--error", condition: errorCondition});
+        CommonFunctionsUtil.toggleClassForHTMLElement({element, className: "wrapper__error", condition: errorCondition});
         return errorCondition;
     }
 

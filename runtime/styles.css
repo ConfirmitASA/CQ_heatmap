@@ -35,6 +35,7 @@
     margin: 0.25em 0 0.25em 0;
     padding: 0.0125em;
     width: 1.75em;
+    min-width: 30px;
     height: 1.01em; /* to fix IE it's a bit more than 1em */
 }
 .slider__input {
@@ -66,7 +67,7 @@
 .slider__toggle:after {
     height: 0.75em;
     width: 0.75em;
-    left: 0.125em;
+    left: 0.2em;
     bottom: 0.125em;
     border-radius: 1.75em;
     -webkit-transition: all 0.25s ease;
@@ -81,6 +82,6 @@
 }
 
 .slider__input:checked + .slider__toggle:after {
-    left: 0.875em;
+    left: 0.825em;
     opacity: 1;
 }

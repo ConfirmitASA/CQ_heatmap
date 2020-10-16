@@ -1,8 +1,8 @@
 {
-  "id": "f9891fff-8b5f-437d-8f9e-6f2170dc5c24",
-  "name": "HeatMap Multi",
+  "id": "fb2d754e-abf5-4cf4-a440-df2b7afd9fb1",
+  "name": "HeatMap-grid (DEVELOPMENT VERSION)",
   "description": "",
-  "baseQuestionType": "MultiForm",
+  "baseQuestionType": "GridForm",
   "disableDefaultRendering": true,
   "iconUrl": "design/icon.svg",
   "designEntryPoint": "design/index.html",

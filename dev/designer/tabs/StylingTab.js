@@ -4,7 +4,7 @@ import AbstractTab from "./AbstractTab";
 import {
     COLOR_HIGHLIGHT_TYPE,
     BORDER_HIGHLIGHT_TYPE,
-    DEFAULT_COLORS
+    DEFAULT_COLORS, DEFAULT_SETTINGS
 } from "../../Constants";
 
 export default class StylingTab extends AbstractTab {
@@ -16,27 +16,18 @@ export default class StylingTab extends AbstractTab {
     }
 
     setValues = ({values}) => {
-        const {elements} = this;
-        const {areaHoverColorInput, areaBorderColorInput, areaBorderWidthInput, areaChosenColorInput} = elements;
+        const {areaChosenColorInput} = this.elements;
         const {styles} = values;
 
         if (styles) {
             this.shouldBeOpened({styles});
             this.setValuesFromSettingsForAreaHighlight({styles});
+            this.setValuesFromSettingsForAreaHighlight({styles, isMobile: true});
             areaChosenColorInput.value = styles.areaChoose && styles.areaChoose.color ? styles.areaChoose.color : DEFAULT_COLORS.AREA_CHOSEN;
         }
 
-        const elementsToChangeVisibility = [
-            {
-                elements: [CommonFunctionsUtil.getInputWrapper({input: areaHoverColorInput})],
-                shouldBeShown: !styles || !styles.areaHighlight || styles.areaHighlight.type === COLOR_HIGHLIGHT_TYPE
-            },
-            {
-                elements: [CommonFunctionsUtil.getInputWrapper({input: areaBorderWidthInput}), CommonFunctionsUtil.getInputWrapper({input: areaBorderColorInput})],
-                shouldBeShown: styles && styles.areaHighlight && styles.areaHighlight.type === BORDER_HIGHLIGHT_TYPE
-            }
-        ];
-        elementsToChangeVisibility.forEach((elementsOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementsOptions));
+        this.toggleVisibilityForAreaHighlight({styles});
+        this.toggleVisibilityForAreaHighlight({styles, isMobile: true});
     };
 
     shouldBeOpened = ({styles}) => {
@@ -47,39 +38,84 @@ export default class StylingTab extends AbstractTab {
         const isAreaColorHighlightChanged = areaHighlight && areaHighlight.type === COLOR_HIGHLIGHT_TYPE && areaHighlight.color !== DEFAULT_COLORS.AREA_HOVER;
         const isAreaBorderHighlightChanged = areaHighlight && areaHighlight.type === BORDER_HIGHLIGHT_TYPE &&
             areaHighlight.border && (areaHighlight.border.color !== DEFAULT_COLORS.AREA_BORDER || areaHighlight.border.width > 0);
+        const isAreaColorHighlightOnMobileChanged = areaHighlight && areaHighlight.mobile && areaHighlight.mobile.type === COLOR_HIGHLIGHT_TYPE && areaHighlight.mobile.color !== DEFAULT_COLORS.AREA_HOVER;
+        const isAreaBorderHighlightOnMobileChanged = areaHighlight && areaHighlight.mobile && areaHighlight.mobile.type === BORDER_HIGHLIGHT_TYPE &&
+            areaHighlight.mobile.border && (areaHighlight.mobile.border.color !== DEFAULT_COLORS.AREA_BORDER || areaHighlight.mobile.border.width > 0);
         const isChosenAreaColorChanged = areaChoose && areaChoose.color !== DEFAULT_COLORS.AREA_CHOSEN;
 
-        if (isPreHighlightOnMobilesUnchecked || isAreaColorHighlightChanged || isAreaBorderHighlightChanged || isChosenAreaColorChanged) {
+        if (isPreHighlightOnMobilesUnchecked || isAreaColorHighlightChanged || isAreaBorderHighlightChanged || isAreaColorHighlightOnMobileChanged || isAreaBorderHighlightOnMobileChanged || isChosenAreaColorChanged) {
             CommonFunctionsUtil.toggleTab({elements: [stylingTabWrapper]});
         }
     };
 
-    setValuesFromSettingsForAreaHighlight = ({styles}) => {
-        const {preHighlightAreasOnMobileInput, areaHighlighterSelector, areaHoverColorInput, areaBorderColorInput, areaBorderWidthInput} = this.elements;
+    setValuesFromSettingsForAreaHighlight = ({styles, isMobile}) => {
+        const {preHighlightAreasOnMobileInput} = this.elements;
+        const {preHighlightOnMobiles} = styles.areaHighlight;
+        const areaHighlighterSelector = this.elements[`areaHighlighter${isMobile ? "OnMobile" : ""}Selector`];
+        const areaHoverColorInput = this.elements[`areaHoverColor${isMobile ? "OnMobile" : ""}Input`];
+        const areaBorderColorInput = this.elements[`areaBorderColor${isMobile ? "OnMobile" : ""}Input`];
+        const areaBorderWidthInput = this.elements[`areaBorderWidth${isMobile ? "OnMobile" : ""}Input`];
 
-        if (!styles.areaHighlight) {
+        if (isMobile) {
+            preHighlightAreasOnMobileInput.checked = preHighlightOnMobiles;
+        }
+
+        if (!styles.areaHighlight || isMobile && !styles.areaHighlight.mobile) {
             return;
         }
 
-        const {preHighlightOnMobiles, type, color, border} = styles.areaHighlight;
+        const {type, color, border} = isMobile ? styles.areaHighlight.mobile : styles.areaHighlight;
+        const {type: defaultType, color: defaultColor, border: defaultBorder} = isMobile ? DEFAULT_SETTINGS.styles.areaHighlight.mobile : DEFAULT_SETTINGS.styles.areaHighlight;
 
-        preHighlightAreasOnMobileInput.checked = preHighlightOnMobiles;
+        areaHighlighterSelector[0].selected = type ? type !== BORDER_HIGHLIGHT_TYPE : defaultType !== BORDER_HIGHLIGHT_TYPE;
+        areaHighlighterSelector[1].selected = type ? type === BORDER_HIGHLIGHT_TYPE : defaultType === BORDER_HIGHLIGHT_TYPE;
 
-        areaHighlighterSelector[0].selected = type !== BORDER_HIGHLIGHT_TYPE;
-        areaHighlighterSelector[1].selected = type === BORDER_HIGHLIGHT_TYPE;
+        areaHoverColorInput.value = color ? color : (defaultColor ? defaultColor : DEFAULT_COLORS.AREA_HOVER);
 
-        areaHoverColorInput.value = color ? color : DEFAULT_COLORS.AREA_HOVER;
+        areaBorderWidthInput.value = border && border.width ? border.width : (defaultBorder ? defaultBorder.width : "");
+        areaBorderColorInput.value = border && border.color ? border.color : (defaultBorder ? defaultBorder.color : "");
+    };
 
-        areaBorderWidthInput.value = border && border.width ? border.width : "";
-        areaBorderColorInput.value = border && border.color ? border.color : DEFAULT_COLORS.AREA_BORDER;
+    toggleVisibilityForAreaHighlight = ({styles, isMobile}) => {
+        const {preHighlightAreasOnMobileInput, areaHighlightOnMobileWrapper} = this.elements;
+        const areaHoverColorInput = this.elements[`areaHoverColor${isMobile ? "OnMobile" : ""}Input`];
+        const areaBorderColorInput = this.elements[`areaBorderColor${isMobile ? "OnMobile" : ""}Input`];
+        const areaBorderWidthInput = this.elements[`areaBorderWidth${isMobile ? "OnMobile" : ""}Input`];
+
+        const areaHighlight = isMobile ? styles.areaHighlight.mobile : styles.areaHighlight;
+
+        const elementsToChangeVisibility = [
+            {
+                elements: [CommonFunctionsUtil.getInputWrapper({input: areaHoverColorInput})],
+                shouldBeShown: !styles || !areaHighlight || areaHighlight.type === COLOR_HIGHLIGHT_TYPE
+            },
+            {
+                elements: [CommonFunctionsUtil.getInputWrapper({input: areaBorderWidthInput}), CommonFunctionsUtil.getInputWrapper({input: areaBorderColorInput})],
+                shouldBeShown: styles && areaHighlight && areaHighlight.type === BORDER_HIGHLIGHT_TYPE
+            }
+        ];
+
+        if (isMobile) {
+            elementsToChangeVisibility.push({
+                elements: [areaHighlightOnMobileWrapper],
+                shouldBeShown: preHighlightAreasOnMobileInput.checked
+            });
+        }
+
+        elementsToChangeVisibility.forEach((elementsOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementsOptions));
     };
 
     get values() {
-        const {areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput, areaChosenColorInput, preHighlightAreasOnMobileInput} = this.elements;
-        const areaHighlighterType = areaHighlighterSelector[1].selected ? BORDER_HIGHLIGHT_TYPE : COLOR_HIGHLIGHT_TYPE;
+        const {areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput, areaChosenColorInput, preHighlightAreasOnMobileInput,
+            areaHighlighterOnMobileSelector, areaHoverColorOnMobileInput, areaBorderWidthOnMobileInput, areaBorderColorOnMobileInput} = this.elements;
 
-        const areaHighlighterColor = areaHighlighterType === COLOR_HIGHLIGHT_TYPE && !!areaHoverColorInput.value ? areaHoverColorInput.value : "";
+        const areaHighlighterType = areaHighlighterSelector[1].selected ? BORDER_HIGHLIGHT_TYPE : COLOR_HIGHLIGHT_TYPE;
+        const areaHighlighterColor = areaHighlighterType === COLOR_HIGHLIGHT_TYPE && !!areaHoverColorInput.value ? areaHoverColorInput.value : DEFAULT_SETTINGS.styles.areaHighlight.color;
         const areaHighlighterBorderEnabled = areaHighlighterType === BORDER_HIGHLIGHT_TYPE && (!!areaBorderWidthInput.value || !!areaBorderColorInput.value);
+
+        const areaHighlighterOnMobileType = areaHighlighterOnMobileSelector[1].selected ? BORDER_HIGHLIGHT_TYPE : COLOR_HIGHLIGHT_TYPE;
+        const areaHighlighterOnMobileColor = areaHighlighterOnMobileType === COLOR_HIGHLIGHT_TYPE && !!areaHoverColorOnMobileInput.value ? areaHoverColorOnMobileInput.value : "";
+        const areaHighlighterOnMobileBorderEnabled = areaHighlighterOnMobileType === BORDER_HIGHLIGHT_TYPE && (!!areaBorderWidthOnMobileInput.value || !!areaBorderColorOnMobileInput.value);
 
         return {
             areaHighlight: {
@@ -92,9 +128,19 @@ export default class StylingTab extends AbstractTab {
                         color: !!areaBorderColorInput.value ? areaBorderColorInput.value : ""
                     }
                     : undefined,
+                mobile: preHighlightAreasOnMobileInput.checked ? {
+                    type: areaHighlighterOnMobileType,
+                    color: areaHighlighterOnMobileColor,
+                    border: areaHighlighterOnMobileBorderEnabled
+                        ? {
+                            width: !!areaBorderWidthOnMobileInput.value ? areaBorderWidthOnMobileInput.value : DEFAULT_SETTINGS.styles.areaHighlight.mobile.border.width,
+                            color: !!areaBorderColorOnMobileInput.value ? areaBorderColorOnMobileInput.value : DEFAULT_SETTINGS.styles.areaHighlight.mobile.border.color
+                        }
+                        : undefined,
+                } : undefined
             },
             areaChoose: {
-                color: areaChosenColorInput.value ? areaChosenColorInput.value : ""
+                color: areaChosenColorInput.value ? areaChosenColorInput.value : DEFAULT_SETTINGS.styles.areaChoose.color
             }
         };
     };
@@ -118,13 +164,31 @@ export default class StylingTab extends AbstractTab {
 
         questionTypeHandler.customizeStylingTabToType();
 
-        this.setupAdditionalStyles();
+        this.setupAreaHighlight({isMobile: false});
+        this.setupAreaHighlight({isMobile: true});
     };
 
-    setupAdditionalStyles = () => {
-        const {preHighlightAreasOnMobileInput, areaHighlighterSelector, areaHoverColorInput, areaBorderWidthInput, areaBorderColorInput} = this.elements;
+    setupAreaHighlight = ({isMobile}) => {
+        const {preHighlightAreasOnMobileInput, areaHighlightOnMobileWrapper} = this.elements;
+        const areaHighlighterSelector = this.elements[`areaHighlighter${isMobile ? "OnMobile" : ""}Selector`];
+        const areaHoverColorInput = this.elements[`areaHoverColor${isMobile ? "OnMobile" : ""}Input`];
+        const areaBorderColorInput = this.elements[`areaBorderColor${isMobile ? "OnMobile" : ""}Input`];
+        const areaBorderWidthInput = this.elements[`areaBorderWidth${isMobile ? "OnMobile" : ""}Input`];
 
-        preHighlightAreasOnMobileInput.addEventListener("change", () => this.saveChanges());
+        if (isMobile) {
+            preHighlightAreasOnMobileInput.addEventListener("change", (e) => {
+                const input = e.target;
+                const elementsToChangeVisibility = [
+                    {
+                        elements: [areaHighlightOnMobileWrapper],
+                        shouldBeShown: input.checked
+                    }
+                ];
+                elementsToChangeVisibility.forEach((elementsOptions) => CommonFunctionsUtil.toggleElementsVisibility(elementsOptions));
+
+                this.saveChanges();
+            });
+        }
 
         areaHighlighterSelector.addEventListener("change", (e) => {
             const selector = e.target;

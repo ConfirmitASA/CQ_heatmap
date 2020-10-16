@@ -10,7 +10,7 @@ import {
     ELEMENTS,
     DEFAULT_LANGUAGE,
     DEFAULT_TRANSLATION_TEXT_SEPARATOR,
-    TRANSLATION_TYPES
+    TRANSLATION_TYPES, COLOR_HIGHLIGHT_TYPE, BORDER_HIGHLIGHT_TYPE
 } from "../Constants";
 
 export default class Heatmap {
@@ -311,6 +311,7 @@ export default class Heatmap {
 
         this.question.validationEvent.on((validationResult) => {
             if (this.state.isBackClicked) {
+                // saves incorrect data
                 return;
             }
 
@@ -404,14 +405,24 @@ export default class Heatmap {
         if (styles) {
             if (styles.areaHighlight) {
                 const {preHighlightOnMobiles, color, border} = styles.areaHighlight;
-                if (color) {
-                    const isTouchScreen = 'ontouchstart' in window // works on most browsers
-                        || 'onmsgesturechange' in window; // works on IE10 with some false positives
-                    stylesElement.innerText += `#${id} .select-areas-background-area${preHighlightOnMobiles && (window.innerWidth <= mobileThreshold || isTouchScreen) ? "" : ":hover"}` +
-                        `{ background-color: ${(color ? color : "#fff")}; opacity: 0.5; }`;
+                const hasTouchScreen = CommonFunctionsUtil.hasTouchScreen();
+                const isMobile = window.innerWidth <= mobileThreshold || hasTouchScreen;
+                if (preHighlightOnMobiles && styles.areaHighlight.mobile && isMobile) {
+                    const {color: mobileColor, border: mobileBorder} = styles.areaHighlight.mobile
+                    if (styles.areaHighlight.mobile.type === BORDER_HIGHLIGHT_TYPE && mobileBorder) {
+                        stylesElement.innerText += `#${id} .select-areas-background-area { border: ${(mobileBorder.width ? mobileBorder.width : "0")}px solid ${(!!mobileBorder.color ? mobileBorder.color : "#000")}; }`;
+                    }
+                    if (styles.areaHighlight.mobile.type === COLOR_HIGHLIGHT_TYPE && mobileColor) {
+                        stylesElement.innerText += `#${id} .select-areas-background-area { background-color: ${(mobileColor ? mobileColor : "#fff")}; opacity: 0.5; }`;
+                    }
                 }
-                if (border) {
-                    stylesElement.innerText += `#${id} .select-areas-background-area { border: ${(border.width ? border.width : "0")}px solid ${(!!border.color ? border.color : "#000")}; }`;
+                if (!isMobile) {
+                    if (styles.areaHighlight.type === COLOR_HIGHLIGHT_TYPE && color) {
+                        stylesElement.innerText += `#${id} .select-areas-background-area:hover { background-color: ${(color ? color : "#fff")}; opacity: 0.5; }`;
+                    }
+                    if (styles.areaHighlight.type === BORDER_HIGHLIGHT_TYPE && border) {
+                        stylesElement.innerText += `#${id} .select-areas-background-area { border: ${(border.width ? border.width : "0")}px solid ${(!!border.color ? border.color : "#000")}; }`;
+                    }
                 }
             }
         } else {

@@ -14,7 +14,7 @@
     display: none;
 }
 
-.wrapper--error {
+.wrapper_error {
     border-color: #eb0052 !important;
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ff6c9f !important;
 }

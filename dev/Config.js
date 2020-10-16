@@ -1,6 +1,10 @@
 import CommonFunctionsUtil from "./CommonFunctionsUtil";
 
-import {HAVE_SCALES_WRAPPER_LEVEL_FROM_INPUT, QUESTION_TYPES} from "./Constants";
+import {
+    AREA_HIGHLIGHT_ON_MOBILE_WRAPPER_LEVEL_FROM_SELECTOR,
+    HAVE_SCALES_WRAPPER_LEVEL_FROM_INPUT,
+    QUESTION_TYPES
+} from "./Constants";
 
 export default class Config {
     static questionType = QUESTION_TYPES.GRID;
@@ -72,13 +76,19 @@ export default class Config {
         this.elements = {
             ...elements,
             stylingTabWrapper: settingsWrapper.querySelector(".tab.tab--styling"),
-            preHighlightAreasOnMobileInput: settingsWrapper.querySelector("#preHighlightAreasOnMobile"),
             areaHighlighterSelector: settingsWrapper.querySelector("#areaHighlighterSelector"),
             areaHoverColorInput: settingsWrapper.querySelector("#areaHoverColor"),
             areaBorderWidthInput: settingsWrapper.querySelector("#areaBorderWidth"),
             areaBorderColorInput: settingsWrapper.querySelector("#areaBorderColor"),
+            preHighlightAreasOnMobileInput: settingsWrapper.querySelector("#preHighlightAreasOnMobile"),
+            areaHighlighterOnMobileSelector: settingsWrapper.querySelector("#areaHighlighterOnMobileSelector"),
+            areaHoverColorOnMobileInput: settingsWrapper.querySelector("#areaHoverOnMobileColor"),
+            areaBorderWidthOnMobileInput: settingsWrapper.querySelector("#areaBorderOnMobileWidth"),
+            areaBorderColorOnMobileInput: settingsWrapper.querySelector("#areaBorderOnMobileColor"),
             areaChosenColorInput: settingsWrapper.querySelector("#areaChosenColor")
         }
+
+        this.elements.areaHighlightOnMobileWrapper = CommonFunctionsUtil.getInputWrapper({input: this.elements.areaHighlighterOnMobileSelector, level: AREA_HIGHLIGHT_ON_MOBILE_WRAPPER_LEVEL_FROM_SELECTOR});
     };
 
     setupMoreOptions = () => {

@@ -10,6 +10,7 @@ const BORDER_HIGHLIGHT_TYPE = "border";
 const MIN_VALUE_FOR_MINMAX = 1;
 
 const HAVE_SCALES_WRAPPER_LEVEL_FROM_INPUT = 4;
+const AREA_HIGHLIGHT_ON_MOBILE_WRAPPER_LEVEL_FROM_SELECTOR = 3;
 const AREA_CHOSEN_COLOR_WRAPPER_LEVEL_FROM_INPUT = 3;
 
 const QUESTION_TYPES = {
@@ -163,6 +164,13 @@ const DEFAULT_SETTINGS = {
     styles: {
         areaHighlight: {
             preHighlightOnMobiles: true,
+            mobile: {
+                type: "border",
+                border: {
+                    color: "#000000",
+                    width: 2
+                }
+            },
             type: "color",
             color: "#ffffff"
         },
@@ -182,6 +190,7 @@ export {
     BORDER_HIGHLIGHT_TYPE,
     MIN_VALUE_FOR_MINMAX,
     HAVE_SCALES_WRAPPER_LEVEL_FROM_INPUT,
+    AREA_HIGHLIGHT_ON_MOBILE_WRAPPER_LEVEL_FROM_SELECTOR,
     AREA_CHOSEN_COLOR_WRAPPER_LEVEL_FROM_INPUT,
     QUESTION_TYPES,
     DEFAULT_COLORS,
