@@ -10,14 +10,14 @@
     "component": "runtime/component.js",
     "deps": {
       "scripts": [
-        "https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.1.12.4.min.js",
-        "https://cdnjs.cloudflare.com/ajax/libs/jBox/0.4.9/jBox.min.js",
-        "https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.selectareas.min.js",
+        "external/js/jquery.1.12.4.min.js",
+        "external/js/jBox.min.js",
+        "external/js/jquery.selectareas.min.js",
         "runtime/bundle.js"
       ],
       "styles": [
-        "https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.2.0/dist/jBox.all.min.css",
-        "https://author.euro.confirmit.com/isa/BDJPFRDMEYBPBKLVADAYFQCDAVIOEQJR/AGalaida/jquery.selectareas.css",
+        "external/css/jBox.all.min.css",
+        "external/css/jquery.selectareas.css",
         "runtime/styles.css"
       ]
     }
